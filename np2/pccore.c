@@ -353,13 +353,22 @@ void pccore_reset(void) {
 	pccore_set(&np2cfg);
 	nevent_allreset();
 
+#if defined(VAEG_FIX)
+	//Œã‚ë‚ÉˆÚ“®
+#else
 	CPU_RESET();
 	CPU_SETEXTSIZE((UINT32)pccore.extmem);
+#endif
 
 	CPU_TYPE = 0;
 	if (pccore.dipsw[2] & 0x80) {
 		CPU_TYPE = CPUTYPE_V30;
 	}
+
+#if defined(VAEG_FIX)
+	CPU_RESET();
+	CPU_SETEXTSIZE((UINT32)pccore.extmem);
+#endif
 
 	epson = (pccore.model & PCMODEL_EPSON) ? TRUE : FALSE;
 	if (epson) {
