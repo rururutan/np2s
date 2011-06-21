@@ -1,0 +1,63 @@
+/HID_Utilities_External.h/1.1/Tue Oct 28 16:44:44 2003//
+/commng.cpp/1.5/Tue Mar  2 23:23:06 2004//
+/commng.h/1.3/Tue Mar  2 23:23:06 2004//
+/fdefine.h/1.1/Tue Oct 28 16:44:44 2003//
+/fontmng.cpp/1.1.1.1/Thu Oct 16 17:59:38 2003//
+/hid.h/1.1/Tue Oct 28 16:44:44 2003//
+/ini.cpp/1.22/Mon May 16 06:08:22 2005//
+/joymng.cpp/1.2/Tue Oct 28 16:44:44 2003//
+/joymng.h/1.2/Tue Oct 28 16:44:44 2003//
+/mackbd.cpp/1.17/Wed Feb 25 19:30:40 2004//
+/macossub.h/1.5/Tue Mar  2 23:23:06 2004//
+/menu.cpp/1.16/Sun May 23 04:07:56 2004//
+/menu.h/1.10/Sun Apr 18 16:42:28 2004//
+/mousemng.cpp/1.6/Wed Nov 12 19:56:50 2003//
+/mousemng.h/1.5/Wed Nov 12 19:56:50 2003//
+/np2.h/1.17/Sun Apr 18 16:42:28 2004//
+/np2.r/1.18/Tue Jul 13 17:10:06 2004//
+/np2cw.h/1.1/Thu Oct 23 06:26:16 2003//
+/np2gcc.h/1.2/Thu Oct 23 06:26:16 2003//
+/np2gcc_ia32.h/1.1/Tue Mar  2 23:23:06 2004//
+/np2opening.cpp/1.6/Tue Mar  2 23:23:06 2004//
+/np2opening.h/1.5/Tue Mar  2 23:23:06 2004//
+/resource.h/1.16/Tue Jul 13 17:10:06 2004//
+/soundmng.cpp/1.10/Wed Feb 25 19:30:40 2004//
+/soundrecording.h/1.1/Tue Oct 28 16:44:44 2003//
+/subwind.cpp/1.2/Sun May 23 04:07:56 2004//
+/subwind.h/1.1/Sun Apr 18 16:42:28 2004//
+/sysmng.cpp/1.12/Sun May 23 04:07:56 2004//
+/taskmng.h/1.1.1.1/Thu Oct 16 17:59:38 2003//
+/timemng.cpp/1.1.1.1/Thu Oct 16 17:59:38 2003//
+/timemng.h/1.1.1.1/Thu Oct 16 17:59:38 2003//
+/toolwin.h/1.2/Tue Mar  2 23:23:06 2004//
+/toolwin.res/1.2/Tue Nov 11 16:33:50 2003//
+/trace.h/1.3/Thu Oct 23 06:26:16 2003//
+/workspace.sit/1.31/Tue Jul 13 17:10:06 2004/-kb/
+D/English.lproj////
+D/Icon////
+D/Japanese.lproj////
+D/dialog////
+D/np2.pbproj////
+D/np2_IA32.pbproj////
+/cmmidi.cpp/1.5/Mon Mar 15 05:06:02 2004//
+/cmmidi.h/1.5/Mon Mar 15 05:06:02 2004//
+/compiler.h/1.22/Fri May 20 17:25:04 2005//
+/dosio.cpp/1.5/Fri May 20 17:25:04 2005//
+/dosio.h/1.6/Fri May 20 17:25:04 2005//
+/fontmng.h/1.1.1.1/Thu Oct 16 17:59:38 2003//
+/hid.cpp/1.2/Fri May 20 17:25:04 2005//
+/ini.h/1.4/Mon Feb 16 05:31:32 2004//
+/mackbd.h/1.5/Thu Dec  4 17:48:18 2003//
+/macossub.cpp/1.6/Sun Jan 11 16:58:48 2004//
+/np2.cpp/1.65/Fri May 20 17:25:04 2005//
+/np2.proj/1.3/Thu Oct 23 06:32:54 2003/-kb/
+/scrnmng.cpp/1.7/Wed Feb 25 17:16:32 2004//
+/scrnmng.h/1.2/Sun Oct 19 14:48:08 2003//
+/soundmng.h/1.4/Fri Nov 14 07:37:30 2003//
+/soundrecording.cpp/1.3/Fri May 20 17:25:04 2005//
+/sysmng.h/1.6/Tue Nov  4 15:45:00 2003//
+/taskmng.cpp/1.2/Thu Nov  6 18:28:00 2003//
+/toolwin.cpp/1.21/Fri May 20 17:25:04 2005//
+/trace.cpp/1.1.1.1/Thu Oct 16 17:59:38 2003//
+/carbon.r/1.1/Tue Jun 21 12:04:08 2011//
+/fdefine.cpp/1.9/Tue Jun 21 12:04:08 2011//

@@ -1,0 +1,24 @@
+/cpucore.h/1.15/Sat Mar  5 06:02:29 2005//
+/i286a.c/1.12/Sun Jan 25 07:53:08 2004//
+/i286a.inc/1.20/Sat Jul 17 20:43:02 2004//
+/i286a_0f.s/1.6/Sun Jan 18 16:18:10 2004//
+/i286a_8x.s/1.11/Sat Jul 17 20:43:02 2004//
+/i286a_ea.s/1.9/Wed Jan  7 06:53:47 2004//
+/i286a_f6.s/1.6/Sun Dec 21 23:27:08 2003//
+/i286a_fe.s/1.8/Mon Dec 22 10:24:50 2003//
+/i286a_i.s/1.11/Wed Jan  7 12:51:29 2004//
+/i286a_mn.s/1.29/Mon May 16 04:55:13 2005//
+/i286a_rp.s/1.4/Fri Dec 26 00:11:51 2003//
+/i286a_sf.s/1.8/Sat Jul 17 20:43:02 2004//
+/i286aalu.inc/1.7/Wed Jan  7 12:51:29 2004//
+/i286aea.inc/1.4/Mon Dec 22 10:24:50 2003//
+/i286aio.inc/1.8/Fri May 20 19:52:02 2005//
+/i286amem.inc/1.1/Sun Dec 21 23:27:08 2003//
+/i286aop.inc/1.13/Sat Mar 19 21:02:05 2005//
+/i286asft.inc/1.2/Sun Dec 21 23:27:08 2003//
+/memory.c/1.10/Fri May 20 13:59:46 2005//
+/memory.h/1.6/Fri May 20 13:59:46 2005//
+/memorya.s/1.13/Fri Mar 11 15:12:57 2005//
+/memoryd.s/1.10/Fri May 20 13:59:46 2005//
+/readme.txt/1.5/Mon Dec 22 10:24:50 2003//
+D

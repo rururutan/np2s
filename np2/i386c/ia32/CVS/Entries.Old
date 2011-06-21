@@ -1,0 +1,34 @@
+/cpu.c/1.24/Sat Mar 12 12:32:54 2005//
+/cpu.h/1.36/Fri Jan 25 18:02:18 2008//
+/cpu_io.c/1.8/Tue Feb  6 14:20:57 2007//
+/cpu_io.h/1.3/Sat Mar 12 12:32:54 2005//
+/cpu_mem.c/1.21/Sat Mar 12 12:32:54 2005//
+/cpu_mem.h/1.10/Tue Feb  6 14:20:57 2007//
+/cpu_mem.mcr/1.4/Sat Mar 12 12:32:54 2005//
+/ctrlxfer.c/1.19/Fri Jan 25 17:49:46 2008//
+/ctrlxfer.h/1.3/Sat Mar 12 12:32:54 2005//
+/debug.c/1.13/Sat Mar 12 12:32:54 2005//
+/disasm.c/1.9/Sat Mar 12 12:32:54 2005//
+/exception.c/1.20/Fri Jan 25 17:49:46 2008//
+/exception.h/1.2/Sat Mar 12 12:32:54 2005//
+/groups.c/1.7/Sat Mar 12 12:32:54 2005//
+/groups.h/1.3/Sat Mar 12 12:32:54 2005//
+/ia32.c/1.20/Fri Jan 25 17:49:46 2008//
+/ia32.mcr/1.24/Fri Jan 25 18:07:30 2008//
+/ia32weak.txt/1.3/Wed Mar 24 14:36:03 2004//
+/ia32xc.mcr/1.8/Sat Mar 12 12:34:30 2005//
+/ia32xc_msc.mcr/1.3/Wed Mar 24 16:46:14 2004//
+/inst_table.c/1.10/Sat Mar 12 12:32:54 2005//
+/inst_table.h/1.5/Sat Mar 12 12:32:54 2005//
+/interface.c/1.26/Sun Jan 27 12:11:31 2008//
+/interface.h/1.19/Fri Jan 25 18:02:18 2008//
+/paging.c/1.29/Tue Feb  6 14:20:57 2007//
+/paging.h/1.21/Tue Feb  6 14:20:57 2007//
+/resolve.c/1.9/Sat Mar 12 12:32:54 2005//
+/resolve.h/1.6/Sat Mar 12 12:32:54 2005//
+/segments.c/1.18/Fri Jan 25 17:53:27 2008//
+/segments.h/1.10/Sat Mar 12 12:32:54 2005//
+/task.c/1.22/Fri Jan 25 18:12:13 2008//
+/task.h/1.7/Sat Mar 12 12:32:54 2005//
+D/instructions////
+D
