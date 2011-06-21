@@ -1,4 +1,6 @@
 #include	"compiler.h"
+#include	"joymng.h"
+#include	"keystat.h"
 #include	<math.h>
 #include	"pccore.h"
 #include	"iocore.h"
@@ -6,6 +8,7 @@
 #include	"amd98.h"
 #include	"sound.h"
 #include	"fmboard.h"
+#include	"s98.h"
 
 
 // ないよりあったほーが良い程度のリズム…
@@ -16,6 +19,43 @@ static struct {
 	UINT	enable;
 } amd98r;
 
+static	REG8	rapids = 0;
+
+REG8 amd98_getjoy(UINT no) {
+
+	REG8	ret;
+
+	rapids ^= 0xf0;											// ver0.28
+	ret = 0xff;
+	if (no == 1) {
+		ret &= (joymng_getstat() | (rapids & 0x30));
+		if (np2cfg.KEY_MODE == 1) {
+			ret &= keystat_getjoy();
+		}
+	}
+	else {
+		if (np2cfg.KEY_MODE == 2) {
+			ret &= keystat_getjoy();
+		}
+	}
+	if (np2cfg.BTN_RAPID) {
+		ret |= rapids;
+	}
+
+	// rapidと非rapidを合成								// ver0.28
+	ret &= ((ret >> 2) | (~0x30));
+
+	if (np2cfg.BTN_MODE) {
+		UINT8 bit1 = (ret & 0x20) >> 1;					// ver0.28
+		UINT8 bit2 = (ret & 0x10) << 1;
+		ret = (ret & (~0x30)) | bit1 | bit2;
+	}
+
+	// intr 反映して終わり								// ver0.28
+	ret &= 0x3f;
+	ret |= fmtimer.intr;
+	return(ret);
+}
 
 static void pcmmake1(PMIXDAT *dat, UINT rate,
 											int vol, double hz, double env) {
@@ -188,7 +228,7 @@ static void setamd98event(UINT32 cnt, BOOL absolute) {
 		cnt = pccore.multiple << 16;
 	}
 	if (!(pccore.cpumode & CPUMODE_8MHZ)) {
-		cnt = cnt * 16 / 13;					// cnt * 2457600 / 1996800
+		cnt = cnt * 2457600 / 2000000;
 	}
 	nevent_set(NEVENT_MUSICGEN, cnt, amd98int, absolute);
 }
@@ -229,7 +269,11 @@ static void IOOUTCALL amd_oda(UINT port, REG8 dat) {
 
 	addr = opn.addr;
 	if (addr < 0x0e) {
+		S98_put(NORMAL2608, addr, dat);
 		psggen_setreg(&psg1, addr, dat);
+	}
+	else if (addr == 0x0e) {
+		psg1.reg.io1 = dat;
 	}
 	else if (addr == 0x0f) {
 		psg1.reg.io2 = dat;
@@ -243,6 +287,7 @@ static void IOOUTCALL amd_odb(UINT port, REG8 dat) {
 
 	addr = opn.addr2;
 	if (addr < 0x0e) {
+		S98_put(NORMAL2608_2, addr, dat);
 		psggen_setreg(&psg2, addr, dat);
 	}
 	else if (addr == 0x0f) {
@@ -255,6 +300,7 @@ static void IOOUTCALL amd_odb(UINT port, REG8 dat) {
 			}
 			else if (b == 0x40) {
 				if (amd98.psg3reg < 0x0e) {
+					S98_put(NORMAL2608_3, amd98.psg3reg, psg1.reg.io2);
 					psggen_setreg(&psg3, amd98.psg3reg, psg1.reg.io2);
 				}
 				else if (amd98.psg3reg == 0x0f) {
@@ -293,6 +339,9 @@ static REG8 IOINPCALL amd_ida(UINT port) {
 	if (addr < 0x0e) {
 		return(psggen_getreg(&psg1, addr));
 	}
+	else if (addr == 0x0e) {
+		return(amd98_getjoy(1));
+	}
 	else if (addr == 0x0f) {
 		return(psg1.reg.io2);
 	}
@@ -307,6 +356,9 @@ static REG8 IOINPCALL amd_idb(UINT port) {
 	addr = opn.addr2;
 	if (addr < 0x0e) {
 		return(psggen_getreg(&psg2, addr));
+	}
+	else if (addr == 0x0e) {
+		return(amd98_getjoy(2));
 	}
 	else if (addr == 0x0f) {
 		return(psg2.reg.io2);

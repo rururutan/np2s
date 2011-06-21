@@ -26,8 +26,20 @@ typedef struct {
 	UINT8	offset[4];
 	UINT8	dumpdata[4];
 	UINT8	looppoint[4];
-	UINT8	headerreserved[0x24];
-	UINT8	title[0x40];
+	UINT8	devicecount[4];
+	UINT8	device1type[4];
+	UINT8	device1clock[4];
+	UINT8	device1pan[4];
+	UINT8	device1reserved[4];
+	UINT8	device2type[4];
+	UINT8	device2clock[4];
+	UINT8	device2pan[4];
+	UINT8	device2reserved[4];
+	UINT8	device3type[4];
+	UINT8	device3clock[4];
+	UINT8	device3pan[4];
+	UINT8	device3reserved[4];
+	UINT8	title[0x30];
 } S98HDR;
 
 static struct {
@@ -128,32 +140,160 @@ BRESULT S98_open(const OEMCHAR *filename) {
 	hdr.magic[0] = 'S';
 	hdr.magic[1] = '9';
 	hdr.magic[2] = '8';
-	hdr.formatversion = '1';
 	STOREINTELDWORD(hdr.timerinfo, 1);
-	STOREINTELDWORD(hdr.offset, offsetof(S98HDR, title));
 	STOREINTELDWORD(hdr.dumpdata, sizeof(S98HDR));
+	switch(usesound) {
+	  case 0x02:
+	  case 0x22:
+		hdr.formatversion = '3';
+		STOREINTELDWORD(hdr.devicecount, 1);
+		STOREINTELDWORD(hdr.device1type, 2);
+		STOREINTELDWORD(hdr.device1clock, OPNA_CLOCK);
+		break;
+	  case 0x06:
+		hdr.formatversion = '3';
+		STOREINTELDWORD(hdr.devicecount, 2);
+		STOREINTELDWORD(hdr.device1type, 4);
+		STOREINTELDWORD(hdr.device2type, 2);
+		STOREINTELDWORD(hdr.device1clock, OPNA_CLOCK*2);
+		STOREINTELDWORD(hdr.device2clock, OPNA_CLOCK);
+		break;
+	  case 0x40:
+		hdr.formatversion = '3';
+		STOREINTELDWORD(hdr.devicecount, 2);
+		STOREINTELDWORD(hdr.device1type, 4);
+		STOREINTELDWORD(hdr.device2type, 3);
+		STOREINTELDWORD(hdr.device1clock, OPNA_CLOCK*2);
+		STOREINTELDWORD(hdr.device2clock, OPNA_CLOCK*2);
+		break;
+	  case 0x80:
+		hdr.formatversion = '3';
+		STOREINTELDWORD(hdr.devicecount, 3);
+		STOREINTELDWORD(hdr.device1type, 0xf);
+		STOREINTELDWORD(hdr.device2type, 0xf);
+		STOREINTELDWORD(hdr.device3type, 0xf);
+		STOREINTELDWORD(hdr.device1clock, 2000000);
+		STOREINTELDWORD(hdr.device2clock, 2000000);
+		STOREINTELDWORD(hdr.device3clock, 2000000);
+		STOREINTELDWORD(hdr.device1pan, 0x21);
+		STOREINTELDWORD(hdr.device2pan, 0x21);
+		STOREINTELDWORD(hdr.device3pan, 0x21);
+		break;
+	  case 0x32:
+		hdr.formatversion = '3';
+		STOREINTELDWORD(hdr.devicecount, 2);
+		STOREINTELDWORD(hdr.device1type, 2);
+		STOREINTELDWORD(hdr.device2type, 8);
+		STOREINTELDWORD(hdr.device1clock, OPNA_CLOCK);
+		STOREINTELDWORD(hdr.device2clock, OPNA_CLOCK);
+		STOREINTELDWORD(hdr.device1pan, 0x40);
+		STOREINTELDWORD(hdr.device2pan, 0x02);
+		break;
+	  case 0x41:
+		hdr.formatversion = '3';
+		STOREINTELDWORD(hdr.devicecount, 1);
+		STOREINTELDWORD(hdr.device1type, 9);
+		STOREINTELDWORD(hdr.device1clock, 14400000);
+		break;
+	  case 0x82:
+		hdr.formatversion = '3';
+		STOREINTELDWORD(hdr.devicecount, 2);
+		STOREINTELDWORD(hdr.device1type, 2);
+		STOREINTELDWORD(hdr.device2type, 10);
+		STOREINTELDWORD(hdr.device1clock, OPNA_CLOCK);
+		STOREINTELDWORD(hdr.device2clock, OPNA_CLOCK);
+		STOREINTELDWORD(hdr.device1pan, 0x40);
+		STOREINTELDWORD(hdr.device2pan, 0x02);
+		break;
+	  default:
+		hdr.formatversion = '1';
+		STOREINTELDWORD(hdr.offset, offsetof(S98HDR, title));
+		break;
+	}
 	for (i=0; i<sizeof(hdr); i++) {
 		S98_putc(*(((UINT8 *)&hdr) + i));
 	}
 
 #if 1
-	// FM
-	for (i=0x30; i<0xb6; i++) {
-		if ((i & 3) != 3) {
+	if (np2cfg.s98init) {
+	if (usesound == 0x80) {
+		// AMD-98
+		for (i=0x00; i<0x0e; i++) {
 			S98_putc(NORMAL2608);
 			S98_putc((REG8)i);
-			S98_putc(opn.reg[i]);
-
-			S98_putc(EXTEND2608);
+			S98_putc(((UINT8 *)&psg1.reg)[i]);
+			S98_putc(NORMAL2608_2);
 			S98_putc((REG8)i);
-			S98_putc(opn.reg[i+0x100]);
+			S98_putc(((UINT8 *)&psg2.reg)[i]);
+			S98_putc(NORMAL2608_3);
+			S98_putc((REG8)i);
+			S98_putc(((UINT8 *)&psg3.reg)[i]);
+		}
+	} else if (usesound == 0x41) {
+		// SB16 without OPN
+		for (i=0x1; i<0xf6; i++) {
+			S98_putc(NORMAL2608);
+			S98_putc((REG8)i);
+			S98_putc(opl.reg[i]);
+		}
+		for (i=0x101; i<0x1f6; i++) {
+			S98_putc(EXTEND2608);
+			S98_putc((REG8)i - 0x100);
+			S98_putc(opl.reg[i]);
+		}
+	} else {
+		// FM
+		for (i=0x30; i<0xb6; i++) {
+			if ((i & 3) != 3) {
+				S98_putc(NORMAL2608);
+				S98_putc((REG8)i);
+				S98_putc(opn.reg[i]);
+
+				if (!(usesound & 0x02)) {
+					S98_putc(EXTEND2608);
+					S98_putc((REG8)i);
+					S98_putc(opn.reg[i+0x100]);
+				}
+				if (usesound == 0x06 || usesound == 0x40) {
+					S98_putc(NORMAL2608_2);
+					S98_putc((REG8)i);
+					S98_putc(opn.reg[i+0x200]);
+				}
+				if (usesound == 0x40) {
+					S98_putc(EXTEND2608_2);
+					S98_putc((REG8)i);
+					S98_putc(opn.reg[i+0x300]);
+				}
+			}
+		}
+		// PSG
+		for (i=0x00; i<0x0e; i++) {
+			S98_putc(NORMAL2608);
+			S98_putc((REG8)i);
+			S98_putc(((UINT8 *)&psg1.reg)[i]);
+			if (usesound == 0x06) {
+				S98_putc(NORMAL2608_2);
+				S98_putc((REG8)i);
+				S98_putc(((UINT8 *)&psg1.reg)[i]);
+			}
 		}
 	}
-	// PSG
-	for (i=0x00; i<0x0e; i++) {
-		S98_putc(NORMAL2608);
-		S98_putc((REG8)i);
-		S98_putc(((UINT8 *)&psg1.reg)[i]);
+	if (usesound == 0x32) {
+		// OPL2
+		for (i=0x1; i<0xf6; i++) {
+			S98_putc(NORMAL2608_2);
+			S98_putc((REG8)i);
+			S98_putc(opl.reg[i]);
+		}
+	}
+	if (usesound == 0x82) {
+		// MSX-Audio
+		for (i=0x1; i<0xf6; i++) {
+			S98_putc(NORMAL2608_2);
+			S98_putc((REG8)i);
+			S98_putc(opl.reg[i]);
+		}
+	}
 	}
 #endif
 

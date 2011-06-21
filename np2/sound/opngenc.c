@@ -624,3 +624,7 @@ void opngen_keyon(UINT chnum, REG8 value) {
 	keydisp_fmkeyon((UINT8)chnum, value);
 }
 
+void opngen_csm(void) {
+	opngen_keyon(2, 0x02);
+	opngen_keyon(2, 0xf2);
+}

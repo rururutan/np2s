@@ -64,6 +64,7 @@ static void IOOUTCALL spb_o18a(UINT port, REG8 dat) {
 static void IOOUTCALL spb_o18c(UINT port, REG8 dat) {
 
 	opn.addr = dat + 0x100;
+	opn.extaddr = dat;
 	opn.data = dat;
 	(void)port;
 }
@@ -73,7 +74,7 @@ static void IOOUTCALL spb_o18e(UINT port, REG8 dat) {
 	UINT	addr;
 
 	opn.data = dat;
-	addr = opn.addr - 0x100;
+	addr = opn.extaddr;
 	if (addr >= 0x100) {
 		return;
 	}

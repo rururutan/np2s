@@ -34,7 +34,7 @@ static void IOOUTCALL spb_o18a(UINT port, REG8 dat) {
 		if (addr < 0x20) {
 			rhythm_setreg(&rhythm, addr, dat);
 		}
-		else if (addr < 0x30) {
+		else if ((addr < 0x30) && (addr > 0x22)) {
 			if (addr == 0x28) {
 				if ((dat & 0x0f) < 3) {
 					opngen_keyon(dat & 0x0f, dat);
@@ -51,7 +51,7 @@ static void IOOUTCALL spb_o18a(UINT port, REG8 dat) {
 				}
 			}
 		}
-		else if (addr < 0xc0) {
+		else if ((addr < 0xc0) || (addr == 0x22)) {
 			opngen_setreg(0, addr, dat);
 		}
 		opn.reg[addr] = dat;
@@ -62,6 +62,7 @@ static void IOOUTCALL spb_o18a(UINT port, REG8 dat) {
 static void IOOUTCALL spb_o18c(UINT port, REG8 dat) {
 
 	opn.addr = dat + 0x100;
+	opn.extaddr = dat;
 	opn.data = dat;
 	(void)port;
 }
@@ -71,7 +72,7 @@ static void IOOUTCALL spb_o18e(UINT port, REG8 dat) {
 	UINT	addr;
 
 	opn.data = dat;
-	addr = opn.addr - 0x100;
+	addr = opn.extaddr;
 	if (addr >= 0x100) {
 		return;
 	}
@@ -97,6 +98,9 @@ static REG8 IOINPCALL spb_i18a(UINT port) {
 	UINT	addr;
 
 	addr = opn.addr;
+	if (addr >= 0x100) {
+		addr -= 0x100;
+	}
 	if (addr == 0x0e) {
 		return(fmboard_getjoy(&psg1));
 	}
@@ -116,7 +120,10 @@ static REG8 IOINPCALL spb_i18e(UINT port) {
 
 	UINT	addr;
 
-	addr = opn.addr - 0x100;
+	addr = opn.addr;
+	if (addr >= 0x100) {
+		addr -= 0x100;
+	}
 	if (addr == 0x08) {
 		return(adpcm_readsample(&adpcm));
 	}
@@ -148,6 +155,7 @@ static void IOOUTCALL spr_o58a(UINT port, REG8 dat) {
 	if (addr >= 0x100) {
 		return;
 	}
+	S98_put(NORMAL2608_2, addr, dat);
 	if (addr < 0x30) {
 		if (addr == 0x28) {
 			if ((dat & 0x0f) < 3) {
@@ -187,6 +195,7 @@ static void IOOUTCALL spr_o58e(UINT port, REG8 dat) {
 	if (addr >= 0x100) {
 		return;
 	}
+	S98_put(EXTEND2608_2, addr, dat);
 	opn.reg[addr + 0x300] = dat;
 	if (addr >= 0x30) {
 		opngen_setreg(9, addr, dat);

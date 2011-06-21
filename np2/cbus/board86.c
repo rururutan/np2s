@@ -37,7 +37,7 @@ static void IOOUTCALL opna_o18a(UINT port, REG8 dat) {
 				rhythm_setreg(&rhythm, addr, dat);
 			}
 		}
-		else if (addr < 0x30) {
+		else if ((addr < 0x30) && (addr > 0x22)) {
 			if (addr == 0x28) {
 				if ((dat & 0x0f) < 3) {
 					opngen_keyon(dat & 0x0f, dat);
@@ -54,7 +54,7 @@ static void IOOUTCALL opna_o18a(UINT port, REG8 dat) {
 				}
 			}
 		}
-		else if (addr < 0xc0) {
+		else if ((addr < 0xc0) || (addr == 0x22)) {
 			opngen_setreg(0, addr, dat);
 		}
 		opn.reg[addr] = dat;
@@ -66,6 +66,7 @@ static void IOOUTCALL opna_o18c(UINT port, REG8 dat) {
 
 	if (opn.extend) {
 		opn.addr = dat + 0x100;
+		opn.extaddr = dat;
 		opn.data = dat;
 	}
 	(void)port;
@@ -79,7 +80,7 @@ static void IOOUTCALL opna_o18e(UINT port, REG8 dat) {
 		return;
 	}
 	opn.data = dat;
-	addr = opn.addr - 0x100;
+	addr = opn.extaddr;
 	if (addr >= 0x100) {
 		return;
 	}
@@ -205,7 +206,7 @@ static void IOOUTCALL opnac_o18e(UINT port, REG8 dat) {
 		return;
 	}
 	opn.data = dat;
-	addr = opn.addr - 0x100;
+	addr = opn.extaddr;
 	if (addr >= 0x100) {
 		return;
 	}
@@ -235,7 +236,7 @@ static REG8 IOINPCALL opnac_i18c(UINT port) {
 static REG8 IOINPCALL opnac_i18e(UINT port) {
 
 	if (opn.extend) {
-		UINT addr = opn.addr - 0x100;
+		UINT addr = opn.extaddr;
 		if (addr == 0x08) {
 			return(adpcm_readsample(&adpcm));
 		}
