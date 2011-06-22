@@ -57,6 +57,7 @@ const OEMCHAR np2version[] = OEMTEXT(NP2VER_CORE);
 #define	PCBASEMULTIPLE	4
 #endif
 
+#define MAXMULTIPLE	128
 
 	NP2CFG	np2cfg = {
 				0, 1, 0, 32, 0, 0, 0x40,
@@ -144,9 +145,9 @@ static void pccore_set(const NP2CFG *pConfig)
 	{
 		multiple = 1;
 	}
-	else if (multiple > 32)
+	else if (multiple > MAXMULTIPLE)
 	{
-		multiple = 32;
+		multiple = MAXMULTIPLE;
 	}
 	pccore.multiple = multiple;
 	pccore.realclock = pccore.baseclock * multiple;

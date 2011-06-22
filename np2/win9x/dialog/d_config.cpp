@@ -15,7 +15,7 @@ static const CBPARAM cpBase[] =
 	{MAKEINTRESOURCE(IDS_2_0MHZ),	PCBASECLOCK20},
 	{MAKEINTRESOURCE(IDS_2_5MHZ),	PCBASECLOCK25},
 };
-static const UINT32 mulval[10] = {1, 2, 4, 5, 6, 8, 10, 12, 16, 20};
+static const UINT32 mulval[16] = {1, 2, 4, 5, 6, 8, 10, 12, 16, 20, 24, 32, 48, 56, 64, 128};
 static const TCHAR str_clockfmt[] = _T("%2u.%.4u");
 
 
@@ -32,7 +32,7 @@ static void setclock(HWND hWnd, UINT uMultiple)
 		uMultiple = (UINT)miltchar_solveINT(szWork);
 	}
 	uMultiple = max(uMultiple, 1);
-	uMultiple = min(uMultiple, 32);
+	uMultiple = min(uMultiple, 128);
 
 	uClock = (uClock / 100) * uMultiple;
 	wsprintf(szWork, str_clockfmt, uClock / 10000, uClock % 10000);
@@ -128,8 +128,8 @@ const OEMCHAR	*str;
 	if (val < 1) {
 		val = 1;
 	}
-	else if (val > 32) {
-		val = 32;
+	else if (val > 128) {
+		val = 128;
 	}
 	if (np2cfg.multiple != val) {
 		np2cfg.multiple = val;
