@@ -787,7 +787,10 @@ enum {
 	FLAG_RHYTHM		= 0x0100,
 	FLAG_ADPCM		= 0x0200,
 	FLAG_PCM86		= 0x0400,
-	FLAG_CS4231		= 0x0800
+	FLAG_CS4231		= 0x0800,
+	FLAG_OPL2		= 0x1000,
+	FLAG_MSXA		= 0x2000,
+	FLAG_OPL3		= 0x4000
 };
 
 typedef struct {
@@ -807,6 +810,7 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 			break;
 
 		case 0x02:
+		case 0x22:
 			saveflg = FLAG_FM1A | FLAG_PSG1;
 			break;
 
@@ -842,6 +846,22 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 
 		case 0x80:
 			saveflg = FLAG_PSG1 | FLAG_PSG2 | FLAG_PSG3;
+			break;
+
+		case 0x32:
+			saveflg = FLAG_FM1A | FLAG_PSG1 | FLAG_OPL2;
+			break;
+
+		case 0x41:
+			saveflg = FLAG_OPL3;
+			break;
+
+		case 0x42:
+			saveflg = FLAG_FM1A | FLAG_PSG1 | FLAG_OPL3;
+			break;
+
+		case 0x82:
+			saveflg = FLAG_FM1A | FLAG_PSG1 | FLAG_MSXA;
 			break;
 
 		default:
@@ -900,6 +920,7 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 			break;
 
 		case 0x02:
+		case 0x22:
 			saveflg = FLAG_FM1A | FLAG_PSG1;
 			break;
 
@@ -935,6 +956,22 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 
 		case 0x80:
 			saveflg = FLAG_PSG1 | FLAG_PSG2 | FLAG_PSG3;
+			break;
+
+		case 0x32:
+			saveflg = FLAG_FM1A | FLAG_PSG1 | FLAG_OPL2;
+			break;
+
+		case 0x41:
+			saveflg = FLAG_OPL3;
+			break;
+
+		case 0x42:
+			saveflg = FLAG_FM1A | FLAG_PSG1 | FLAG_OPL3;
+			break;
+
+		case 0x82:
+			saveflg = FLAG_FM1A | FLAG_PSG1 | FLAG_MSXA;
 			break;
 
 		default:

@@ -14,6 +14,7 @@
 
 typedef struct {
 	UINT	addr;
+	UINT	extaddr;
 	UINT	addr2;
 	UINT8	data;
 	UINT8	data2;
@@ -41,6 +42,19 @@ typedef struct {
 	int		ch;
 } MUSICGEN;
 
+typedef struct {
+	UINT	addr;
+	UINT	addr2;
+	UINT8	reg[0x1ff];
+} OPL;
+
+typedef struct {
+	UINT8	dmairq;
+	UINT8	dmach;
+	UINT16	base;
+	UINT8	mixsel;
+	UINT8	mixreg[0x18];
+} SB16;
 
 #ifdef __cplusplus
 extern "C" {
@@ -49,6 +63,8 @@ extern "C" {
 extern	UINT32		usesound;
 extern	OPN_T		opn;
 extern	AMD98		amd98;
+extern	OPL			opl;
+extern	SB16		sb16;
 extern	MUSICGEN	musicgen;
 
 extern	_TMS3631	tms3631;

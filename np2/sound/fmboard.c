@@ -14,6 +14,11 @@
 #include	"boardpx.h"
 #endif	// defined(SUPPORT_PX)
 #include	"amd98.h"
+#include	"boardso.h"
+#include	"boardsov.h"
+#include	"boardmo.h"
+#include	"boardlol.h"
+#include	"boardsb16.h"
 #include	"pcm86io.h"
 #include	"cs4231io.h"
 #include	"sound.h"
@@ -26,6 +31,8 @@
 	UINT32		usesound;
 	OPN_T		opn;
 	AMD98		amd98;
+	OPL			opl;
+	SB16		sb16;
 	MUSICGEN	musicgen;
 
 	_TMS3631	tms3631;
@@ -226,6 +233,26 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 			break;
 #endif	// defined(SUPPORT_PX)
 
+		case 0x22:
+			boardlol_reset(pConfig);
+			break;
+
+		case 0x32:
+			boardso_reset(pConfig);
+			break;
+
+		case 0x41:
+			boardsb16_reset(pConfig);
+			break;
+
+		case 0x42:
+			boardmo_reset(pConfig);
+			break;
+
+		case 0x82:
+			boardsov_reset(pConfig);
+			break;
+
 		default:
 			type = 0;
 			break;
@@ -284,6 +311,26 @@ void fmboard_bind(void) {
 			boardpx2_bind();
 			break;
 #endif	// defined(SUPPORT_PX)
+
+		case 0x22:
+			boardlol_bind();
+			break;
+
+		case 0x32:
+			boardso_bind();
+			break;
+
+		case 0x41:
+			boardsb16_bind();
+			break;
+
+		case 0x42:
+			boardmo_bind();
+			break;
+
+		case 0x82:
+			boardsov_bind();
+			break;
 	}
 	sound_streamregist(&beep, (SOUNDCB)beep_getpcm);
 }

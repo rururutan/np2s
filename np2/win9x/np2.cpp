@@ -863,6 +863,31 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			break;
 #endif	// defined(SUPPORT_PX)
 
+		case IDM_LITTLEORCHESTRA:
+			xmenu_setsound(0x22);
+			update |= SYS_UPDATECFG;
+			break;
+
+		case IDM_SOUNDORCHESTRA:
+			xmenu_setsound(0x32);
+			update |= SYS_UPDATECFG;
+			break;
+
+		case IDM_SOUNDORCHESTRAV:
+			xmenu_setsound(0x82);
+			update |= SYS_UPDATECFG;
+			break;
+
+		case IDM_SOUNDBLASTER:
+			xmenu_setsound(0x41);
+			update |= SYS_UPDATECFG;
+			break;
+
+		case IDM_MULTIORCHESTRA:
+			xmenu_setsound(0x42);
+			update |= SYS_UPDATECFG;
+			break;
+
 		case IDM_JASTSOUND:
 			xmenu_setjastsound(np2oscfg.jastsnd ^ 1);
 			update |= SYS_UPDATEOSCFG;
