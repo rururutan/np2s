@@ -1,7 +1,9 @@
 /adler32.c/1.1/Sun Dec 10 12:45:47 2006//
 /crc32.c/1.1/Sun Dec 10 12:45:47 2006//
+/crc32.h/1.1/Sun Dec 10 12:45:47 2006//
 /inffast.c/1.1/Sun Dec 10 12:45:47 2006//
 /inffast.h/1.1/Sun Dec 10 12:45:47 2006//
+/inffixed.h/1.1/Sun Dec 10 12:45:47 2006//
 /inflate.c/1.1/Sun Dec 10 12:45:47 2006//
 /inflate.h/1.1/Sun Dec 10 12:45:47 2006//
 /inftrees.c/1.1/Sun Dec 10 12:45:47 2006//
@@ -11,6 +13,4 @@
 /zlib.h/1.1/Sun Dec 10 12:45:47 2006//
 /zutil.c/1.1/Sun Dec 10 12:45:47 2006//
 /zutil.h/1.1/Sun Dec 10 12:45:47 2006//
-/crc32.h/1.1/Sun Jan  5 16:53:34 2003//
-/inffixed.h/1.1/Sun Nov 24 23:44:58 2002//
 D
