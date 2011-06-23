@@ -470,7 +470,27 @@
 					>
 				</File>
 				<File
+					RelativePath="..\cbus\boardlol.c"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\boardmo.c"
+					>
+				</File>
+				<File
 					RelativePath="..\cbus\boardpx.c"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\boardsb16.c"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\boardso.c"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\boardsov.c"
 					>
 				</File>
 				<File
@@ -487,6 +507,14 @@
 				</File>
 				<File
 					RelativePath="..\cbus\cs4231io.c"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\ct1741io.c"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\ct1745io.c"
 					>
 				</File>
 				<File
@@ -973,6 +1001,10 @@
 			<Filter
 				Name="i286x"
 				>
+				<File
+					RelativePath="..\i286x\DMAP.X86"
+					>
+				</File>
 				<File
 					RelativePath="..\i286x\i286x.cpp"
 					>
@@ -1554,6 +1586,22 @@
 					</File>
 					<File
 						RelativePath="..\sound\vermouth\midvoice.c"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="mame"
+					>
+					<File
+						RelativePath="..\sound\mame\fmopl.c"
+						>
+					</File>
+					<File
+						RelativePath="..\sound\mame\ymdeltat.c"
+						>
+					</File>
+					<File
+						RelativePath="..\sound\mame\ymf262.c"
 						>
 					</File>
 				</Filter>

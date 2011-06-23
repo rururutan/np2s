@@ -1660,7 +1660,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	xmenu_setxshift(0);
 	xmenu_setf12copy(np2oscfg.F12COPY);
 	xmenu_setbeepvol(np2cfg.BEEP_VOL);
-	xmenu_setsound(np2cfg.SOUND_SW);
+//	xmenu_setsound(np2cfg.SOUND_SW);
 	xmenu_setjastsound(np2oscfg.jastsnd);
 	xmenu_setmotorflg(np2cfg.MOTOR);
 	xmenu_setextmem(np2cfg.EXTMEM);
@@ -1682,6 +1682,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 
 	sysmenu_initialize();
 	xmenu_initialize();
+	xmenu_setsound(np2cfg.SOUND_SW);
 	DrawMenuBar(hWnd);
 
 	if (file_attr_c(np2help) == (short)-1) {						// ver0.30

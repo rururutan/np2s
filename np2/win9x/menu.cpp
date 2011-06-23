@@ -311,6 +311,10 @@ void xmenu_initialize(void)
 												(UINT_PTR)hmenuSub, IDS_HDD);
 	}
 
+#if defined(SUPPORT_PX)
+	(void)menu_addmenubyid(hMenu, IDM_SPARKBOARD, IDR_PXMENU);
+#endif	// defined(SUPPORT_PX)
+
 #if defined(SUPPORT_WAVEREC)
 	(void)menu_addmenubyid(hMenu, IDM_S98LOGGING, IDR_WAVEREC);
 #endif
@@ -452,7 +456,6 @@ void xmenu_setsound(UINT8 value) {
 	CheckMenuItem(hmenu, IDM_SPARKBOARD, MFCHECK(value == 0x40));
 	CheckMenuItem(hmenu, IDM_AMD98, MFCHECK(value == 0x80));
 #if defined(SUPPORT_PX)
-	(void)menu_addmenubyid(hmenu, IDM_SPARKBOARD, IDR_PXMENU);
 	CheckMenuItem(hmenu, IDM_PX1, MFCHECK(value == 0x30));
 	CheckMenuItem(hmenu, IDM_PX2, MFCHECK(value == 0x50));
 #endif	// defined(SUPPORT_PX)
