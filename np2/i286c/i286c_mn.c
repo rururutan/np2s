@@ -1829,7 +1829,11 @@ I286FN _popf(void) {						// 9D:	popf
 	REGPOP0(flag)
 	I286_OV = flag & O_FLAG;
 	I286_FLAG = flag & (0xfff ^ O_FLAG);
+#if defined(VAEG_FIX)
+	I286_TRAP = ((flag & 0x100) == 0x100);
+#else
 	I286_TRAP = ((flag & 0x300) == 0x300);
+#endif
 	I286_WORKCLOCK(5);
 #if defined(INTR_FAST)
 	if ((I286_TRAP) || ((flag & I_FLAG) && (PICEXISTINTR))) {
@@ -2291,7 +2295,11 @@ I286FN _iret(void) {						// CF:	iret
 	REGPOP0(flag)
 	I286_OV = flag & O_FLAG;
 	I286_FLAG = flag & (0xfff ^ O_FLAG);
+#if defined(VAEG_FIX)
+	I286_TRAP = ((flag & 0x100) == 0x100);
+#else
 	I286_TRAP = ((flag & 0x300) == 0x300);
+#endif
 	CS_BASE = I286_CS << 4;
 //	CS_BASE = SEGSELECT(I286_CS);
 	I286_WORKCLOCK(31);
@@ -2661,7 +2669,11 @@ I286FN _cli(void) {							// FA:	cli
 
 	I286_WORKCLOCK(2);
 	I286_FLAG &= ~I_FLAG;
+#if defined(VAEG_FIX)
+				// シングルステップ割り込みは割り込み許可フラグの影響を受けない
+#else
 	I286_TRAP = 0;
+#endif
 }
 
 I286FN _sti(void) {							// FB:	sti
@@ -2674,7 +2686,11 @@ I286FN _sti(void) {							// FB:	sti
 	}
 #endif
 	I286_FLAG |= I_FLAG;
+#if defined(VAEG_FIX)
+				// シングルステップ割り込みは割り込み許可フラグの影響を受けない
+#else
 	I286_TRAP = (I286_FLAG & T_FLAG) >> 8;
+#endif
 #if defined(INTR_FAST)
 	if ((I286_TRAP) || (PICEXISTINTR)) {
 		REMAIN_ADJUST(1)
