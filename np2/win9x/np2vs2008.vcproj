@@ -1004,6 +1004,22 @@
 				<File
 					RelativePath="..\i286x\DMAP.X86"
 					>
+					<FileConfiguration
+						Name="Debug|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="NASM"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="NASM"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\i286x\i286x.cpp"
