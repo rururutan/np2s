@@ -182,3 +182,4 @@ typedef	signed __int64		SINT64;
 #define SUPPORT_V30ORIGINAL
 #define SUPPORT_V30EXT
 #define VAEG_FIX			// 98x1‹¤—pˆ—‚ÉC³‚ğ“K—p‚·‚é
+#define SUPPORT_WAVEREC
