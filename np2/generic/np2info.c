@@ -16,14 +16,14 @@ static const OEMCHAR str_8MHz[] = OEMTEXT("8MHz");
 static const OEMCHAR str_notexist[] = OEMTEXT("not exist");
 static const OEMCHAR str_disable[] = OEMTEXT("disable");
 
-static const OEMCHAR str_cpu[] = OEMTEXT("8086-2\00070116\00080286\00080386\00080486\0Pentium\0PentiumPro");
+static const OEMCHAR str_cpu[] = OEMTEXT("8086-2\0uPD70116\00080286\00080386\00080486\0Pentium\0PentiumPro");
 static const OEMCHAR str_winclr[] = OEMTEXT("256-colors\00065536-colors\0full color\0true color");
 static const OEMCHAR str_winmode[] = OEMTEXT(" (window)\0 (fullscreen)");
 static const OEMCHAR str_grcgchip[] = OEMTEXT("\0GRCG \0GRCG CG-Window \0EGC CG-Window ");
 static const OEMCHAR str_vrammode[] = OEMTEXT("Digital\0Analog\000256colors");
 static const OEMCHAR str_vrampage[] = OEMTEXT(" page-0\0 page-1\0 page-all");
 static const OEMCHAR str_chpan[] = OEMTEXT("none\0Mono-R\0Mono-L\0Stereo");
-static const OEMCHAR str_fmboard[] = OEMTEXT("none\0PC-9801-14\0PC-9801-26\0PC-9801-86\0PC-9801-26 + 86\0PC-9801-118\0PC-9801-86 + Chibi-oto\0Speak board\0Spark board\0AMD-98");
+static const OEMCHAR str_fmboard[] = OEMTEXT("none\0PC-9801-14\0PC-9801-26\0PC-9801-86\0PC-9801-26 + 86\0PC-9801-118\0PC-9801-86 + Chibi-oto\0Speak board\0Spark board\0AMD-98\0Otomi x2\0Otomi x2 + 86\0Little Orchestra\0Sound Orchestra\0Sound Orchestra V\0SoundBlaster16(98)\0Multimedia Orchestra");
 
 static const OEMCHAR str_clockfmt[] = OEMTEXT("%d.%1dMHz");
 static const OEMCHAR str_memfmt[] = OEMTEXT("%3uKB");
@@ -241,6 +241,34 @@ static void info_sound(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 
 		case 0x80:
 			type = 9;
+			break;
+
+		case 0x30:
+			type = 10;
+			break;
+
+		case 0x50:
+			type = 11;
+			break;
+
+		case 0x22:
+			type = 12;
+			break;
+
+		case 0x32:
+			type = 13;
+			break;
+
+		case 0x82:
+			type = 14;
+			break;
+
+		case 0x41:
+			type = 15;
+			break;
+
+		case 0x42:
+			type = 16;
 			break;
 	}
 	milstr_ncpy(str, milstr_list(str_fmboard, type), maxlen);
