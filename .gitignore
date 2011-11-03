@@ -1,4 +1,13 @@
 np2/bin
 np2/obj
+*.old
+*.htm
+*.pdb
+*.idb
+*.obj
 *.user
 *.ncb
+*.suo
+*.aps
+*.*~
+CVS
