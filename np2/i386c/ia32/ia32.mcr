@@ -72,7 +72,7 @@ do { \
 
 #define	CPU_HALT() \
 do { \
-        CPU_REMCLOCK = -1; \
+	CPU_REMCLOCK = -1; \
 } while (/*CONSTCOND*/ 0)
 
 #define	IRQCHECKTERM() \
@@ -87,7 +87,7 @@ do { \
 /*
  * instruction pointer
  */
-/* ╔Ё║╪╔и╔у╔╖╔ц╔а╓к╩хмя╓╧╓К╓н╓г║╒OpSize ╓н╠ф╤а╓Р╪У╓╠╓ф╓о╓╓╓╠╓й╓╓ */
+/* Ц┌ЁЦ┐╪Ц┐┴Ц┐∙Ц┌╖Ц┐┐Ц┐│Ц│╚Д╫©Г■╗Ц│≥Ц┌▀Ц│╝Ц│╖Ц─│OpSize Ц│╝Е╫╠И÷©Ц┌▓Е▐≈Ц│▒Ц│╕Ц│╞Ц│└Ц│▒Ц│╙Ц│└ */
 #define	_ADD_EIP(v) \
 do { \
 	UINT32 __tmp_ip = CPU_EIP + (v); \

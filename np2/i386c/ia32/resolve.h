@@ -32,7 +32,7 @@ extern "C" {
 
 void resolve_init(void);
 
-static INLINE UINT32
+STATIC_INLINE UINT32 CPUCALL
 calc_ea_dst(UINT32 op)
 {
 	extern UINT32 (*calc_ea_dst_tbl[0x100])(void);

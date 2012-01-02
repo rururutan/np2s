@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004 NONAKA Kimihiro (aw9k-nnk@asahi-net.or.jp)
+ * Copyright (c) 2004-2011 NONAKA Kimihiro
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -241,6 +241,7 @@ static GtkRadioActionEntry f12key_entries[] = {
 { "f12mouse", NULL, "F12 = _Mouse",     NULL, NULL, 0 },
 { "f12copy",  NULL, "F12 = Co_py",      NULL, NULL, 1 },
 { "f12stop",  NULL, "F12 = S_top",      NULL, NULL, 2 },
+{ "f12help",  NULL, "F12 = _Help",      NULL, NULL, 7 },
 { "f12equal", NULL, "F12 = tenkey [=]", NULL, NULL, 4 },
 { "f12comma", NULL, "F12 = tenkey [,]", NULL, NULL, 3 },
 };
@@ -416,6 +417,7 @@ static const gchar *ui_info =
 "    <menuitem action='f12mouse'/>\n"
 "    <menuitem action='f12copy'/>\n"
 "    <menuitem action='f12stop'/>\n"
+"    <menuitem action='f12help'/>\n"
 "    <menuitem action='f12equal'/>\n"
 "    <menuitem action='f12comma'/>\n"
 "   </menu>\n"
@@ -576,8 +578,11 @@ cb_bmpsave(GtkAction *action, gpointer user_data)
 	if (dialog == NULL)
 		goto end;
 
-	g_object_set(G_OBJECT(dialog), "show-hidden", TRUE, NULL);
-	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), FALSE);
+	gtk_file_chooser_set_show_hidden(GTK_FILE_CHOOSER(dialog), TRUE);
+#if GTK_MAJOR_VERSION >= 2 && GTK_MINOR_VERSION >= 8
+	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dialog),
+	    TRUE);
+#endif
 	if (strlen(bmpfilefolder) == 0) {
 		g_strlcpy(bmpfilefolder, modulefile, sizeof(bmpfilefolder));
 		file_cutname(bmpfilefolder);
@@ -609,6 +614,12 @@ cb_bmpsave(GtkAction *action, gpointer user_data)
 	if (utf8) {
 		path = g_filename_from_utf8(utf8, -1, NULL, NULL, NULL);
 		if (path) {
+			gchar *ext = file_getext(path);
+			if (strlen(ext) != 3 || file_cmpname(ext, "bmp")) {
+				gchar *tmp = g_strjoin(".", path, "bmp", NULL);
+				g_free(path);
+				path = tmp;
+			}
 			file_cpyname(bmpfilefolder, path, sizeof(bmpfilefolder));
 			sysmng_update(SYS_UPDATEOSCFG);
 			fh = file_create(path);
@@ -647,8 +658,7 @@ cb_change_font(GtkAction *action, gpointer user_data)
 	if (dialog == NULL)
 		goto end;
 
-	g_object_set(G_OBJECT(dialog), "show-hidden", TRUE, NULL);
-	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), FALSE);
+	gtk_file_chooser_set_show_hidden(GTK_FILE_CHOOSER(dialog), TRUE);
 	utf8 = g_filename_to_utf8(np2cfg.fontfile, -1, NULL, NULL, NULL);
 	if (utf8) {
 		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog), utf8);
@@ -734,8 +744,7 @@ cb_diskopen(GtkAction *action, gpointer user_data)
 	if (dialog == NULL)
 		goto end;
 
-	g_object_set(G_OBJECT(dialog), "show-hidden", TRUE, NULL);
-	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), FALSE);
+	gtk_file_chooser_set_show_hidden(GTK_FILE_CHOOSER(dialog), TRUE);
 	utf8 = g_filename_to_utf8(fddfolder, -1, NULL, NULL, NULL);
 	if (utf8) {
 		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog), utf8);
@@ -761,6 +770,7 @@ cb_diskopen(GtkAction *action, gpointer user_data)
 		gtk_file_filter_add_pattern(filter, "*.2[hH][dD]");
 		gtk_file_filter_add_pattern(filter, "*.[fF][dD][iI]");
 		gtk_file_filter_add_pattern(filter, "*.[fF][sS]");
+		gtk_file_filter_add_pattern(filter, "*.[fF][lL][pP]");
 		gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
 	}
 	filter = gtk_file_filter_new();
@@ -777,6 +787,7 @@ cb_diskopen(GtkAction *action, gpointer user_data)
 		gtk_file_filter_add_pattern(filter, "*.2[hH][dD]");
 		gtk_file_filter_add_pattern(filter, "*.[fF][dD][iI]");
 		gtk_file_filter_add_pattern(filter, "*.[fF][sS]");
+		gtk_file_filter_add_pattern(filter, "*.[fF][lL][pP]");
 		gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
 	}
 	gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), filter);
@@ -843,8 +854,7 @@ cb_ataopen(GtkAction *action, gpointer user_data)
 	if (dialog == NULL)
 		goto end;
 
-	g_object_set(G_OBJECT(dialog), "show-hidden", TRUE, NULL);
-	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), FALSE);
+	gtk_file_chooser_set_show_hidden(GTK_FILE_CHOOSER(dialog), TRUE);
 	utf8 = g_filename_to_utf8(hddfolder, -1, NULL, NULL, NULL);
 	if (utf8) {
 		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog), utf8);
@@ -930,8 +940,7 @@ cb_atapiopen(GtkAction *action, gpointer user_data)
 	if (dialog == NULL)
 		goto end;
 
-	g_object_set(G_OBJECT(dialog), "show-hidden", TRUE, NULL);
-	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), FALSE);
+	gtk_file_chooser_set_show_hidden(GTK_FILE_CHOOSER(dialog), TRUE);
 	utf8 = g_filename_to_utf8(hddfolder, -1, NULL, NULL, NULL);
 	if (utf8) {
 		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog), utf8);
@@ -1031,8 +1040,11 @@ cb_newdisk(GtkAction *action, gpointer user_data)
 	if (dialog == NULL)
 		goto end;
 
-	g_object_set(G_OBJECT(dialog), "show-hidden", TRUE, NULL);
-	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), FALSE);
+	gtk_file_chooser_set_show_hidden(GTK_FILE_CHOOSER(dialog), TRUE);
+#if GTK_MAJOR_VERSION >= 2 && GTK_MINOR_VERSION >= 8
+	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dialog),
+	    TRUE);
+#endif
 	if (strlen(fddfolder) == 0) {
 		g_strlcpy(fddfolder, modulefile, sizeof(fddfolder));
 		file_cutname(fddfolder);
@@ -1173,8 +1185,7 @@ cb_sasiopen(GtkAction *action, gpointer user_data)
 	if (dialog == NULL)
 		goto end;
 
-	g_object_set(G_OBJECT(dialog), "show-hidden", TRUE, NULL);
-	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), FALSE);
+	gtk_file_chooser_set_show_hidden(GTK_FILE_CHOOSER(dialog), TRUE);
 	utf8 = g_filename_to_utf8(hddfolder, -1, NULL, NULL, NULL);
 	if (utf8) {
 		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog), utf8);

@@ -65,8 +65,8 @@ enum {
 #define	INTERRUPT(num, softintp) \
 	interrupt(num, softintp, 0, 0)
 
-void exception(int num, int vec);
-void interrupt(int num, int intrtype, int errorp, int error_code);
+void CPUCALL exception(int num, int vec);
+void CPUCALL interrupt(int num, int intrtype, int errorp, int error_code);
 
 #ifdef __cplusplus
 }

@@ -397,21 +397,17 @@ cpu_codefetch(UINT32 offset)
 {
 	descriptor_t *sdp;
 	UINT32 addr;
-#if defined(IA32_SUPPORT_TLB)
 	TLB_ENTRY_T *ep;
-#endif
 
 	sdp = &CPU_CS_DESC;
 	if (offset <= sdp->u.seg.limit) {
 		addr = sdp->u.seg.segbase + offset;
 		if (!CPU_STAT_PAGING)
 			return cpu_memoryread(addr);
-#if defined(IA32_SUPPORT_TLB)
 		ep = tlb_lookup(addr, ucrw);
 		if (ep != NULL && ep->memp != NULL) {
 			return ep->memp[addr & 0xfff];
 		}
-#endif
 		return cpu_linear_memory_read_b(addr, ucrw);
 	}
 	EXCEPTION(GP_EXCEPTION, 0);
@@ -423,17 +419,14 @@ cpu_codefetch_w(UINT32 offset)
 {
 	descriptor_t *sdp;
 	UINT32 addr;
-#if defined(IA32_SUPPORT_TLB)
 	TLB_ENTRY_T *ep;
 	UINT16 value;
-#endif
 
 	sdp = &CPU_CS_DESC;
 	if (offset <= sdp->u.seg.limit - 1) {
 		addr = sdp->u.seg.segbase + offset;
 		if (!CPU_STAT_PAGING)
 			return cpu_memoryread_w(addr);
-#if defined(IA32_SUPPORT_TLB)
 		ep = tlb_lookup(addr, ucrw);
 		if (ep != NULL && ep->memp != NULL) {
 			if ((addr + 1) & 0x00000fff) {
@@ -446,7 +439,6 @@ cpu_codefetch_w(UINT32 offset)
 				return value;
 			}
 		}
-#endif
 		return cpu_linear_memory_read_w(addr, ucrw);
 	}
 	EXCEPTION(GP_EXCEPTION, 0);
@@ -458,18 +450,15 @@ cpu_codefetch_d(UINT32 offset)
 {
 	descriptor_t *sdp;
 	UINT32 addr;
-#if defined(IA32_SUPPORT_TLB)
 	TLB_ENTRY_T *ep[2];
 	UINT32 value;
 	UINT remain;
-#endif
 
 	sdp = &CPU_CS_DESC;
 	if (offset <= sdp->u.seg.limit - 3) {
 		addr = sdp->u.seg.segbase + offset;
 		if (!CPU_STAT_PAGING)
 			return cpu_memoryread_d(addr);
-#if defined(IA32_SUPPORT_TLB)
 		ep[0] = tlb_lookup(addr, ucrw);
 		if (ep[0] != NULL && ep[0]->memp != NULL) {
 			remain = 0x1000 - (addr & 0xfff);
@@ -503,7 +492,6 @@ cpu_codefetch_d(UINT32 offset)
 				return value;
 			}
 		}
-#endif
 		return cpu_linear_memory_read_d(addr, ucrw);
 	}
 	EXCEPTION(GP_EXCEPTION, 0);

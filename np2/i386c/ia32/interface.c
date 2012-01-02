@@ -47,10 +47,10 @@ ia32_initreg(void)
 	CPU_EFLAG = 2;
 	CPU_CR0 = CPU_CR0_CD | CPU_CR0_NW | CPU_CR0_ET;
 #if defined(USE_FPU)
-	CPU_CR0 |= CPU_CR0_EM | CPU_CR0_NE;
-	CPU_CR0 &= ~CPU_CR0_MP;
-#else
 	CPU_CR0 |= CPU_CR0_ET;
+#else
+	CPU_CR0 |= CPU_CR0_EM | CPU_CR0_NE;
+	CPU_CR0 &= ~(CPU_CR0_MP | CPU_CR0_ET);
 #endif
 	CPU_MXCSR = 0x1f80;
 

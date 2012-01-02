@@ -149,25 +149,25 @@ typedef struct {
 #define	CPU_SYSDESC_TYPE_TSS_BUSY_IND	0x02
 
 
-static INLINE void
+STATIC_INLINE void CPUCALL
 segdesc_clear(descriptor_t *sdp)
 {
 
 	memset((sdp), 0, sizeof(*sdp));
 }
 
-void segdesc_init(int idx, UINT16 sreg, descriptor_t *sdp);
-void segdesc_set_default(int idx, UINT16 selector, descriptor_t *sdp);
-void load_descriptor(descriptor_t *sdp, UINT32 addr);
+void CPUCALL segdesc_init(int idx, UINT16 sreg, descriptor_t *sdp);
+void CPUCALL segdesc_set_default(int idx, UINT16 selector, descriptor_t *sdp);
+void CPUCALL load_descriptor(descriptor_t *sdp, UINT32 addr);
 
-void load_segreg(int idx, UINT16 selector, UINT16 *sregp, descriptor_t *sdp, int exc);
+void CPUCALL load_segreg(int idx, UINT16 selector, UINT16 *sregp, descriptor_t *sdp, int exc);
 #define	LOAD_SEGREG1(idx, selector, e) \
 	load_segreg(idx, selector, &CPU_REGS_SREG(idx), &CPU_STAT_SREG(idx), e)
 #define	LOAD_SEGREG(idx, selector) \
 	LOAD_SEGREG1((idx), (selector), GP_EXCEPTION)
-void load_ss(UINT16 selector, const descriptor_t *sdp, int cpl);
-void load_cs(UINT16 selector, const descriptor_t *sdp, int cpl);
-void load_ldtr(UINT16 selector, int exc);
+void CPUCALL load_ss(UINT16 selector, const descriptor_t *sdp, int cpl);
+void CPUCALL load_cs(UINT16 selector, const descriptor_t *sdp, int cpl);
+void CPUCALL load_ldtr(UINT16 selector, int exc);
 
 
 /*
@@ -189,8 +189,8 @@ typedef struct {
 	descriptor_t	desc;
 } selector_t;
 
-int parse_selector(selector_t *ssp, UINT16 selector);
-int selector_is_not_present(const selector_t *ssp);
+int CPUCALL parse_selector(selector_t *ssp, UINT16 selector);
+int CPUCALL selector_is_not_present(const selector_t *ssp);
 
 #ifdef __cplusplus
 }

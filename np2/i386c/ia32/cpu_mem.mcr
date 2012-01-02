@@ -99,7 +99,7 @@ err: \
 } \
 \
 UINT32 MEMCALL \
-cpu_memory_access_va_RMW_##width(int idx, UINT32 offset, UINT32 (*func)(UINT32, void *), void *arg) \
+cpu_memory_access_va_RMW_##width(int idx, UINT32 offset, UINT32 (CPUCALL *func)(UINT32, void *), void *arg) \
 { \
 	descriptor_t *sdp; \
 	UINT32 addr; \

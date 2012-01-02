@@ -158,7 +158,7 @@ void XADD_EdGd(void);
 void CMPXCHG_EbGb(void);
 void CMPXCHG_EwGw(void);
 void CMPXCHG_EdGd(void);
-void CMPXCHG8B(UINT32);
+void CPUCALL CMPXCHG8B(UINT32);
 
 /*
  * PUSH
@@ -195,8 +195,8 @@ void PUSH32_DS(void);
 void PUSH32_FS(void);
 void PUSH32_GS(void);
 
-void PUSH_Ew(UINT32);
-void PUSH_Ed(UINT32);
+void CPUCALL PUSH_Ew(UINT32);
+void CPUCALL PUSH_Ed(UINT32);
 
 /*
  * POP
@@ -230,8 +230,8 @@ void POP32_FS(void);
 void POP16_GS(void);
 void POP32_GS(void);
 
-void POP_Ew_G5(UINT32);
-void POP_Ed_G5(UINT32);
+void CPUCALL POP_Ew_G5(UINT32);
+void CPUCALL POP_Ed_G5(UINT32);
 
 /*
  * PUSHA/POPA

@@ -28,25 +28,25 @@
 #include "ia32.mcr"
 
 /*
- * ¥Ú¡¼¥¸¥Õ¥©¥ë¥ÈÎã³°
+ * ãƒšãƒ¼ã‚¸ãƒ•ã‚©ãƒ«ãƒˆä¾‹å¤–
  *
- * 4-31: Í½ÌóºÑ¤ß
- *    3: RSVD: 0 = ¥Õ¥©¥ë¥È¤Î¸¶°ø¤ÏÍ½Ìó¥Ó¥Ã¥È°ãÈ¿¤Ç¤Ï¤Ê¤«¤Ã¤¿¡¥
- *             1 = ¥Ú¡¼¥¸¡¦¥Õ¥©¥ë¥È¤Î¸¶°ø¤Ï¡¤°ãÈ¿¤È¥Þ¡¼¥¯¤µ¤ì¤¿ PTE ¤Þ¤¿¤Ï
- *                 PDE ¤ÎÍ½Ìó¥Ó¥Ã¥È°ÌÃÖ¤Î¤¦¤Á°ì¤Ä¤Ç¡¤1 ¤¬¸¡½Ð¤µ¤ì¤¿¤³¤È¤Ç¤¢¤ë¡¥
- *    2: U/S:  0 = ¥Õ¥©¥ë¥È¤Î¸¶°ø¤È¤Ê¤Ã¤¿¥¢¥¯¥»¥¹¤Ï¥×¥í¥»¥Ã¥µ¤¬¥¹¡¼¥Ñ¥Ð¥¤¥¶¡¦
- *                 ¥â¡¼¥É¤Ç¼Â¹ÔÃæ¤Ë¹Ô¤ï¤ì¤¿¡¥
- *             1 = ¥Õ¥©¥ë¥È¤Î¸¶°ø¤È¤Ê¤Ã¤¿¥¢¥¯¥»¥¹¤Ï¥×¥í¥»¥Ã¥µ¤¬¥æ¡¼¥¶¡¦¥â¡¼¥É¤Ç
- *                 ¼Â¹ÔÃæ¤Ë¹Ô¤ï¤ì¤¿¡¥
- *    1: W/R:  0 = ¥Õ¥©¥ë¥È¤Î¸¶°ø¤È¤Ê¤Ã¤¿¥¢¥¯¥»¥¹¤¬ÆÉ¤ß¼è¤ê¤Ç¤¢¤Ã¤¿¡¥
- *             1 = ¥Õ¥©¥ë¥È¤Î¸¶°ø¤È¤Ê¤Ã¤¿¥¢¥¯¥»¥¹¤¬½ñ¤­¹þ¤ß¤Ç¤¢¤Ã¤¿¡¥
- *    0: P:    0 = ¥Õ¥©¥ë¥È¤Î¸¶°ø¤¬ÉÔºß¥Ú¡¼¥¸¤Ç¤¢¤Ã¤¿¡¥
- *             1 = ¥Õ¥©¥ë¥È¤Î¸¶°ø¤¬¥Ú¡¼¥¸¡¦¥ì¥Ù¥ëÊÝ¸î°ãÈ¿¤Ç¤¢¤Ã¤¿¡¥
+ * 4-31: äºˆç´„æ¸ˆã¿
+ *    3: RSVD: 0 = ãƒ•ã‚©ãƒ«ãƒˆã®åŽŸå› ã¯äºˆç´„ãƒ“ãƒƒãƒˆé•åã§ã¯ãªã‹ã£ãŸï¼Ž
+ *             1 = ãƒšãƒ¼ã‚¸ãƒ»ãƒ•ã‚©ãƒ«ãƒˆã®åŽŸå› ã¯ï¼Œé•åã¨ãƒžãƒ¼ã‚¯ã•ã‚ŒãŸ PTE ã¾ãŸã¯
+ *                 PDE ã®äºˆç´„ãƒ“ãƒƒãƒˆä½ç½®ã®ã†ã¡ä¸€ã¤ã§ï¼Œ1 ãŒæ¤œå‡ºã•ã‚ŒãŸã“ã¨ã§ã‚ã‚‹ï¼Ž
+ *    2: U/S:  0 = ãƒ•ã‚©ãƒ«ãƒˆã®åŽŸå› ã¨ãªã£ãŸã‚¢ã‚¯ã‚»ã‚¹ã¯ãƒ—ãƒ­ã‚»ãƒƒã‚µãŒã‚¹ãƒ¼ãƒ‘ãƒã‚¤ã‚¶ãƒ»
+ *                 ãƒ¢ãƒ¼ãƒ‰ã§å®Ÿè¡Œä¸­ã«è¡Œã‚ã‚ŒãŸï¼Ž
+ *             1 = ãƒ•ã‚©ãƒ«ãƒˆã®åŽŸå› ã¨ãªã£ãŸã‚¢ã‚¯ã‚»ã‚¹ã¯ãƒ—ãƒ­ã‚»ãƒƒã‚µãŒãƒ¦ãƒ¼ã‚¶ãƒ»ãƒ¢ãƒ¼ãƒ‰ã§
+ *                 å®Ÿè¡Œä¸­ã«è¡Œã‚ã‚ŒãŸï¼Ž
+ *    1: W/R:  0 = ãƒ•ã‚©ãƒ«ãƒˆã®åŽŸå› ã¨ãªã£ãŸã‚¢ã‚¯ã‚»ã‚¹ãŒèª­ã¿å–ã‚Šã§ã‚ã£ãŸï¼Ž
+ *             1 = ãƒ•ã‚©ãƒ«ãƒˆã®åŽŸå› ã¨ãªã£ãŸã‚¢ã‚¯ã‚»ã‚¹ãŒæ›¸ãè¾¼ã¿ã§ã‚ã£ãŸï¼Ž
+ *    0: P:    0 = ãƒ•ã‚©ãƒ«ãƒˆã®åŽŸå› ãŒä¸åœ¨ãƒšãƒ¼ã‚¸ã§ã‚ã£ãŸï¼Ž
+ *             1 = ãƒ•ã‚©ãƒ«ãƒˆã®åŽŸå› ãŒãƒšãƒ¼ã‚¸ãƒ»ãƒ¬ãƒ™ãƒ«ä¿è­·é•åã§ã‚ã£ãŸï¼Ž
  */
 
 /*
- * ²¼´¬ 4.12. ¥Ú¡¼¥¸ÊÝ¸î¤È¥»¥°¥á¥ó¥ÈÊÝ¸î¤ÎÁÈ¤ß¹ç¤ï¤»
- * ¡ÖÉ½ 4-2. ¥Ú¡¼¥¸¡¦¥Ç¥£¥ì¥¯¥È¥ê¤È¥Ú¡¼¥¸¡¦¥Æ¡¼¥Ö¥ë¤ÎÊÝ¸î¤ÎÁÈ¤ß¹ç¤ï¤»¡×
+ * ä¸‹å·» 4.12. ãƒšãƒ¼ã‚¸ä¿è­·ã¨ã‚»ã‚°ãƒ¡ãƒ³ãƒˆä¿è­·ã®çµ„ã¿åˆã‚ã›
+ * ã€Œè¡¨ 4-2. ãƒšãƒ¼ã‚¸ãƒ»ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã¨ãƒšãƒ¼ã‚¸ãƒ»ãƒ†ãƒ¼ãƒ–ãƒ«ã®ä¿è­·ã®çµ„ã¿åˆã‚ã›ã€
  *
  * +------------+------------+------------+
  * |    PDE     |    PTE     |   merge    |
@@ -71,11 +71,11 @@
  * |  s  |  rw  |  s  |  rw  |  s  |  rw  |
  * +-----+------+-----+------+-----+------+
  *
- * ¢¨ rw/p : CR0 ¤Î WP ¥Ó¥Ã¥È¤¬ ON ¤Î¾ì¹ç¤Ë¤Ï ro
+ * â€» rw/p : CR0 ã® WP ãƒ“ãƒƒãƒˆãŒ ON ã®å ´åˆã«ã¯ ro
  */
 
 /*
- * ¥á¥â¥ê¥¢¥¯¥»¥¹/PxE(¾åµ­»²¾È)/CPL/CR0 ¤È¥Ú¡¼¥¸¥¢¥¯¥»¥¹¸¢¤Î´Ø·¸
+ * ãƒ¡ãƒ¢ãƒªã‚¢ã‚¯ã‚»ã‚¹/PxE(ä¸Šè¨˜å‚ç…§)/CPL/CR0 ã¨ãƒšãƒ¼ã‚¸ã‚¢ã‚¯ã‚»ã‚¹æ¨©ã®é–¢ä¿‚
  *
  * +-----+-----+-----+-----+-----+---+
  * | CR0 | CPL | PxE | PxE | ope |   |
@@ -155,17 +155,17 @@ static const UINT8 page_access_bit[32] = {
 
 /*
  *--
- * 32bit ÊªÍý¥¢¥É¥ì¥¹ 4k ¥Ú¡¼¥¸
+ * 32bit ç‰©ç†ã‚¢ãƒ‰ãƒ¬ã‚¹ 4k ãƒšãƒ¼ã‚¸
  *
- * ¥ê¥Ë¥¢¡¦¥¢¥É¥ì¥¹
+ * ãƒªãƒ‹ã‚¢ãƒ»ã‚¢ãƒ‰ãƒ¬ã‚¹
  *  31                    22 21                  12 11                       0
  * +------------------------+----------------------+--------------------------+
- * |  ¥Ú¡¼¥¸¡¦¥Ç¥£¥ì¥¯¥È¥ê  |   ¥Ú¡¼¥¸¡¦¥Æ¡¼¥Ö¥ë   |        ¥ª¥Õ¥»¥Ã¥È        |
+ * |  ãƒšãƒ¼ã‚¸ãƒ»ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª  |   ãƒšãƒ¼ã‚¸ãƒ»ãƒ†ãƒ¼ãƒ–ãƒ«   |        ã‚ªãƒ•ã‚»ãƒƒãƒˆ        |
  * +------------------------+----------------------+--------------------------+
  *             |                        |                       |
  * +-----------+            +-----------+                       +----------+
  * |                        |                                              |
- * |  ¥Ú¡¼¥¸¡¦¥Ç¥£¥ì¥¯¥È¥ê  |   ¥Ú¡¼¥¸¡¦¥Æ¡¼¥Ö¥ë            ¥Ú¡¼¥¸         |
+ * |  ãƒšãƒ¼ã‚¸ãƒ»ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª  |   ãƒšãƒ¼ã‚¸ãƒ»ãƒ†ãƒ¼ãƒ–ãƒ«            ãƒšãƒ¼ã‚¸         |
  * | +--------------------+ | +-------------------+   +------------------+ |
  * | |                    | | |                   |   |                  | |
  * | |                    | | +-------------------+   |                  | |
@@ -177,19 +177,17 @@ static const UINT8 page_access_bit[32] = {
  *   |                    | | |                   | | |                  |
  * +>+--------------------+ +>+-------------------+ +>+------------------+
  * |
- * +- CR3(ÊªÍý¥¢¥É¥ì¥¹)
+ * +- CR3(ç‰©ç†ã‚¢ãƒ‰ãƒ¬ã‚¹)
  */
 
 static UINT32 MEMCALL paging(const UINT32 laddr, const int ucrw);
-#if defined(IA32_SUPPORT_TLB)
 static void MEMCALL tlb_update(const UINT32 laddr, const UINT entry, const int ucrw);
-#endif
 
 #define	PAGE_SIZE	0x1000
 #define	PAGE_MASK	(PAGE_SIZE - 1)
 
 UINT8 MEMCALL
-cpu_memory_access_la_RMW_b(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg)
+cpu_memory_access_la_RMW_b(UINT32 laddr, UINT32 (CPUCALL *func)(UINT32, void *), void *arg)
 {
 	const int ucrw = CPU_PAGE_WRITE_DATA|CPU_STAT_USER_MODE;
 	UINT32 result, value;
@@ -204,7 +202,7 @@ cpu_memory_access_la_RMW_b(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *a
 }
 
 UINT16 MEMCALL
-cpu_memory_access_la_RMW_w(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg)
+cpu_memory_access_la_RMW_w(UINT32 laddr, UINT32 (CPUCALL *func)(UINT32, void *), void *arg)
 {
 	const int ucrw = CPU_PAGE_WRITE_DATA|CPU_STAT_USER_MODE;
 	UINT32 result, value;
@@ -227,7 +225,7 @@ cpu_memory_access_la_RMW_w(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *a
 }
 
 UINT32 MEMCALL
-cpu_memory_access_la_RMW_d(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg)
+cpu_memory_access_la_RMW_d(UINT32 laddr, UINT32 (CPUCALL *func)(UINT32, void *), void *arg)
 {
 	const int ucrw = CPU_PAGE_WRITE_DATA|CPU_STAT_USER_MODE;
 	UINT32 result, value;
@@ -639,13 +637,11 @@ paging(const UINT32 laddr, const int ucrw)
 	UINT32 pte;		/* page table entry */
 	UINT bit;
 	UINT err;
-#if defined(IA32_SUPPORT_TLB)
 	TLB_ENTRY_T *ep;
 
 	ep = tlb_lookup(laddr, ucrw);
 	if (ep != NULL)
 		return ep->paddr + (laddr & PAGE_MASK);
-#endif
 
 	pde_addr = CPU_STAT_PDE_BASE + ((laddr >> 20) & 0xffc);
 	pde = cpu_memoryread_d(pde_addr);
@@ -701,9 +697,8 @@ paging(const UINT32 laddr, const int ucrw)
 		cpu_memorywrite_d(pte_addr, pte);
 	}
 
-#if defined(IA32_SUPPORT_TLB)
 	tlb_update(laddr, pte, (bit & (CPU_PTE_WRITABLE|CPU_PTE_USER_MODE)) + ((ucrw & CPU_PAGE_CODE) >> 1));
-#endif
+
 	return paddr;
 
 pf_exception:
@@ -714,8 +709,6 @@ pf_exception:
 	return 0;	/* compiler happy */
 }
 
-
-#if defined(IA32_SUPPORT_TLB)
 /* 
  * TLB
  */
@@ -904,4 +897,3 @@ tlb_update(const UINT32 laddr, const UINT entry, const int bit)
 	}
 	ep->memp = NULL;
 }
-#endif	/* IA32_SUPPORT_TLB */

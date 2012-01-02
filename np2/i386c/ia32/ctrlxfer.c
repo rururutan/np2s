@@ -33,12 +33,12 @@
 /*------------------------------------------------------------------------------
  * JMPfar_pm
  */
-static void JMPfar_pm_code_segment(const selector_t *cs_sel, UINT32 new_ip);
-static void JMPfar_pm_call_gate(const selector_t *callgate_sel);
-static void JMPfar_pm_task_gate(selector_t *taskgate_sel);
-static void JMPfar_pm_tss(selector_t *tss_sel);
+static void CPUCALL JMPfar_pm_code_segment(const selector_t *cs_sel, UINT32 new_ip);
+static void CPUCALL JMPfar_pm_call_gate(const selector_t *callgate_sel);
+static void CPUCALL JMPfar_pm_task_gate(selector_t *taskgate_sel);
+static void CPUCALL JMPfar_pm_tss(selector_t *tss_sel);
 
-void
+void CPUCALL
 JMPfar_pm(UINT16 selector, UINT32 new_ip)
 {
 	selector_t jmp_sel;
@@ -101,7 +101,7 @@ JMPfar_pm(UINT16 selector, UINT32 new_ip)
 /*---
  * JMPfar: code segment
  */
-static void
+static void CPUCALL
 JMPfar_pm_code_segment(const selector_t *cs_sel, UINT32 new_ip)
 {
 
@@ -110,7 +110,7 @@ JMPfar_pm_code_segment(const selector_t *cs_sel, UINT32 new_ip)
 	/* check privilege level */
 	if (!SEG_IS_CONFORMING_CODE(&cs_sel->desc)) {
 		VERBOSE(("JMPfar_pm: NON-CONFORMING-CODE-SEGMENT"));
-		/* ²¼´¬ p.119 4.8.1.1. */
+		/* ä¸‹å·» p.119 4.8.1.1. */
 		if (cs_sel->rpl > CPU_STAT_CPL) {
 			VERBOSE(("JMPfar_pm: RPL(%d) > CPL(%d)", cs_sel->rpl, CPU_STAT_CPL));
 			EXCEPTION(GP_EXCEPTION, cs_sel->idx);
@@ -121,7 +121,7 @@ JMPfar_pm_code_segment(const selector_t *cs_sel, UINT32 new_ip)
 		}
 	} else {
 		VERBOSE(("JMPfar_pm: CONFORMING-CODE-SEGMENT"));
-		/* ²¼´¬ p.120 4.8.1.2. */
+		/* ä¸‹å·» p.120 4.8.1.2. */
 		if (cs_sel->desc.dpl > CPU_STAT_CPL) {
 			VERBOSE(("JMPfar_pm: DPL(%d) > CPL(%d)", cs_sel->desc.dpl, CPU_STAT_CPL));
 			EXCEPTION(GP_EXCEPTION, cs_sel->idx);
@@ -147,7 +147,7 @@ JMPfar_pm_code_segment(const selector_t *cs_sel, UINT32 new_ip)
 /*---
  * JMPfar: call gate
  */
-static void
+static void CPUCALL
 JMPfar_pm_call_gate(const selector_t *callgate_sel)
 {
 	selector_t cs_sel;
@@ -190,7 +190,7 @@ JMPfar_pm_call_gate(const selector_t *callgate_sel)
 
 	/* check privilege level */
 	if (!SEG_IS_CONFORMING_CODE(&cs_sel.desc)) {
-		/* ²¼´¬ p.119 4.8.1.1. */
+		/* ä¸‹å·» p.119 4.8.1.1. */
 		if (cs_sel.rpl > CPU_STAT_CPL) {
 			VERBOSE(("JMPfar_pm: RPL(%d) > CPL(%d)", cs_sel.rpl, CPU_STAT_CPL));
 			EXCEPTION(GP_EXCEPTION, cs_sel.idx);
@@ -200,7 +200,7 @@ JMPfar_pm_call_gate(const selector_t *callgate_sel)
 			EXCEPTION(GP_EXCEPTION, cs_sel.idx);
 		}
 	} else {
-		/* ²¼´¬ p.120 4.8.1.2. */
+		/* ä¸‹å·» p.120 4.8.1.2. */
 		if (cs_sel.desc.dpl > CPU_STAT_CPL) {
 			VERBOSE(("JMPfar_pm: DPL(%d) > CPL(%d)", cs_sel.desc.dpl, CPU_STAT_CPL));
 			EXCEPTION(GP_EXCEPTION, cs_sel.idx);
@@ -226,7 +226,7 @@ JMPfar_pm_call_gate(const selector_t *callgate_sel)
 /*---
  * JMPfar: task gate
  */
-static void
+static void CPUCALL
 JMPfar_pm_task_gate(selector_t *taskgate_sel)
 {
 	selector_t tss_sel;
@@ -280,12 +280,18 @@ JMPfar_pm_task_gate(selector_t *taskgate_sel)
 	}
 
 	task_switch(&tss_sel, TASK_SWITCH_JMP);
+
+	/* out of range */
+	if (CPU_EIP > CPU_STAT_CS_LIMIT) {
+		VERBOSE(("JMPfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", CPU_EIP, CPU_STAT_CS_LIMIT));
+		EXCEPTION(GP_EXCEPTION, 0);
+	}
 }
 
 /*---
  * JMPfar: TSS
  */
-static void
+static void CPUCALL
 JMPfar_pm_tss(selector_t *tss_sel)
 {
 
@@ -308,18 +314,24 @@ JMPfar_pm_tss(selector_t *tss_sel)
 	}
 
 	task_switch(tss_sel, TASK_SWITCH_JMP);
+
+	/* out of range */
+	if (CPU_EIP > CPU_STAT_CS_LIMIT) {
+		VERBOSE(("JMPfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", CPU_EIP, CPU_STAT_CS_LIMIT));
+		EXCEPTION(GP_EXCEPTION, 0);
+	}
 }
 
 
 /*------------------------------------------------------------------------------
  * CALLfar_pm
  */
-static void CALLfar_pm_code_segment(const selector_t *cs_sel, UINT32 new_ip);
-static void CALLfar_pm_call_gate(const selector_t *callgate_sel);
-static void CALLfar_pm_task_gate(selector_t *taskgate_sel);
-static void CALLfar_pm_tss(selector_t *tss_sel);
+static void CPUCALL CALLfar_pm_code_segment(const selector_t *cs_sel, UINT32 new_ip);
+static void CPUCALL CALLfar_pm_call_gate(const selector_t *callgate_sel);
+static void CPUCALL CALLfar_pm_task_gate(selector_t *taskgate_sel);
+static void CPUCALL CALLfar_pm_tss(selector_t *tss_sel);
 
-void
+void CPUCALL
 CALLfar_pm(UINT16 selector, UINT32 new_ip)
 {
 	selector_t call_sel;
@@ -382,7 +394,7 @@ CALLfar_pm(UINT16 selector, UINT32 new_ip)
 /*---
  * CALLfar_pm: code segment
  */
-static void
+static void CPUCALL
 CALLfar_pm_code_segment(const selector_t *cs_sel, UINT32 new_ip)
 {
 	UINT32 sp;
@@ -392,7 +404,7 @@ CALLfar_pm_code_segment(const selector_t *cs_sel, UINT32 new_ip)
 	/* check privilege level */
 	if (!SEG_IS_CONFORMING_CODE(&cs_sel->desc)) {
 		VERBOSE(("CALLfar_pm: NON-CONFORMING-CODE-SEGMENT"));
-		/* ²¼´¬ p.119 4.8.1.1. */
+		/* ä¸‹å·» p.119 4.8.1.1. */
 		if (cs_sel->rpl > CPU_STAT_CPL) {
 			VERBOSE(("CALLfar_pm: RPL(%d) > CPL(%d)", cs_sel->rpl, CPU_STAT_CPL));
 			EXCEPTION(GP_EXCEPTION, cs_sel->idx);
@@ -403,7 +415,7 @@ CALLfar_pm_code_segment(const selector_t *cs_sel, UINT32 new_ip)
 		}
 	} else {
 		VERBOSE(("CALLfar_pm: CONFORMING-CODE-SEGMENT"));
-		/* ²¼´¬ p.120 4.8.1.2. */
+		/* ä¸‹å·» p.120 4.8.1.2. */
 		if (cs_sel->desc.dpl > CPU_STAT_CPL) {
 			VERBOSE(("CALLfar_pm: DPL(%d) > CPL(%d)", cs_sel->desc.dpl, CPU_STAT_CPL));
 			EXCEPTION(GP_EXCEPTION, cs_sel->idx);
@@ -452,10 +464,10 @@ CALLfar_pm_code_segment(const selector_t *cs_sel, UINT32 new_ip)
 /*---
  * CALLfar_pm: call gate
  */
-static void CALLfar_pm_call_gate_same_privilege(const selector_t *call_sel, selector_t *cs_sel);
-static void CALLfar_pm_call_gate_more_privilege(const selector_t *call_sel, selector_t *cs_sel);
+static void CPUCALL CALLfar_pm_call_gate_same_privilege(const selector_t *call_sel, selector_t *cs_sel);
+static void CPUCALL CALLfar_pm_call_gate_more_privilege(const selector_t *call_sel, selector_t *cs_sel);
 
-static void
+static void CPUCALL
 CALLfar_pm_call_gate(const selector_t *callgate_sel)
 {
 	selector_t cs_sel;
@@ -524,7 +536,7 @@ CALLfar_pm_call_gate(const selector_t *callgate_sel)
 /*---
  * CALLfar_pm: call gate (SAME-PRIVILEGE)
  */
-static void
+static void CPUCALL
 CALLfar_pm_call_gate_same_privilege(const selector_t *callgate_sel, selector_t *cs_sel)
 {
 	UINT32 sp;
@@ -555,7 +567,7 @@ CALLfar_pm_call_gate_same_privilege(const selector_t *callgate_sel, selector_t *
 /*---
  * CALLfar_pm: call gate (MORE-PRIVILEGE)
  */
-static void
+static void CPUCALL
 CALLfar_pm_call_gate_more_privilege(const selector_t *callgate_sel, selector_t *cs_sel)
 {
 	UINT32 param[32];	/* copy param */
@@ -698,7 +710,7 @@ CALLfar_pm_call_gate_more_privilege(const selector_t *callgate_sel, selector_t *
 /*---
  * CALLfar_pm: task gate
  */
-static void
+static void CPUCALL
 CALLfar_pm_task_gate(selector_t *taskgate_sel)
 {
 	selector_t tss_sel;
@@ -752,12 +764,18 @@ CALLfar_pm_task_gate(selector_t *taskgate_sel)
 	}
 
 	task_switch(&tss_sel, TASK_SWITCH_CALL);
+
+	/* out of range */
+	if (CPU_EIP > CPU_STAT_CS_LIMIT) {
+		VERBOSE(("JMPfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", CPU_EIP, CPU_STAT_CS_LIMIT));
+		EXCEPTION(GP_EXCEPTION, 0);
+	}
 }
 
 /*---
  * CALLfar_pm: TSS
  */
-static void
+static void CPUCALL
 CALLfar_pm_tss(selector_t *tss_sel)
 {
 
@@ -780,6 +798,12 @@ CALLfar_pm_tss(selector_t *tss_sel)
 	}
 
 	task_switch(tss_sel, TASK_SWITCH_CALL);
+
+	/* out of range */
+	if (CPU_EIP > CPU_STAT_CS_LIMIT) {
+		VERBOSE(("JMPfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", CPU_EIP, CPU_STAT_CS_LIMIT));
+		EXCEPTION(GP_EXCEPTION, 0);
+	}
 }
 
 
@@ -787,7 +811,7 @@ CALLfar_pm_tss(selector_t *tss_sel)
  * RETfar_pm
  */
 
-void
+void CPUCALL
 RETfar_pm(UINT nbytes)
 {
 	selector_t cs_sel, ss_sel, temp_sel;
@@ -817,7 +841,7 @@ RETfar_pm(UINT nbytes)
 
 	rv = parse_selector(&cs_sel, new_cs);
 	if (rv < 0) {
-		VERBOSE(("RETfar_pm: parse_selector (selector = %04x, rv = %d, %s)", cs_sel.selector, rv));
+		VERBOSE(("RETfar_pm: parse_selector (selector = %04x, rv = %d)", cs_sel.selector, rv));
 		EXCEPTION(GP_EXCEPTION, cs_sel.idx);
 	}
 
@@ -988,11 +1012,11 @@ RETfar_pm(UINT nbytes)
  * IRET_pm
  */
 static void IRET_pm_nested_task(void);
-static void IRET_pm_protected_mode_return(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags);
-static void IRET_pm_protected_mode_return_same_privilege(const selector_t *cs_sel, UINT32 new_ip, UINT32 new_flags);
-static void IRET_pm_protected_mode_return_outer_privilege(const selector_t *cs_sel, UINT32 new_ip, UINT32 new_flags);
-static void IRET_pm_return_to_vm86(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags);
-static void IRET_pm_return_from_vm86(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags);
+static void CPUCALL IRET_pm_protected_mode_return(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags);
+static void CPUCALL IRET_pm_protected_mode_return_same_privilege(const selector_t *cs_sel, UINT32 new_ip, UINT32 new_flags);
+static void CPUCALL IRET_pm_protected_mode_return_outer_privilege(const selector_t *cs_sel, UINT32 new_ip, UINT32 new_flags);
+static void CPUCALL IRET_pm_return_to_vm86(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags);
+static void CPUCALL IRET_pm_return_from_vm86(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags);
 
 void
 IRET_pm(void)
@@ -1089,12 +1113,18 @@ IRET_pm_nested_task(void)
 	}
 
 	task_switch(&tss_sel, TASK_SWITCH_IRET);
+
+	/* out of range */
+	if (CPU_EIP > CPU_STAT_CS_LIMIT) {
+		VERBOSE(("JMPfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", CPU_EIP, CPU_STAT_CS_LIMIT));
+		EXCEPTION(GP_EXCEPTION, 0);
+	}
 }
 
 /*---
  * IRET_pm: PROTECTED-MODE-RETURN
  */
-static void
+static void CPUCALL
 IRET_pm_protected_mode_return(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags)
 {
 	selector_t cs_sel;
@@ -1145,7 +1175,7 @@ IRET_pm_protected_mode_return(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags)
 /*---
  * IRET_pm: SAME-PRIVILEGE
  */
-static void
+static void CPUCALL
 IRET_pm_protected_mode_return_same_privilege(const selector_t *cs_sel, UINT32 new_ip, UINT32 new_flags)
 {
 	UINT32 mask;
@@ -1193,7 +1223,7 @@ IRET_pm_protected_mode_return_same_privilege(const selector_t *cs_sel, UINT32 ne
 /*---
  * IRET_pm: OUTER-PRIVILEGE
  */
-static void
+static void CPUCALL
 IRET_pm_protected_mode_return_outer_privilege(const selector_t *cs_sel, UINT32 new_ip, UINT32 new_flags)
 {
 	descriptor_t *sdp;
@@ -1313,7 +1343,7 @@ IRET_pm_protected_mode_return_outer_privilege(const selector_t *cs_sel, UINT32 n
 /*---
  * IRET_pm: new_flags & VM_FLAG
  */
-static void
+static void CPUCALL
 IRET_pm_return_to_vm86(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags)
 {
 	UINT16 segsel[CPU_SEGREG_NUM];
@@ -1360,7 +1390,7 @@ IRET_pm_return_to_vm86(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags)
 /*---
  * IRET_pm: VM_FLAG
  */
-static void
+static void CPUCALL
 IRET_pm_return_from_vm86(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags)
 {
 	UINT stacksize;

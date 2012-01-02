@@ -129,9 +129,9 @@ main(int argc, char *argv[])
 	progname = argv[0];
 
 	setlocale(LC_ALL, "");
-	bindtextdomain(np2appname, NP2LOCALEDIR);
-	bind_textdomain_codeset(np2appname, "UTF-8");
-	textdomain(np2appname);
+	(void) bindtextdomain(np2appname, NP2LOCALEDIR);
+	(void) bind_textdomain_codeset(np2appname, "UTF-8");
+	(void) textdomain(np2appname);
 
 	toolkit_initialize();
 	toolkit_arginit(&argc, &argv);

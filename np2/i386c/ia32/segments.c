@@ -28,7 +28,7 @@
 #include "ia32.mcr"
 
 
-void
+void CPUCALL
 load_segreg(int idx, UINT16 selector, UINT16 *sregp, descriptor_t *sdp, int exc)
 {
 	selector_t sel;
@@ -122,7 +122,7 @@ load_segreg(int idx, UINT16 selector, UINT16 *sregp, descriptor_t *sdp, int exc)
 /*
  * load SS register
  */
-void
+void CPUCALL
 load_ss(UINT16 selector, const descriptor_t *sdp, int cpl)
 {
 
@@ -134,7 +134,7 @@ load_ss(UINT16 selector, const descriptor_t *sdp, int cpl)
 /*
  * load CS register
  */
-void
+void CPUCALL
 load_cs(UINT16 selector, const descriptor_t *sdp, int new_cpl)
 {
 	int cpl = new_cpl & 3;
@@ -150,7 +150,7 @@ load_cs(UINT16 selector, const descriptor_t *sdp, int new_cpl)
 /*
  * load LDT register
  */
-void
+void CPUCALL
 load_ldtr(UINT16 selector, int exc)
 {
 	selector_t sel;
@@ -189,7 +189,7 @@ load_ldtr(UINT16 selector, int exc)
 	CPU_LDTR_DESC = sel.desc;
 }
 
-void
+void CPUCALL
 load_descriptor(descriptor_t *sdp, UINT32 addr)
 {
 	UINT32 l, h;
@@ -303,7 +303,7 @@ load_descriptor(descriptor_t *sdp, UINT32 addr)
 #endif
 }
 
-int
+int CPUCALL
 parse_selector(selector_t *ssp, UINT16 selector)
 {
 	UINT32 base;
@@ -337,7 +337,7 @@ parse_selector(selector_t *ssp, UINT16 selector)
 		limit = CPU_GDTR_LIMIT;
 	}
 	if (idx + 7 > limit) {
-		VERBOSE(("parse_selector: segment limit check failed"));
+		VERBOSE(("parse_selector: segment limit check failed: 0x%08x > 0x%08x", idx + 7, limit));
 		return -3;
 	}
 
@@ -352,7 +352,7 @@ parse_selector(selector_t *ssp, UINT16 selector)
 	return 0;
 }
 
-int
+int CPUCALL
 selector_is_not_present(const selector_t *ssp)
 {
 	UINT32 h;
@@ -375,7 +375,7 @@ selector_is_not_present(const selector_t *ssp)
 	return 0;
 }
 
-void
+void CPUCALL
 segdesc_init(int idx, UINT16 sreg, descriptor_t *sdp)
 {
 
@@ -388,7 +388,7 @@ segdesc_init(int idx, UINT16 sreg, descriptor_t *sdp)
 	segdesc_set_default(idx, sreg, sdp);
 }
 
-void
+void CPUCALL
 segdesc_set_default(int idx, UINT16 selector, descriptor_t *sdp)
 {
 

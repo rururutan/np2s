@@ -20,10 +20,10 @@ D/fpu////////
 /seg_reg.h////////
 /shift_rotate.c////////
 /shift_rotate.h////////
-/shift_rotate.mcr////////
 /shift_rotatexc.mcr////////
 /shift_rotatexc_msc.mcr////////
 /string_inst.c////////
 /string_inst.h////////
-/system_inst.c////////
 /system_inst.h////////
+/shift_rotate.mcr////////
+/system_inst.c////////

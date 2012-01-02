@@ -31,22 +31,22 @@ extern "C" {
 #endif
 
 /* Load/Store system register */
-void LGDT_Ms(UINT32);
-void SGDT_Ms(UINT32);
-void LLDT_Ew(UINT32);
-void SLDT_Ew(UINT32);
-void LTR_Ew(UINT32);
-void STR_Ew(UINT32);
-void LIDT_Ms(UINT32);
-void SIDT_Ms(UINT32);
+void CPUCALL LGDT_Ms(UINT32);
+void CPUCALL SGDT_Ms(UINT32);
+void CPUCALL LLDT_Ew(UINT32);
+void CPUCALL SLDT_Ew(UINT32);
+void CPUCALL LTR_Ew(UINT32);
+void CPUCALL STR_Ew(UINT32);
+void CPUCALL LIDT_Ms(UINT32);
+void CPUCALL SIDT_Ms(UINT32);
 
 /* ctrl reg */
 void MOV_CdRd(void);
 void MOV_RdCd(void);
 
 /* msw */
-void LMSW_Ew(UINT32);
-void SMSW_Ew(UINT32);
+void CPUCALL LMSW_Ew(UINT32);
+void CPUCALL SMSW_Ew(UINT32);
 
 /* */
 void CLTS(void);
@@ -59,8 +59,8 @@ void LSL_GwEw(void);
 void LSL_GdEw(void);
 
 /* */
-void VERR_Ew(UINT32);
-void VERW_Ew(UINT32);
+void CPUCALL VERR_Ew(UINT32);
+void CPUCALL VERW_Ew(UINT32);
 
 /* dbg reg */
 void MOV_DdRd(void);
@@ -71,7 +71,7 @@ void INVD(void);
 void WBINVD(void);
 
 /* */
-void INVLPG(UINT32);
+void CPUCALL INVLPG(UINT32);
 
 /* */
 void _LOCK(void);

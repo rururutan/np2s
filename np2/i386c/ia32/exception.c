@@ -61,7 +61,7 @@ static const int dftable[4][4] = {
 	{ 1, 1, 1, 1, },
 };
 
-void
+void CPUCALL
 exception(int num, int error_code)
 {
 	int errorp = 0;
@@ -74,7 +74,7 @@ exception(int num, int error_code)
 #endif
 
 	VERBOSE(("exception: -------------------------------------------------------------- start"));
-	VERBOSE(("exception: %s, error_code = %x at %04x:%08x", exception_str[num], error_code, CPU_CS, CPU_PREV_EIP));
+	VERBOSE(("exception: %s, error_code = %x at %04x:%08x, %04x:%08x", exception_str[num], error_code, CPU_CS, CPU_PREV_EIP, CPU_SS, CPU_ESP));
 	VERBOSE(("%s", cpu_reg2str()));
 
 	CPU_STAT_EXCEPTION_COUNTER_INC();
@@ -85,34 +85,38 @@ exception(int num, int error_code)
 	}
 
 	switch (num) {
-	case DE_EXCEPTION:	/* (F) Ω¸ªª•®•È°º */
-	case DB_EXCEPTION:	/* (F/T) •«•–•√•∞ */
-	case BR_EXCEPTION:	/* (F) BOUND §Œ»œ∞œ≥∞ */
-	case UD_EXCEPTION:	/* (F) Ãµ∏˙•™•⁄•≥°º•… */
-	case NM_EXCEPTION:	/* (F) •«•–•§•πª»Õ—…‘≤ƒ (FPU §¨Ãµ§§) */
-	case MF_EXCEPTION:	/* (F) …‚∆∞æÆøÙ≈¿•®•È°º */
+	case DE_EXCEPTION:	/* (F) Èô§ÁÆó„Ç®„É©„Éº */
+	case DB_EXCEPTION:	/* (F/T) „Éá„Éê„ÉÉ„Ç∞ */
+	case BR_EXCEPTION:	/* (F) BOUND „ÅÆÁØÑÂõ≤Â§ñ */
+	case UD_EXCEPTION:	/* (F) ÁÑ°Âäπ„Ç™„Éö„Ç≥„Éº„Éâ */
+	case NM_EXCEPTION:	/* (F) „Éá„Éê„Ç§„Çπ‰ΩøÁî®‰∏çÂèØ (FPU „ÅåÁÑ°„ÅÑ) */
+	case MF_EXCEPTION:	/* (F) ÊµÆÂãïÂ∞èÊï∞ÁÇπ„Ç®„É©„Éº */
 		CPU_EIP = CPU_PREV_EIP;
+		if (CPU_STATSAVE.cpu_stat.backout_sp)
+			CPU_ESP = CPU_PREV_ESP;
 		/*FALLTHROUGH*/
-	case NMI_EXCEPTION:	/* (I) NMI ≥‰§Íπ˛§ﬂ */
-	case BP_EXCEPTION:	/* (T) •÷•Ï°º•Ø•›•§•Û•» */
-	case OF_EXCEPTION:	/* (T) •™°º•–°º•’•Ì°º */
+	case NMI_EXCEPTION:	/* (I) NMI Ââ≤„ÇäËæº„Åø */
+	case BP_EXCEPTION:	/* (T) „Éñ„É¨„Éº„ÇØ„Éù„Ç§„É≥„Éà */
+	case OF_EXCEPTION:	/* (T) „Ç™„Éº„Éê„Éº„Éï„É≠„Éº */
 		errorp = 0;
 		break;
 
-	case DF_EXCEPTION:	/* (A) •¿•÷•Î•’•©•Î•» (errcode: 0) */
+	case DF_EXCEPTION:	/* (A) „ÉÄ„Éñ„É´„Éï„Ç©„É´„Éà (errcode: 0) */
 		errorp = 1;
 		error_code = 0;
 		break;
 
-	case AC_EXCEPTION:	/* (F) •¢•È•§•Û•·•Û•»•¡•ß•√•Ø (errcode: 0) */
+	case AC_EXCEPTION:	/* (F) „Ç¢„É©„Ç§„É≥„É°„É≥„Éà„ÉÅ„Çß„ÉÉ„ÇØ (errcode: 0) */
 		error_code = 0;
 		/*FALLTHROUGH*/
-	case TS_EXCEPTION:	/* (F) Ãµ∏˙ TSS (errcode) */
-	case NP_EXCEPTION:	/* (F) •ª•∞•·•Û•»…‘∫ﬂ (errcode) */
-	case SS_EXCEPTION:	/* (F) •π•ø•√•Ø•ª•∞•·•Û•»•’•©•Î•» (errcode) */
-	case GP_EXCEPTION:	/* (F) ∞Ï»Ã ›∏ÓŒ„≥∞ (errcode) */
-	case PF_EXCEPTION:	/* (F) •⁄°º•∏•’•©•Î•» (errcode) */
+	case TS_EXCEPTION:	/* (F) ÁÑ°Âäπ TSS (errcode) */
+	case NP_EXCEPTION:	/* (F) „Çª„Ç∞„É°„É≥„Éà‰∏çÂú® (errcode) */
+	case SS_EXCEPTION:	/* (F) „Çπ„Çø„ÉÉ„ÇØ„Çª„Ç∞„É°„É≥„Éà„Éï„Ç©„É´„Éà (errcode) */
+	case GP_EXCEPTION:	/* (F) ‰∏ÄËà¨‰øùË≠∑‰æãÂ§ñ (errcode) */
+	case PF_EXCEPTION:	/* (F) „Éö„Éº„Ç∏„Éï„Ç©„É´„Éà (errcode) */
 		CPU_EIP = CPU_PREV_EIP;
+		if (CPU_STATSAVE.cpu_stat.backout_sp)
+			CPU_ESP = CPU_PREV_ESP;
 		errorp = 1;
 		break;
 
@@ -120,12 +124,6 @@ exception(int num, int error_code)
 		ia32_panic("exception: unknown exception (%d)", num);
 		break;
 	}
-
-	if (CPU_STATSAVE.cpu_stat.backout_sp) {
-		VERBOSE(("exception: restore stack pointer."));
-		CPU_ESP = CPU_PREV_ESP;
-	}
-	CPU_STATSAVE.cpu_stat.backout_sp = 0;
 
 	if (CPU_STAT_EXCEPTION_COUNTER >= 2) {
 		if (dftable[exctype[CPU_STAT_PREV_EXCEPTION]][exctype[num]]) {
@@ -138,7 +136,7 @@ exception(int num, int error_code)
 
 	VERBOSE(("exception: ---------------------------------------------------------------- end"));
 
-	interrupt(num, 0, errorp, error_code);
+	interrupt(num, INTR_TYPE_EXTINTR, errorp, error_code);
 #if defined(IA32_SUPPORT_DEBUG_REGISTER)
 	if (num != BP_EXCEPTION) {
 		if (CPU_INST_OP32) {
@@ -151,22 +149,22 @@ exception(int num, int error_code)
 }
 
 /*
- * •≥°º•Î°¶•≤°º•»°¶•«•£•π•Ø•Í•◊•ø
+ * „Ç≥„Éº„É´„Éª„Ç≤„Éº„Éà„Éª„Éá„Ç£„Çπ„ÇØ„É™„Éó„Çø
  *
  *  31                                16 15 14 13 12       8 7   5 4       0
  * +------------------------------------+--+-----+----------+-----+---------+
- * |         •™•’•ª•√•» 31..16          | P| DPL | 0 D 1 0 0|0 0 0|•´•¶•Û•» | 4
+ * |         „Ç™„Éï„Çª„ÉÉ„Éà 31..16          | P| DPL | 0 D 1 0 0|0 0 0|„Ç´„Ç¶„É≥„Éà | 4
  * +------------------------------------+--+-----+----------+-----+---------+
  *  31                                16 15                                0
  * +------------------------------------+-----------------------------------+
- * |        •ª•∞•·•Û•»°¶•ª•Ï•Ø•ø        |          •™•’•ª•√•» 15..0         | 0
+ * |        „Çª„Ç∞„É°„É≥„Éà„Éª„Çª„É¨„ÇØ„Çø        |          „Ç™„Éï„Çª„ÉÉ„Éà 15..0         | 0
  * +------------------------------------+-----------------------------------+
  */
 
 /*
- * ≥‰§Íπ˛§ﬂ•«•£•π•Ø•Í•◊•ø
+ * Ââ≤„ÇäËæº„Åø„Éá„Ç£„Çπ„ÇØ„É™„Éó„Çø
  *--
- * •ø•π•Ø°¶•≤°º•»
+ * „Çø„Çπ„ÇØ„Éª„Ç≤„Éº„Éà
  *
  *  31                                16 15 14 13 12       8 7             0
  * +------------------------------------+--+-----+----------+---------------+
@@ -174,42 +172,42 @@ exception(int num, int error_code)
  * +------------------------------------+--+-----+----------+---------------+
  *  31                                16 15                                0
  * +------------------------------------+-----------------------------------+
- * |      TSS •ª•∞•·•Û•»°¶•ª•Ï•Ø•ø      |              Reserved             | 0
+ * |      TSS „Çª„Ç∞„É°„É≥„Éà„Éª„Çª„É¨„ÇØ„Çø      |              Reserved             | 0
  * +------------------------------------+-----------------------------------+
  *--
- * ≥‰§Íπ˛§ﬂ°¶•≤°º•»
+ * Ââ≤„ÇäËæº„Åø„Éª„Ç≤„Éº„Éà
  *
  *  31                                16 15 14 13 12       8 7   5 4       0
  * +------------------------------------+--+-----+----------+-----+---------+
- * |         •™•’•ª•√•» 31..16          | P| DPL | 0 D 1 1 0|0 0 0|Reserved | 4
+ * |         „Ç™„Éï„Çª„ÉÉ„Éà 31..16          | P| DPL | 0 D 1 1 0|0 0 0|Reserved | 4
  * +------------------------------------+--+-----+----------+-----+---------+
  *  31                                16 15                                0
  * +------------------------------------+-----------------------------------+
- * |        •ª•∞•·•Û•»°¶•ª•Ï•Ø•ø        |          •™•’•ª•√•» 15..0         | 0
+ * |        „Çª„Ç∞„É°„É≥„Éà„Éª„Çª„É¨„ÇØ„Çø        |          „Ç™„Éï„Çª„ÉÉ„Éà 15..0         | 0
  * +------------------------------------+-----------------------------------+
  *--
- * •»•È•√•◊°¶•≤°º•»
+ * „Éà„É©„ÉÉ„Éó„Éª„Ç≤„Éº„Éà
  *
  *  31                                16 15 14 13 12       8 7   5 4       0
  * +------------------------------------+--+-----+----------+-----+---------+
- * |         •™•’•ª•√•» 31..16          | P| DPL | 0 D 1 1 1|0 0 0|Reserved | 4
+ * |         „Ç™„Éï„Çª„ÉÉ„Éà 31..16          | P| DPL | 0 D 1 1 1|0 0 0|Reserved | 4
  * +------------------------------------+--+-----+----------+-----+---------+
  *  31                                16 15                                0
  * +------------------------------------+-----------------------------------+
- * |        •ª•∞•·•Û•»°¶•ª•Ï•Ø•ø        |          •™•’•ª•√•» 15..0         | 0
+ * |        „Çª„Ç∞„É°„É≥„Éà„Éª„Çª„É¨„ÇØ„Çø        |          „Ç™„Éï„Çª„ÉÉ„Éà 15..0         | 0
  * +------------------------------------+-----------------------------------+
  *--
- * DPL        : •«•£•π•Ø•Í•◊•ø∆√∏¢•Ï•Ÿ•Î
- * •™•’•ª•√•» : •◊•Ì•∑°º•∏•„°¶•®•Û•»•Í°¶•›•§•Û•»§ﬁ§«§Œ•™•’•ª•√•»
- * P          : •ª•∞•·•Û•»¬∏∫ﬂ•’•È•∞
- * •ª•Ï•Ø•ø   : •«•£•π•∆•£•Õ°º•∑•Á•Û°¶•≥°º•…°¶•ª•∞•·•Û•»§Œ•ª•∞•·•Û•»°¶•ª•Ï•Ø•ø
- * D          : •≤°º•»§Œ•µ•§•∫°•0 = 16 bit, 1 = 32 bit
+ * DPL        : „Éá„Ç£„Çπ„ÇØ„É™„Éó„ÇøÁâπÊ®©„É¨„Éô„É´
+ * „Ç™„Éï„Çª„ÉÉ„Éà : „Éó„É≠„Ç∑„Éº„Ç∏„É£„Éª„Ç®„É≥„Éà„É™„Éª„Éù„Ç§„É≥„Éà„Åæ„Åß„ÅÆ„Ç™„Éï„Çª„ÉÉ„Éà
+ * P          : „Çª„Ç∞„É°„É≥„ÉàÂ≠òÂú®„Éï„É©„Ç∞
+ * „Çª„É¨„ÇØ„Çø   : „Éá„Ç£„Çπ„ÉÜ„Ç£„Éç„Éº„Ç∑„Éß„É≥„Éª„Ç≥„Éº„Éâ„Éª„Çª„Ç∞„É°„É≥„Éà„ÅÆ„Çª„Ç∞„É°„É≥„Éà„Éª„Çª„É¨„ÇØ„Çø
+ * D          : „Ç≤„Éº„Éà„ÅÆ„Çµ„Ç§„Ç∫Ôºé0 = 16 bit, 1 = 32 bit
  */
 
-static void interrupt_task_gate(const descriptor_t *gsdp, int intrtype, int errorp, int error_code);
-static void interrupt_intr_or_trap(const descriptor_t *gsdp, int intrtype, int errorp, int error_code);
+static void CPUCALL interrupt_task_gate(const descriptor_t *gsdp, int intrtype, int errorp, int error_code);
+static void CPUCALL interrupt_intr_or_trap(const descriptor_t *gsdp, int intrtype, int errorp, int error_code);
 
-void
+void CPUCALL
 interrupt(int num, int intrtype, int errorp, int error_code)
 {
 	descriptor_t gsd;
@@ -219,6 +217,8 @@ interrupt(int num, int intrtype, int errorp, int error_code)
 	int exc_errcode;
 
 	VERBOSE(("interrupt: num = 0x%02x, intrtype = %s, errorp = %s, error_code = %08x", num, intrtype ? "on" : "off", errorp ? "on" : "off", error_code));
+
+	CPU_SET_PREV_ESP();
 
 	if (!CPU_STAT_PM) {
 		/* real mode */
@@ -231,6 +231,7 @@ interrupt(int num, int intrtype, int errorp, int error_code)
 		}
 
 		if ((intrtype == INTR_TYPE_EXTINTR) && CPU_STAT_HLT) {
+			VERBOSE(("interrupt: reset HTL in real mode"));
 			CPU_EIP++;
 			CPU_STAT_HLT = 0;
 		}
@@ -256,7 +257,7 @@ interrupt(int num, int intrtype, int errorp, int error_code)
 #if defined(DEBUG)
 		if (num == 0x80) {
 			/* Linux, FreeBSD, NetBSD, OpenBSD system call */
-			VERBOSE(("interrupt: syscall no = %d\n%s", CPU_EAX, cpu_reg2str()));
+			VERBOSE(("interrupt: syscall# = %d\n%s", CPU_EAX, cpu_reg2str()));
 		}
 #endif
 
@@ -275,10 +276,6 @@ interrupt(int num, int intrtype, int errorp, int error_code)
 		load_descriptor(&gsd, CPU_IDTR_BASE + idt_idx);
 		if (!SEG_IS_VALID(&gsd)) {
 			VERBOSE(("interrupt: gate descripter is invalid."));
-			EXCEPTION(GP_EXCEPTION, exc_errcode);
-		}
-		if (!SEG_IS_PRESENT(&gsd)) {
-			VERBOSE(("interrupt: gate descriptor is not present."));
 			EXCEPTION(GP_EXCEPTION, exc_errcode);
 		}
 		if (!SEG_IS_SYSTEM(&gsd)) {
@@ -300,18 +297,19 @@ interrupt(int num, int intrtype, int errorp, int error_code)
 			break;
 		}
 
-		if (gsd.dpl < CPU_STAT_CPL) {
-			VERBOSE(("interrupt: gate DPL(%d) < CPL(%d)", gsd.dpl, CPU_STAT_CPL));
-			EXCEPTION(GP_EXCEPTION, exc_errcode);
-		}
-
-		/* 5.10.1.1. Œ„≥∞°ø≥‰§Íπ˛§ﬂ•œ•Û•…•È°¶•◊•Ì•∑°º•∏•„§Œ ›∏Ó */
+		/* 5.10.1.1. ‰æãÂ§ñÔºèÂâ≤„ÇäËæº„Åø„Éè„É≥„Éâ„É©„Éª„Éó„É≠„Ç∑„Éº„Ç∏„É£„ÅÆ‰øùË≠∑ */
 		if ((intrtype != INTR_TYPE_EXTINTR) && (gsd.dpl < CPU_STAT_CPL)) {
-			VERBOSE(("interrupt: intrtype && DPL(%d) < CPL(%d)", gsd.dpl, CPU_STAT_CPL));
+			VERBOSE(("interrupt: intrtype(%d) && DPL(%d) < CPL(%d)", intrtype, gsd.dpl, CPU_STAT_CPL));
 			EXCEPTION(GP_EXCEPTION, exc_errcode);
 		}
 
-		if (!intrtype && CPU_STAT_HLT) {
+		if (!SEG_IS_PRESENT(&gsd)) {
+			VERBOSE(("interrupt: gate descriptor is not present."));
+			EXCEPTION(NP_EXCEPTION, exc_errcode);
+		}
+
+		if ((intrtype == INTR_TYPE_EXTINTR) && CPU_STAT_HLT) {
+			VERBOSE(("interrupt: reset HTL in protected mode"));
 			CPU_EIP++;
 			CPU_STAT_HLT = 0;
 		}
@@ -335,9 +333,11 @@ interrupt(int num, int intrtype, int errorp, int error_code)
 
 		VERBOSE(("interrupt: ---------------------------------------------------------------- end"));
 	}
+
+	CPU_CLEAR_PREV_ESP();
 }
 
-static void
+static void CPUCALL
 interrupt_task_gate(const descriptor_t *gsdp, int intrtype, int errorp, int error_code)
 {
 	selector_t task_sel;
@@ -375,12 +375,20 @@ interrupt_task_gate(const descriptor_t *gsdp, int intrtype, int errorp, int erro
 
 	task_switch(&task_sel, TASK_SWITCH_INTR);
 
+	CPU_SET_PREV_ESP();
+
 	if (errorp) {
 		XPUSH0(error_code);
 	}
+
+	/* out of range */
+	if (CPU_EIP > CPU_STAT_CS_LIMIT) {
+		VERBOSE(("interrupt: new_ip is out of range. new_ip = %08x, limit = %08x", CPU_EIP, CPU_STAT_CS_LIMIT));
+		EXCEPTION(GP_EXCEPTION, 0);
+	}
 }
 
-static void
+static void CPUCALL
 interrupt_intr_or_trap(const descriptor_t *gsdp, int intrtype, int errorp, int error_code)
 {
 	selector_t cs_sel, ss_sel;
@@ -422,7 +430,7 @@ interrupt_intr_or_trap(const descriptor_t *gsdp, int intrtype, int errorp, int e
 		break;
 	}
 
-	exc_errcode = cs_sel.idx;
+	exc_errcode = gsdp->u.gate.selector & ~3;
 	if (intrtype == INTR_TYPE_EXTINTR)
 		exc_errcode++;
 
@@ -576,7 +584,7 @@ interrupt_intr_or_trap(const descriptor_t *gsdp, int intrtype, int errorp, int e
 			EXCEPTION(GP_EXCEPTION, exc_errcode);
 		}
 		if (!SEG_IS_CONFORMING_CODE(&cs_sel.desc) && (cs_sel.desc.dpl != CPU_STAT_CPL)) {
-			VERBOSE(("interrupt: %sCONFORMING-CODE-SEGMENT(%s) && DPL[CS](%d) != CPL", SEG_IS_CONFORMING_CODE(&cs_sel.desc) ? "" : "NON-", cs_sel.desc.dpl, CPU_STAT_CPL));
+			VERBOSE(("interrupt: %sCONFORMING-CODE-SEGMENT(%d) && DPL[CS](%d) != CPL", SEG_IS_CONFORMING_CODE(&cs_sel.desc) ? "" : "NON-", cs_sel.desc.dpl, CPU_STAT_CPL));
 			EXCEPTION(GP_EXCEPTION, exc_errcode);
 		}
 

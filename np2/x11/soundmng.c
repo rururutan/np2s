@@ -68,19 +68,19 @@ MIDIMOD vermouth_module = NULL;
  * driver
  */
 static struct {
-        BOOL (*drvinit)(UINT rate, UINT samples);
-        BOOL (*drvterm)(void);
+	BOOL (*drvinit)(UINT rate, UINT samples);
+	BOOL (*drvterm)(void);
 	void (*drvlock)(void);
 	void (*drvunlock)(void);
 
-        void (*sndplay)(void);
-        void (*sndstop)(void);
+	void (*sndplay)(void);
+	void (*sndstop)(void);
 
 	void *(*pcmload)(UINT num, const char *path);
-	void (*pcmdestroy)(void *chanp, UINT num);
-	void (*pcmplay)(void *chanp, UINT num, BOOL loop);
-	void (*pcmstop)(void *chanp, UINT num);
-	void (*pcmvolume)(void *chanp, UINT num, int volume);
+	void (*pcmdestroy)(void *cookie, UINT num);
+	void (*pcmplay)(void *cookie, UINT num, BOOL loop);
+	void (*pcmstop)(void *cookie, UINT num);
+	void (*pcmvolume)(void *cookie, UINT num, int volume);
 } snddrv;
 static int audio_fd = -1;
 static BOOL opened = FALSE;
@@ -100,10 +100,20 @@ void PARTSCALL saturation_s16mmx(SINT16 *dst, const SINT32 *src, UINT size);
 /*
  * PCM
  */
-static void *pcm_channel[SOUND_MAXPCM];
+typedef struct {
+	void *cookie;
+	char *path;
+	int volume;
+} pcm_channel_t;
+static pcm_channel_t *pcm_channel[SOUND_MAXPCM];
 
 static void soundmng_pcminit(void);
 static void soundmng_pcmdestroy(void);
+
+#ifndef	PCM_VOULE_DEFAULT
+#define	PCM_VOULE_DEFAULT	25
+#endif
+int pcm_volume_default = PCM_VOULE_DEFAULT;
 
 /*
  * buffer
@@ -180,7 +190,9 @@ sounddrv_unlock(void)
 UINT
 soundmng_create(UINT rate, UINT bufmsec)
 {
+	pcm_channel_t *chan;
 	UINT samples;
+	int i;
 
 	if (opened || ((rate != 11025) && (rate != 22050) && (rate != 44100))) {
 		return 0;
@@ -190,6 +202,15 @@ soundmng_create(UINT rate, UINT bufmsec)
 		bufmsec = 20;
 	else if (bufmsec > 1000)
 		bufmsec = 1000;
+
+	for (i = 0; i < SOUND_MAXPCM; i++) {
+		chan = pcm_channel[i];
+		if (chan != NULL && chan->cookie != NULL) {
+			soundmng_pcmstop(i);
+			(*snddrv.pcmdestroy)(chan->cookie, i);
+			chan->cookie = NULL;
+		}
+	}
 
 	snddrv_setup();
 
@@ -213,6 +234,15 @@ soundmng_create(UINT rate, UINT bufmsec)
 	soundmng_setreverse(FALSE);
 	buffer_init();
 	soundmng_reset();
+
+	for (i = 0; i < SOUND_MAXPCM; i++) {
+		chan = pcm_channel[i];
+		if (chan != NULL && chan->path != NULL) {
+			chan->cookie = (*snddrv.pcmload)(i, chan->path);
+			if (chan->cookie != NULL)
+				(*snddrv.pcmvolume)(chan->cookie, i, chan->volume);
+		}
+	}
 
 	opened = TRUE;
 
@@ -338,7 +368,7 @@ soundmng_setreverse(BOOL reverse)
 /*
  * PCM function
  */
-void
+static void
 soundmng_pcminit(void)
 {
 	int i;
@@ -348,15 +378,24 @@ soundmng_pcminit(void)
 	}
 }
 
-void
+static void
 soundmng_pcmdestroy(void)
 {
+	pcm_channel_t *chan;
 	int i;
 
 	for (i = 0; i < SOUND_MAXPCM; i++) {
-		if (pcm_channel[i]) {
-			(*snddrv.pcmdestroy)(pcm_channel[i], i);
+		chan = pcm_channel[i];
+		if (chan != NULL) {
 			pcm_channel[i] = NULL;
+			if (chan->cookie != NULL) {
+				(*snddrv.pcmdestroy)(chan->cookie, i);
+				chan->cookie = NULL;
+			}
+			if (chan->path != NULL) {
+				_MFREE(chan->path);
+				chan->path = NULL;
+			}
 		}
 	}
 }
@@ -364,13 +403,31 @@ soundmng_pcmdestroy(void)
 BOOL
 soundmng_pcmload(UINT num, const char *filename)
 {
+	pcm_channel_t *chan;
+	struct stat sb;
+	int rv;
 
 	if (num < SOUND_MAXPCM) {
-		if (pcm_channel[num])
-			(*snddrv.pcmdestroy)(pcm_channel[num], num);
-		pcm_channel[num] = (*snddrv.pcmload)(num, filename);
-		if (pcm_channel[num])
-			return SUCCESS;
+		rv = stat(filename, &sb);
+		if (rv < 0)
+			return FAILURE;
+
+		chan = pcm_channel[num];
+		if (chan != NULL) {
+			if (strcmp(filename, chan->path)) {
+				_MFREE(chan->path);
+				chan->path = strdup(filename);
+			}
+		} else {
+			chan = _MALLOC(sizeof(*chan), "pcm channel");
+			if (chan == NULL)
+				return FAILURE;
+			chan->cookie = NULL;
+			chan->path = strdup(filename);
+			chan->volume = pcm_volume_default;
+			pcm_channel[num] = chan;
+		}
+		return SUCCESS;
 	}
 	return FAILURE;
 }
@@ -378,18 +435,28 @@ soundmng_pcmload(UINT num, const char *filename)
 void
 soundmng_pcmvolume(UINT num, int volume)
 {
+	pcm_channel_t *chan;
 
-	if ((num < SOUND_MAXPCM) && (pcm_channel[num])) {
-		(*snddrv.pcmvolume)(pcm_channel[num], num, volume);
+	if (num < SOUND_MAXPCM) {
+		chan = pcm_channel[num];
+		if (chan != NULL) {
+			chan->volume = volume;
+			if (chan->cookie != NULL)
+				(*snddrv.pcmvolume)(chan->cookie, num, volume);
+		}
 	}
 }
 
 BOOL
 soundmng_pcmplay(UINT num, BOOL loop)
 {
+	pcm_channel_t *chan;
 
-	if ((num < SOUND_MAXPCM) && (pcm_channel[num])) {
-		(*snddrv.pcmplay)(pcm_channel[num], num, loop);
+	if (num < SOUND_MAXPCM) {
+		chan = pcm_channel[num];
+		if (chan != NULL && chan->cookie != NULL) {
+			(*snddrv.pcmplay)(chan->cookie, num, loop);
+		}
 		return SUCCESS;
 	}
 	return FAILURE;
@@ -398,9 +465,13 @@ soundmng_pcmplay(UINT num, BOOL loop)
 void
 soundmng_pcmstop(UINT num)
 {
+	pcm_channel_t *chan;
 
-	if ((num < SOUND_MAXPCM) && (pcm_channel[num])) {
-		(*snddrv.pcmstop)(pcm_channel[num], num);
+	if (num < SOUND_MAXPCM) {
+		chan = pcm_channel[num];
+		if (chan != NULL && chan->cookie != NULL) {
+			(*snddrv.pcmstop)(chan->cookie, num);
+		}
 	}
 }
 
@@ -414,7 +485,7 @@ buffer_init(void)
 
 	sounddrv_lock();
 	for (i = 0; i < NSOUNDBUFFER; i++) {
-		if (sound_buffer[i]) {
+		if (sound_buffer[i] != NULL) {
 			_MFREE(sound_buffer[i]);
 		}
 		sound_buffer[i] = (char *)_MALLOC(opna_frame, "sound buffer");
@@ -449,7 +520,7 @@ buffer_destroy(void)
 
 	sounddrv_lock();
 	for (i = 0; i < NSOUNDBUFFER; i++) {
-		if (sound_buffer[i]) {
+		if (sound_buffer[i] != NULL) {
 			_MFREE(sound_buffer[i]);
 			sound_buffer[i] = NULL;
 		}
@@ -510,28 +581,28 @@ nosound_pcmload(UINT num, const char *path)
 }
 
 static void
-nosound_pcmdestroy(void *chanp, UINT num)
+nosound_pcmdestroy(void *cookie, UINT num)
 {
 
 	/* Nothing to do */
 }
 
 static void
-nosound_pcmplay(void *chanp, UINT num, BOOL loop)
+nosound_pcmplay(void *cookie, UINT num, BOOL loop)
 {
 
 	/* Nothing to do */
 }
 
 static void
-nosound_pcmstop(void *chanp, UINT num)
+nosound_pcmstop(void *cookie, UINT num)
 {
 
 	/* Nothing to do */
 }
 
 static void
-nosound_pcmvolume(void *chanp, UINT num, int volume)
+nosound_pcmvolume(void *cookie, UINT num, int volume)
 {
 
 	/* Nothing to do */
@@ -785,7 +856,7 @@ sdlaudio_init(UINT rate, UINT samples)
 
 	rv = SDL_InitSubSystem(SDL_INIT_AUDIO);
 	if (rv < 0) {
-		g_printerr("sdlmixer_init: SDL_InitSubSystem(): %s\n",
+		g_printerr("sdlaudio_init: SDL_InitSubSystem(): %s\n",
 		    SDL_GetError());
 		return FAILURE;
 	}
@@ -883,38 +954,35 @@ sdlmixer_term(void)
 static void *
 sdlmixer_pcmload(UINT num, const char *path)
 {
-	Mix_Chunk *chunk;
 
-	chunk = Mix_LoadWAV(path);
-	return (void *)chunk;
+	return Mix_LoadWAV(path);
 }
 
 static void
-sdlmixer_pcmdestroy(void *chanp, UINT num)
+sdlmixer_pcmdestroy(void *cookie, UINT num)
 {
-	Mix_Chunk *chunk = (Mix_Chunk *)chanp;
+	Mix_Chunk *chunk = cookie;
 
-	Mix_HaltChannel(num);
 	Mix_FreeChunk(chunk);
 }
 
 static void
-sdlmixer_pcmplay(void *chanp, UINT num, BOOL loop)
+sdlmixer_pcmplay(void *cookie, UINT num, BOOL loop)
 {
-	Mix_Chunk *chunk = (Mix_Chunk *)chanp;
+	Mix_Chunk *chunk = cookie;
 
 	Mix_PlayChannel(num, chunk, loop ? -1 : 1);
 }
 
 static void
-sdlmixer_pcmstop(void *chanp, UINT num)
+sdlmixer_pcmstop(void *cookie, UINT num)
 {
 
 	Mix_HaltChannel(num);
 }
 
 static void
-sdlmixer_pcmvolume(void *chanp, UINT num, int volume)
+sdlmixer_pcmvolume(void *cookie, UINT num, int volume)
 {
 
 	Mix_Volume(num, (MIX_MAX_VOLUME * volume) / 100);

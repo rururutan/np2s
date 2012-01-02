@@ -27,11 +27,13 @@
 #include "cpu.h"
 #include "ia32.mcr"
 
-#define	TSS_SIZE_16	44
-#define	TSS_SIZE_32	108
+#define	TSS_16_SIZE	44
+#define	TSS_16_LIMIT	(TSS_16_SIZE - 1)
+#define	TSS_32_SIZE	104
+#define	TSS_32_LIMIT	(TSS_32_SIZE - 1)
 
-static void
-set_task_busy(UINT16 selector, descriptor_t *sdp)
+static void CPUCALL
+set_task_busy(UINT16 selector)
 {
 	UINT32 addr;
 	UINT32 h;
@@ -39,7 +41,6 @@ set_task_busy(UINT16 selector, descriptor_t *sdp)
 	addr = CPU_GDTR_BASE + (selector & CPU_SEGMENT_SELECTOR_INDEX_MASK);
 	h = cpu_kmemoryread_d(addr + 4);
 	if (!(h & CPU_TSS_H_BUSY)) {
-		sdp->type |= CPU_SYSDESC_TYPE_TSS_BUSY_IND;
 		h |= CPU_TSS_H_BUSY;
 		cpu_kmemorywrite_d(addr + 4, h);
 	} else {
@@ -47,8 +48,8 @@ set_task_busy(UINT16 selector, descriptor_t *sdp)
 	}
 }
 
-static void
-set_task_free(UINT16 selector, descriptor_t *sdp)
+static void CPUCALL
+set_task_free(UINT16 selector)
 {
 	UINT32 addr;
 	UINT32 h;
@@ -56,7 +57,6 @@ set_task_free(UINT16 selector, descriptor_t *sdp)
 	addr = CPU_GDTR_BASE + (selector & CPU_SEGMENT_SELECTOR_INDEX_MASK);
 	h = cpu_kmemoryread_d(addr + 4);
 	if (h & CPU_TSS_H_BUSY) {
-		sdp->type &= ~CPU_SYSDESC_TYPE_TSS_BUSY_IND;
 		h &= ~CPU_TSS_H_BUSY;
 		cpu_kmemorywrite_d(addr + 4, h);
 	} else {
@@ -64,7 +64,7 @@ set_task_free(UINT16 selector, descriptor_t *sdp)
 	}
 }
 
-void
+void CPUCALL
 load_tr(UINT16 selector)
 {
 	selector_t task_sel;
@@ -82,14 +82,14 @@ load_tr(UINT16 selector)
 	/* check descriptor type & stack room size */
 	switch (task_sel.desc.type) {
 	case CPU_SYSDESC_TYPE_TSS_16:
-		if (task_sel.desc.u.seg.limit < TSS_SIZE_16) {
+		if (task_sel.desc.u.seg.limit < TSS_16_LIMIT) {
 			EXCEPTION(TS_EXCEPTION, task_sel.idx);
 		}
 		iobase = 0;
 		break;
 
 	case CPU_SYSDESC_TYPE_TSS_32:
-		if (task_sel.desc.u.seg.limit < TSS_SIZE_32) {
+		if (task_sel.desc.u.seg.limit < TSS_32_LIMIT) {
 			EXCEPTION(TS_EXCEPTION, task_sel.idx);
 		}
 		iobase = cpu_kmemoryread_w(task_sel.desc.u.seg.segbase + 102);
@@ -110,16 +110,17 @@ load_tr(UINT16 selector)
 	tr_dump(task_sel.selector, task_sel.desc.u.seg.segbase, task_sel.desc.u.seg.limit);
 #endif
 
-	set_task_busy(task_sel.selector, &task_sel.desc);
+	set_task_busy(task_sel.selector);
 	CPU_TR = task_sel.selector;
 	CPU_TR_DESC = task_sel.desc;
+	CPU_TR_DESC.type |= CPU_SYSDESC_TYPE_TSS_BUSY_IND;
 
 	/* I/O deny bitmap */
 	CPU_STAT_IOLIMIT = 0;
-	if (task_sel.desc.type == CPU_SYSDESC_TYPE_TSS_BUSY_32) {
-		if (iobase != 0 && iobase < task_sel.desc.u.seg.limit) {
-			CPU_STAT_IOLIMIT = (UINT16)(task_sel.desc.u.seg.limit - iobase);
-			CPU_STAT_IOADDR = task_sel.desc.u.seg.segbase + iobase;
+	if (CPU_TR_DESC.type == CPU_SYSDESC_TYPE_TSS_BUSY_32) {
+		if (iobase != 0 && iobase < CPU_TR_DESC.u.seg.limit) {
+			CPU_STAT_IOLIMIT = (UINT16)(CPU_TR_DESC.u.seg.limit - iobase);
+			CPU_STAT_IOADDR = CPU_TR_DESC.u.seg.segbase + iobase;
 		}
 	}
 
@@ -135,7 +136,7 @@ load_tr(UINT16 selector)
 #endif
 }
 
-void
+void CPUCALL
 get_stack_pointer_from_tss(UINT pl, UINT16 *new_ss, UINT32 *new_esp)
 {
 	UINT32 tss_stack_addr;
@@ -189,7 +190,7 @@ get_backlink_selector_from_tss(void)
 	return backlink;
 }
 
-void
+void CPUCALL
 task_switch(selector_t *task_sel, task_switch_type_t type)
 {
 	UINT32 regs[CPU_REG_NUM];
@@ -215,7 +216,7 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 	switch (task_sel->desc.type) {
 	case CPU_SYSDESC_TYPE_TSS_32:
 	case CPU_SYSDESC_TYPE_TSS_BUSY_32:
-		if (task_sel->desc.u.seg.limit < TSS_SIZE_32) {
+		if (task_sel->desc.u.seg.limit < TSS_32_LIMIT) {
 			EXCEPTION(TS_EXCEPTION, task_sel->idx);
 		}
 		task16 = 0;
@@ -223,7 +224,7 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 
 	case CPU_SYSDESC_TYPE_TSS_16:
 	case CPU_SYSDESC_TYPE_TSS_BUSY_16:
-		if (task_sel->desc.u.seg.limit < TSS_SIZE_16) {
+		if (task_sel->desc.u.seg.limit < TSS_16_LIMIT) {
 			EXCEPTION(TS_EXCEPTION, task_sel->idx);
 		}
 		task16 = 1;
@@ -332,7 +333,7 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 		/*FALLTHROUGH*/
 	case TASK_SWITCH_JMP:
 		/* clear busy flags in current task */
-		set_task_free(CPU_TR, &CPU_TR_DESC);
+		set_task_free(CPU_TR);
 		break;
 
 	case TASK_SWITCH_CALL:
@@ -407,9 +408,9 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 		new_flags |= NT_FLAG;
 		/*FALLTHROUGH*/
 	case TASK_SWITCH_JMP:
-		set_task_busy(task_sel->selector, &task_sel->desc);
+		set_task_busy(task_sel->selector);
 		break;
-	
+
 	case TASK_SWITCH_IRET:
 		/* check busy flag is active */
 		if (SEG_IS_VALID(&task_sel->desc)) {
@@ -429,15 +430,13 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 	/* load task selector to CPU_TR */
 	CPU_TR = task_sel->selector;
 	CPU_TR_DESC = task_sel->desc;
-
-	/* clear BUSY flag in descriptor cache */
-	CPU_TR_DESC.type &= ~CPU_SYSDESC_TYPE_TSS_BUSY_IND;
+	CPU_TR_DESC.type |= CPU_SYSDESC_TYPE_TSS_BUSY_IND;
 
 	/* set CR0 image CPU_CR0_TS */
 	CPU_CR0 |= CPU_CR0_TS;
 
 	/*
-	 * load task state (CR3, EFLAG, EIP, GPR, segreg, LDTR)
+	 * load task state (CR3, EIP, GPR, segregs, LDTR, EFLAGS)
 	 */
 
 	/* set new CR3 */
@@ -445,22 +444,27 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 		set_cr3(cr3);
 	}
 
-	/* set new EIP, GPR */
+	/* set new EIP, GPR, segregs */
 	CPU_EIP = eip;
 	for (i = 0; i < CPU_REG_NUM; i++) {
 		CPU_REGS_DWORD(i) = regs[i];
 	}
 	for (i = 0; i < CPU_SEGREG_NUM; i++) {
 		segdesc_init(i, sreg[i], &CPU_STAT_SREG(i));
+		/* invalidate segreg descriptor */
+		CPU_STAT_SREG(i).valid = 0;
 	}
 
+	CPU_CLEAR_PREV_ESP();
+
 	/* load new LDTR */
+	CPU_LDTR_DESC.valid = 0;
 	load_ldtr(ldtr, TS_EXCEPTION);
 
 	/* I/O deny bitmap */
 	CPU_STAT_IOLIMIT = 0;
-	if (!task16 && iobase != 0 && iobase < task_sel->desc.u.seg.limit) {
-		CPU_STAT_IOLIMIT = (UINT16)(task_sel->desc.u.seg.limit - iobase);
+	if (!task16 && iobase != 0 && iobase < CPU_TR_DESC.u.seg.limit) {
+		CPU_STAT_IOLIMIT = (UINT16)(CPU_TR_DESC.u.seg.limit - iobase);
 		CPU_STAT_IOADDR = task_base + iobase;
 	}
 	VERBOSE(("task_switch: ioaddr = %08x, limit = %08x", CPU_STAT_IOADDR, CPU_STAT_IOLIMIT));
@@ -486,11 +490,6 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 
 	/* set new segment register */
 	if (!CPU_STAT_VM86) {
-		/* clear segment descriptor cache */
-		for (i = 0; i < CPU_SEGREG_NUM; i++) {
-			segdesc_clear(&CPU_STAT_SREG(i));
-		}
-
 		/* load CS */
 		rv = parse_selector(&cs_sel, sreg[CPU_CS_INDEX]);
 		if (rv < 0) {
@@ -548,22 +547,17 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 			EXCEPTION(SS_EXCEPTION, ss_sel.idx);
 		}
 
-		/* Now loading CS/SS register */
-		load_cs(cs_sel.selector, &cs_sel.desc, cs_sel.rpl);
+		/* Now loading SS register */
 		load_ss(ss_sel.selector, &ss_sel.desc, cs_sel.rpl);
 
 		/* load ES, DS, FS, GS segment register */
-		for (i = 0; i < CPU_SEGREG_NUM; i++) {
-			if (i != CPU_CS_INDEX || i != CPU_SS_INDEX) {
-				LOAD_SEGREG1(i, sreg[i], TS_EXCEPTION);
-			}
-		}
-	}
+		LOAD_SEGREG1(CPU_ES_INDEX, sreg[CPU_ES_INDEX], TS_EXCEPTION);
+		LOAD_SEGREG1(CPU_DS_INDEX, sreg[CPU_DS_INDEX], TS_EXCEPTION);
+		LOAD_SEGREG1(CPU_FS_INDEX, sreg[CPU_FS_INDEX], TS_EXCEPTION);
+		LOAD_SEGREG1(CPU_GS_INDEX, sreg[CPU_GS_INDEX], TS_EXCEPTION);
 
-	/* out of range */
-	if (CPU_EIP > CPU_STAT_CS_LIMIT) {
-		VERBOSE(("task_switch: new_ip is out of range. new_ip = %08x, limit = %08x", CPU_EIP, CPU_STAT_CS_LIMIT));
-		EXCEPTION(GP_EXCEPTION, 0);
+		/* Now loading CS register */
+		load_cs(cs_sel.selector, &cs_sel.desc, cs_sel.rpl);
 	}
 
 	VERBOSE(("task_switch: done."));

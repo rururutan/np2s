@@ -28,26 +28,26 @@
 
 /* args == 1 */
 #define	ARITH_INSTRUCTION_1(inst) \
-static UINT32 \
+static UINT32 CPUCALL \
 inst##1(UINT32 dst, void *arg) \
 { \
 	BYTE_##inst(dst); \
 	return dst; \
 } \
-static UINT32 \
+static UINT32 CPUCALL \
 inst##2(UINT32 dst, void *arg) \
 { \
 	WORD_##inst(dst); \
 	return dst; \
 } \
-static UINT32 \
+static UINT32 CPUCALL \
 inst##4(UINT32 dst, void *arg) \
 { \
 	DWORD_##inst(dst); \
 	return dst; \
 } \
 \
-void \
+void CPUCALL \
 inst##_Eb(UINT32 op) \
 { \
 	UINT8 *out; \
@@ -66,7 +66,7 @@ inst##_Eb(UINT32 op) \
 	} \
 } \
 \
-void \
+void CPUCALL \
 inst##_Ew(UINT32 op) \
 { \
 	UINT16 *out; \
@@ -85,7 +85,7 @@ inst##_Ew(UINT32 op) \
 	} \
 } \
 \
-void \
+void CPUCALL \
 inst##_Ed(UINT32 op) \
 { \
 	UINT32 *out; \
@@ -106,21 +106,21 @@ inst##_Ed(UINT32 op) \
 
 /* args == 2 */
 #define	ARITH_INSTRUCTION_2(inst) \
-static UINT32 \
+static UINT32 CPUCALL \
 inst##1(UINT32 dst, void *arg) \
 { \
 	UINT32 src = PTR_TO_UINT32(arg); \
 	BYTE_##inst(dst, src); \
 	return dst; \
 } \
-static UINT32 \
+static UINT32 CPUCALL \
 inst##2(UINT32 dst, void *arg) \
 { \
 	UINT32 src = PTR_TO_UINT32(arg); \
 	WORD_##inst(dst, src); \
 	return dst; \
 } \
-static UINT32 \
+static UINT32 CPUCALL \
 inst##4(UINT32 dst, void *arg) \
 { \
 	UINT32 src = PTR_TO_UINT32(arg); \
@@ -260,7 +260,7 @@ inst##_EAXId(void) \
 	CPU_EAX = dst; \
 } \
 \
-void \
+void CPUCALL \
 inst##_EbIb(UINT8 *regp, UINT32 src) \
 { \
 	UINT32 dst; \
@@ -270,14 +270,14 @@ inst##_EbIb(UINT8 *regp, UINT32 src) \
 	*regp = (UINT8)dst; \
 } \
 \
-void \
+void CPUCALL \
 inst##_EbIb_ext(UINT32 madr, UINT32 src) \
 { \
 \
 	cpu_memory_access_va_RMW(CPU_INST_SEGREG_INDEX, madr, inst##1, UINT32_TO_PTR(src)); \
 } \
 \
-void \
+void CPUCALL \
 inst##_EwIx(UINT16 *regp, UINT32 src) \
 { \
 	UINT32 dst; \
@@ -287,14 +287,14 @@ inst##_EwIx(UINT16 *regp, UINT32 src) \
 	*regp = (UINT16)dst; \
 } \
 \
-void \
+void CPUCALL \
 inst##_EwIx_ext(UINT32 madr, UINT32 src) \
 { \
 \
 	cpu_memory_access_va_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##2, UINT32_TO_PTR(src)); \
 } \
 \
-void \
+void CPUCALL \
 inst##_EdIx(UINT32 *regp, UINT32 src) \
 { \
 	UINT32 dst; \
@@ -304,7 +304,7 @@ inst##_EdIx(UINT32 *regp, UINT32 src) \
 	*regp = dst; \
 } \
 \
-void \
+void CPUCALL \
 inst##_EdIx_ext(UINT32 madr, UINT32 src) \
 { \
 \
@@ -313,7 +313,7 @@ inst##_EdIx_ext(UINT32 madr, UINT32 src) \
 
 /* args == 3 */
 #define	ARITH_INSTRUCTION_3(inst) \
-static UINT32 \
+static UINT32 CPUCALL \
 inst##1(UINT32 dst, void *arg) \
 { \
 	UINT32 src = PTR_TO_UINT32(arg); \
@@ -321,7 +321,7 @@ inst##1(UINT32 dst, void *arg) \
 	BYTE_##inst(res, dst, src); \
 	return res; \
 } \
-static UINT32 \
+static UINT32 CPUCALL \
 inst##2(UINT32 dst, void *arg) \
 { \
 	UINT32 src = PTR_TO_UINT32(arg); \
@@ -329,7 +329,7 @@ inst##2(UINT32 dst, void *arg) \
 	WORD_##inst(res, dst, src); \
 	return res; \
 } \
-static UINT32 \
+static UINT32 CPUCALL \
 inst##4(UINT32 dst, void *arg) \
 { \
 	UINT32 src = PTR_TO_UINT32(arg); \
@@ -470,7 +470,7 @@ inst##_EAXId(void) \
 	CPU_EAX = res; \
 } \
 \
-void \
+void CPUCALL \
 inst##_EbIb(UINT8 *regp, UINT32 src) \
 { \
 	UINT32 dst, res; \
@@ -480,14 +480,14 @@ inst##_EbIb(UINT8 *regp, UINT32 src) \
 	*regp = (UINT8)res; \
 } \
 \
-void \
+void CPUCALL \
 inst##_EbIb_ext(UINT32 madr, UINT32 src) \
 { \
 \
 	cpu_memory_access_va_RMW(CPU_INST_SEGREG_INDEX, madr, inst##1, UINT32_TO_PTR(src)); \
 } \
 \
-void \
+void CPUCALL \
 inst##_EwIx(UINT16 *regp, UINT32 src) \
 { \
 	UINT32 dst, res; \
@@ -497,14 +497,14 @@ inst##_EwIx(UINT16 *regp, UINT32 src) \
 	*regp = (UINT16)res; \
 } \
 \
-void \
+void CPUCALL \
 inst##_EwIx_ext(UINT32 madr, UINT32 src) \
 { \
 \
 	cpu_memory_access_va_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##2, UINT32_TO_PTR(src)); \
 } \
 \
-void \
+void CPUCALL \
 inst##_EdIx(UINT32 *regp, UINT32 src) \
 { \
 	UINT32 dst, res; \
@@ -514,7 +514,7 @@ inst##_EdIx(UINT32 *regp, UINT32 src) \
 	*regp = res; \
 } \
 \
-void \
+void CPUCALL \
 inst##_EdIx_ext(UINT32 madr, UINT32 src) \
 { \
 \

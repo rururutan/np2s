@@ -30,28 +30,28 @@
  * shift/rorate instruction macro
  */
 #define	SHIFT_ROTATE_INSTRUCTION(inst) \
-static UINT32 \
+static UINT32 CPUCALL \
 inst##1(UINT32 src, void *arg) \
 { \
 	UINT32 dst; \
 	BYTE_##inst##1(dst, src); \
 	return dst; \
 } \
-static UINT32 \
+static UINT32 CPUCALL \
 inst##2(UINT32 src, void *arg) \
 { \
 	UINT32 dst; \
 	WORD_##inst##1(dst, src); \
 	return dst; \
 } \
-static UINT32 \
+static UINT32 CPUCALL \
 inst##4(UINT32 src, void *arg) \
 { \
 	UINT32 dst; \
 	DWORD_##inst##1(dst, src); \
 	return dst; \
 } \
-static UINT32 \
+static UINT32 CPUCALL \
 inst##CL1(UINT32 src, void *arg) \
 { \
 	UINT32 cl = PTR_TO_UINT32(arg); \
@@ -59,7 +59,7 @@ inst##CL1(UINT32 src, void *arg) \
 	BYTE_##inst##CL(dst, src, cl); \
 	return dst; \
 } \
-static UINT32 \
+static UINT32 CPUCALL \
 inst##CL2(UINT32 src, void *arg) \
 { \
 	UINT32 cl = PTR_TO_UINT32(arg); \
@@ -67,7 +67,7 @@ inst##CL2(UINT32 src, void *arg) \
 	WORD_##inst##CL(dst, src, cl); \
 	return dst; \
 } \
-static UINT32 \
+static UINT32 CPUCALL \
 inst##CL4(UINT32 src, void *arg) \
 { \
 	UINT32 cl = PTR_TO_UINT32(arg); \
@@ -76,7 +76,7 @@ inst##CL4(UINT32 src, void *arg) \
 	return dst; \
 } \
 \
-void \
+void CPUCALL \
 inst##_Eb(UINT8 *out) \
 { \
 	UINT32 src, dst; \
@@ -86,14 +86,14 @@ inst##_Eb(UINT8 *out) \
 	*out = (UINT8)dst; \
 } \
 \
-void \
+void CPUCALL \
 inst##_Eb_ext(UINT32 madr) \
 { \
 \
 	cpu_memory_access_va_RMW(CPU_INST_SEGREG_INDEX, madr, inst##1, 0); \
 } \
 \
-void \
+void CPUCALL \
 inst##_Ew(UINT16 *out) \
 { \
 	UINT32 src, dst; \
@@ -103,14 +103,14 @@ inst##_Ew(UINT16 *out) \
 	*out = (UINT16)dst; \
 } \
 \
-void \
+void CPUCALL \
 inst##_Ew_ext(UINT32 madr) \
 { \
 \
 	cpu_memory_access_va_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##2, 0); \
 } \
 \
-void \
+void CPUCALL \
 inst##_Ed(UINT32 *out) \
 { \
 	UINT32 src, dst; \
@@ -120,7 +120,7 @@ inst##_Ed(UINT32 *out) \
 	*out = dst; \
 } \
 \
-void \
+void CPUCALL \
 inst##_Ed_ext(UINT32 madr) \
 { \
 \
@@ -128,7 +128,7 @@ inst##_Ed_ext(UINT32 madr) \
 } \
 \
 /* ExCL, ExIb */ \
-void \
+void CPUCALL \
 inst##_EbCL(UINT8 *out, UINT32 cl) \
 { \
 	UINT32 src, dst; \
@@ -138,14 +138,14 @@ inst##_EbCL(UINT8 *out, UINT32 cl) \
 	*out = (UINT8)dst; \
 } \
 \
-void \
+void CPUCALL \
 inst##_EbCL_ext(UINT32 madr, UINT32 cl) \
 { \
 \
 	cpu_memory_access_va_RMW(CPU_INST_SEGREG_INDEX, madr, inst##CL1, (void *)cl); \
 } \
 \
-void \
+void CPUCALL \
 inst##_EwCL(UINT16 *out, UINT32 cl) \
 { \
 	UINT32 src, dst; \
@@ -155,14 +155,14 @@ inst##_EwCL(UINT16 *out, UINT32 cl) \
 	*out = (UINT16)dst; \
 } \
 \
-void \
+void CPUCALL \
 inst##_EwCL_ext(UINT32 madr, UINT32 cl) \
 { \
 \
 	cpu_memory_access_va_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##CL2, (void *)cl); \
 } \
 \
-void \
+void CPUCALL \
 inst##_EdCL(UINT32 *out, UINT32 cl) \
 { \
 	UINT32 src, dst; \
@@ -172,7 +172,7 @@ inst##_EdCL(UINT32 *out, UINT32 cl) \
 	*out = dst; \
 } \
 \
-void \
+void CPUCALL \
 inst##_EdCL_ext(UINT32 madr, UINT32 cl) \
 { \
 \
@@ -188,7 +188,7 @@ struct SHxD_arg {
 };
 
 #define	SHxD_INSTRUCTION(inst) \
-static UINT32 \
+static UINT32 CPUCALL \
 inst##2(UINT32 dst, void *arg) \
 { \
 	struct SHxD_arg *p = (struct SHxD_arg *)arg; \
@@ -197,7 +197,7 @@ inst##2(UINT32 dst, void *arg) \
 	WORD_##inst(dst, src, cl); \
 	return dst; \
 } \
-static UINT32 \
+static UINT32 CPUCALL \
 inst##4(UINT32 dst, void *arg) \
 { \
 	struct SHxD_arg *p = (struct SHxD_arg *)arg; \
@@ -298,7 +298,7 @@ inst##_EdGdCL(void) \
 }
 
 
-/* Pentium!!! - ¥·¥Õ¥È¥«¥¦¥ó¥È != 1¤Î¾ì¹ç¤ÏOV¤ÏÉÔÊÑ¤é¤¹¤¤ */
+/* Pentium!!! - ã‚·ãƒ•ãƒˆã‚«ã‚¦ãƒ³ãƒˆ != 1ã®å ´åˆã¯OVã¯ä¸å¤‰ã‚‰ã™ã„ */
 
 /*
  * SAR
@@ -881,8 +881,9 @@ do { \
 			CPU_OV = ((s) >> 31) ^ tmp; \
 		} \
 		while ((c)--) { \
-			tmp = (s) & 1; \
+			UINT32 tmp2 = (s) & 1; \
 			(s) = (tmp << 31) | ((s) >> 1); \
+			tmp = tmp2; \
 		} \
 		CPU_FLAGL |= tmp; \
 	} \
@@ -962,9 +963,9 @@ do { \
 			CPU_OV = ((s) + 0x40000000) & 0x80000000; \
 		} \
 		while ((c)--) { \
-			tmp = (s) & 0x80000000; \
+			UINT32 tmp2 = (s) & 0x80000000; \
 			(s) = ((s) << 1) | (tmp & 1); \
-			tmp >>= 31; \
+			tmp = tmp2 >> 31; \
 		} \
 		CPU_FLAGL |= tmp; \
 	} \

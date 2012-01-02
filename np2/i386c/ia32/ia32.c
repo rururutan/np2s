@@ -130,9 +130,9 @@ ia32_setemm(UINT frame, UINT32 addr) {
 
 
 /*
- * •‚°º•…¡´∞‹
+ * „É¢„Éº„ÉâÈÅ∑Áßª
  */
-void FASTCALL
+void CPUCALL
 change_pm(BOOL onoff)
 {
 #if 0
@@ -159,7 +159,7 @@ change_pm(BOOL onoff)
 	CPU_STAT_PM = onoff;
 }
 
-void FASTCALL
+void CPUCALL
 change_pg(BOOL onoff)
 {
 
@@ -172,7 +172,7 @@ change_pg(BOOL onoff)
 	CPU_STAT_PAGING = onoff;
 }
 
-void FASTCALL
+void CPUCALL
 change_vm(BOOL onoff)
 {
 	int i;
@@ -197,7 +197,7 @@ change_vm(BOOL onoff)
 /*
  * flags
  */
-static void FASTCALL
+static void CPUCALL
 modify_eflags(UINT32 new_flags, UINT32 mask)
 {
 	UINT32 orig = CPU_EFLAG;
@@ -219,7 +219,7 @@ modify_eflags(UINT32 new_flags, UINT32 mask)
 	}
 }
 
-void FASTCALL
+void CPUCALL
 set_flags(UINT16 new_flags, UINT16 mask)
 {
 
@@ -228,7 +228,7 @@ set_flags(UINT16 new_flags, UINT16 mask)
 	modify_eflags(new_flags, mask);
 }
 
-void FASTCALL
+void CPUCALL
 set_eflags(UINT32 new_flags, UINT32 mask)
 {
 
@@ -241,7 +241,7 @@ set_eflags(UINT32 new_flags, UINT32 mask)
 /*
  * CR3 (Page Directory Entry base physical address)
  */
-void FASTCALL
+void CPUCALL
 set_cr3(UINT32 new_cr3)
 {
 
@@ -255,7 +255,7 @@ set_cr3(UINT32 new_cr3)
 /*
  * CPL (Current Privilege Level)
  */
-void FASTCALL
+void CPUCALL
 set_cpl(int new_cpl)
 {
 	int cpl = new_cpl & 3;

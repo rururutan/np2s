@@ -107,7 +107,7 @@ ok_button_clicked(GtkButton *b, gpointer d)
 		video_lcd |= video_lcdrev ? 2 : 0;
 	}
 	if (np2cfg.LCD_MODE != video_lcd) {
-		np2cfg.LCD_MODE |= video_lcd;
+		np2cfg.LCD_MODE = video_lcd;
 		pal_makelcdpal();
 		renewal = TRUE;
 	}

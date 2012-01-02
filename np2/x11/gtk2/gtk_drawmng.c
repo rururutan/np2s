@@ -92,7 +92,7 @@ drawmng_create(void *parent, int width, int height)
 	}
 	bytes_per_pixel = fmt.bits_per_pixel / 8;
 
-	hdl->d.dest.x = hdl->d.dest.x = 0;
+	hdl->d.dest.x = hdl->d.dest.y = 0;
 	hdl->d.src.left = hdl->d.src.top = 0;
 	hdl->d.src.right = width;
 	hdl->d.src.bottom = height;

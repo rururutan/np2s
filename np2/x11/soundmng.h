@@ -38,6 +38,8 @@ void soundmng_deinitialize(void);
 BOOL soundmng_pcmload(UINT num, const char *filename);
 void soundmng_pcmvolume(UINT num, int volume);
 
+extern int pcm_volume_default;
+
 #else	/* NOSOUND */
 
 #define soundmng_create(rate, ms)	0

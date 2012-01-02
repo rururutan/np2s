@@ -30,7 +30,7 @@
 #include "system_inst.h"
 
 
-void
+void CPUCALL
 LGDT_Ms(UINT32 op)
 {
 	UINT32 madr;
@@ -61,7 +61,7 @@ LGDT_Ms(UINT32 op)
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
-void
+void CPUCALL
 SGDT_Ms(UINT32 op)
 {
 	UINT32 madr;
@@ -83,7 +83,7 @@ SGDT_Ms(UINT32 op)
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
-void
+void CPUCALL
 LLDT_Ew(UINT32 op)
 {
 	UINT32 madr;
@@ -109,7 +109,7 @@ LLDT_Ew(UINT32 op)
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
-void
+void CPUCALL
 SLDT_Ew(UINT32 op)
 {
 	UINT32 madr;
@@ -135,7 +135,7 @@ SLDT_Ew(UINT32 op)
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
-void
+void CPUCALL
 LTR_Ew(UINT32 op)
 {
 	UINT32 madr;
@@ -161,7 +161,7 @@ LTR_Ew(UINT32 op)
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
-void
+void CPUCALL
 STR_Ew(UINT32 op)
 {
 	UINT32 madr;
@@ -187,7 +187,7 @@ STR_Ew(UINT32 op)
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
-void
+void CPUCALL
 LIDT_Ms(UINT32 op)
 {
 	UINT32 madr;
@@ -218,7 +218,7 @@ LIDT_Ms(UINT32 op)
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
-void
+void CPUCALL
 SIDT_Ms(UINT32 op)
 {
 	UINT32 madr;
@@ -274,7 +274,7 @@ MOV_CdRd(void)
 			 * 31 = PG (pageing)
 			 */
 
-			/* ≤º¥¨ p.182 ≥‰§Íπ˛§ﬂ 13 - ∞Ï»Ã ›∏ÓŒ„≥∞ */
+			/* ‰∏ãÂ∑ª p.182 Ââ≤„ÇäËæº„Åø 13 - ‰∏ÄËà¨‰øùË≠∑‰æãÂ§ñ */
 			if ((src & (CPU_CR0_PE|CPU_CR0_PG)) == (UINT32)CPU_CR0_PG) {
 				EXCEPTION(GP_EXCEPTION, 0);
 			}
@@ -425,7 +425,7 @@ MOV_RdCd(void)
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
-void
+void CPUCALL
 LMSW_Ew(UINT32 op)
 {
 	UINT32 src, madr;
@@ -453,7 +453,7 @@ LMSW_Ew(UINT32 op)
 	EXCEPTION(GP_EXCEPTION, 0);
 }
 
-void
+void CPUCALL
 SMSW_Ew(UINT32 op)
 {
 	UINT32 madr;
@@ -747,7 +747,7 @@ LSL_GdEw(void)
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
-void
+void CPUCALL
 VERR_Ew(UINT32 op)
 {
 	selector_t sel;
@@ -800,7 +800,7 @@ VERR_Ew(UINT32 op)
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
-void
+void CPUCALL
 VERW_Ew(UINT32 op)
 {
 	selector_t sel;
@@ -983,7 +983,7 @@ WBINVD(void)
 	}
 }
 
-void
+void CPUCALL
 INVLPG(UINT32 op)
 {
 	descriptor_t *sdp;
@@ -1041,6 +1041,7 @@ HLT(void)
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
 
+	VERBOSE(("HLT: do HLT."));
 	CPU_HALT();
 	CPU_EIP = CPU_PREV_EIP;
 	CPU_STAT_HLT = 1;
@@ -1083,7 +1084,7 @@ WRMSR(void)
 
 	idx = CPU_ECX;
 	switch (idx) {
-		/* MTRR §ÿ§ŒΩÒ§≠π˛§ﬂª˛ tlb_flush(1); */
+		/* MTRR „Å∏„ÅÆÊõ∏„ÅçËæº„ÅøÊôÇ tlb_flush(1); */
 
 	default:
 		EXCEPTION(GP_EXCEPTION, 0);

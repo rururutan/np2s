@@ -134,7 +134,7 @@ memory_dump(int idx, UINT32 madr)
 		size = 0x100;
 		addr = madr - 0x80;
 	}
-	VERBOSE(("memory dump\n-- \n"));
+	VERBOSE(("memory dump\n--"));
 	for (s = 0; s < size; s++) {
 		if ((s % 16) == 0) {
 			VERBOSE(("%08x: ", addr + s));
@@ -251,7 +251,7 @@ segdesc_dump(descriptor_t *sdp)
 
 	__ASSERT(sdp != NULL);
 
-	VERBOSE(("\ndump descriptor", sdp));
+	VERBOSE(("\ndump descriptor: %p", sdp));
 
 	VERBOSE(("valid    : %s", SEG_IS_VALID(sdp) ? "true" : "false"));
 	VERBOSE(("present  : %s", SEG_IS_PRESENT(sdp) ? "true" : "false"));
@@ -335,7 +335,6 @@ segdesc_dump(descriptor_t *sdp)
 			break;
 		}
 	}
-	VERBOSE(("\n"));
 #endif
 }
 

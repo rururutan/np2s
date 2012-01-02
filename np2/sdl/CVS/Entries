@@ -24,7 +24,6 @@ D/slzaurus////
 D/win32s////
 /ank10.res/1.2/Fri Jun 25 11:47:12 2004//
 /ank12.res/1.1/Fri Jun 25 11:47:12 2004//
-/dosio.c/1.8/Sat Feb 12 12:14:00 2005//
 /fontmng.c/1.6/Sat Mar 26 05:46:30 2005//
 /makefile.win/1.15/Sat Mar 19 23:06:18 2005//
 /makefile.zau/1.15/Sat Mar 19 23:06:18 2005//
@@ -43,3 +42,4 @@ D/win32s////
 /timemng.c/1.1/Fri Nov 21 06:51:14 2003//
 /timemng.h/1.1/Fri Nov 21 06:51:14 2003//
 /trace.h/1.1/Fri Nov 21 06:51:14 2003//
+/dosio.c/1.9/Mon Jan  2 14:55:16 2012//

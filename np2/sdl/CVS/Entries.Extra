@@ -24,7 +24,6 @@ D/slzaurus///////
 D/win32s///////
 /ank10.res///////
 /ank12.res///////
-/dosio.c///////
 /fontmng.c///////
 /makefile.win///////
 /makefile.zau///////
@@ -43,3 +42,4 @@ D/win32s///////
 /timemng.c///////
 /timemng.h///////
 /trace.h///////
+/dosio.c///////

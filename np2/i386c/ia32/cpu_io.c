@@ -30,9 +30,9 @@
 #include "iocore.h"
 #include "memory.h"
 
-static void IOOUTCALL check_io(UINT port, UINT len);
+static void CPUCALL check_io(UINT port, UINT len);
 
-static void IOOUTCALL
+static void CPUCALL
 check_io(UINT port, UINT len) 
 {
 	UINT off;
@@ -62,7 +62,7 @@ check_io(UINT port, UINT len)
 	}
 }
 
-UINT8
+UINT8 IOINPCALL
 cpu_in(UINT port)
 {
 
@@ -72,7 +72,7 @@ cpu_in(UINT port)
 	return iocore_inp8(port);
 }
 
-UINT16
+UINT16 IOINPCALL
 cpu_in_w(UINT port)
 {
 
@@ -82,7 +82,7 @@ cpu_in_w(UINT port)
 	return iocore_inp16(port);
 }
 
-UINT32
+UINT32 IOINPCALL
 cpu_in_d(UINT port)
 {
 
@@ -92,7 +92,7 @@ cpu_in_d(UINT port)
 	return iocore_inp32(port);
 }
 
-void
+void IOOUTCALL
 cpu_out(UINT port, UINT8 data)
 {
 
@@ -102,7 +102,7 @@ cpu_out(UINT port, UINT8 data)
 	iocore_out8(port, data);
 }
 
-void
+void IOOUTCALL
 cpu_out_w(UINT port, UINT16 data)
 {
 
@@ -112,7 +112,7 @@ cpu_out_w(UINT port, UINT16 data)
 	iocore_out16(port, data);
 }
 
-void
+void IOOUTCALL
 cpu_out_d(UINT port, UINT32 data)
 {
 

@@ -30,9 +30,9 @@
 extern "C" {
 #endif
 
-void JMPfar_pm(UINT16 selector, UINT32 new_ip);
-void CALLfar_pm(UINT16 selector, UINT32 new_ip);
-void RETfar_pm(UINT nbytes);
+void CPUCALL JMPfar_pm(UINT16 selector, UINT32 new_ip);
+void CPUCALL CALLfar_pm(UINT16 selector, UINT32 new_ip);
+void CPUCALL RETfar_pm(UINT nbytes);
 void IRET_pm(void);
 
 #ifdef __cplusplus

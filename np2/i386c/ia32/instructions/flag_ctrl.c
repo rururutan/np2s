@@ -128,6 +128,7 @@ POPF_Fw(void)
 	UINT16 flags, mask;
 
 	CPU_WORKCLOCK(3);
+	CPU_SET_PREV_ESP();
 	if (!CPU_STAT_PM) {
 		/* Real Mode */
 		POP0_16(flags);
@@ -153,6 +154,7 @@ POPF_Fw(void)
 		/* compiler happy */
 	}
 	set_eflags(flags, mask);
+	CPU_CLEAR_PREV_ESP();
 	IRQCHECKTERM();
 }
 
@@ -162,6 +164,7 @@ POPFD_Fd(void)
 	UINT32 flags, mask;
 
 	CPU_WORKCLOCK(3);
+	CPU_SET_PREV_ESP();
 	if (!CPU_STAT_PM) {
 		/* Real Mode */
 		POP0_32(flags);
@@ -191,6 +194,7 @@ POPFD_Fd(void)
 		/* compiler happy */
 	}
 	set_eflags(flags, mask);
+	CPU_CLEAR_PREV_ESP();
 	IRQCHECKTERM();
 }
 

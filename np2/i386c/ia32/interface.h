@@ -30,6 +30,14 @@
 #define	CPUCALL
 #endif
 
+#ifndef	STATIC_INLINE
+#if defined(__GNUC__)
+#define	STATIC_INLINE	static INLINE __attribute__((unused))
+#else
+#define	STATIC_INLINE	static INLINE
+#endif
+#endif
+
 #if !defined(QWORD_CONST)
 #define	QWORD_CONST(v)	v ## ULL
 #define	SQWORD_CONST(v)	v ## LL
