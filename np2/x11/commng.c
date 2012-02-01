@@ -42,7 +42,7 @@ ncrelease(COMMNG self)
 	/* Nothing to do */
 }
 
-static const _COMMNG com_nc = {
+static _COMMNG com_nc = {
 	COMCONNECT_OFF, ncread, ncwrite, ncgetstat, ncmsg, ncrelease
 };
 

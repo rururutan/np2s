@@ -267,7 +267,7 @@ static const char *joypad_num_str[256] = {
 	"248", "249", "250", "251", "252", "253", "254", "255", 
 };
 
-static const joymng_devinfo_t **joypad_devlist;
+static joymng_devinfo_t **joypad_devlist;
 static GtkWidget *joypad_use_checkbutton[1];
 static GtkWidget *joypad_devlist_combo;
 static GtkWidget *joypad_axis_combo[JOY_NAXIS];
@@ -654,7 +654,7 @@ static void
 driver_radiobutton_clicked(GtkButton *b, gpointer d)
 {
 
-	driver_snddrv = (int)d;
+	driver_snddrv = GPOINTER_TO_UINT(d);
 }
 
 static GtkWidget *

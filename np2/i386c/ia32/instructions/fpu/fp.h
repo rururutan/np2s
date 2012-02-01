@@ -31,6 +31,7 @@ extern "C" {
 #endif
 
 void fpu_init(void);
+void fpu_fwait(void);
 
 void FWAIT(void);
 void ESC0(void);

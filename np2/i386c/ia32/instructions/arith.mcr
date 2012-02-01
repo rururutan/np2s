@@ -62,7 +62,7 @@ inst##_Eb(UINT32 op) \
 	} else { \
 		CPU_WORKCLOCK(5); \
 		madr = calc_ea_dst(op); \
-		cpu_memory_access_va_RMW(CPU_INST_SEGREG_INDEX, madr, inst##1, 0); \
+		cpu_vmemory_RMW_b(CPU_INST_SEGREG_INDEX, madr, inst##1, 0); \
 	} \
 } \
 \
@@ -81,7 +81,7 @@ inst##_Ew(UINT32 op) \
 	} else { \
 		CPU_WORKCLOCK(5); \
 		madr = calc_ea_dst(op); \
-		cpu_memory_access_va_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##2, 0); \
+		cpu_vmemory_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##2, 0); \
 	} \
 } \
 \
@@ -100,7 +100,7 @@ inst##_Ed(UINT32 op) \
 	} else { \
 		CPU_WORKCLOCK(5); \
 		madr = calc_ea_dst(op); \
-		cpu_memory_access_va_RMW_d(CPU_INST_SEGREG_INDEX, madr, inst##4, 0); \
+		cpu_vmemory_RMW_d(CPU_INST_SEGREG_INDEX, madr, inst##4, 0); \
 	} \
 }
 
@@ -144,7 +144,7 @@ inst##_EbGb(void) \
 	} else { \
 		CPU_WORKCLOCK(7); \
 		madr = calc_ea_dst(op); \
-		cpu_memory_access_va_RMW(CPU_INST_SEGREG_INDEX, madr, inst##1, UINT32_TO_PTR(src)); \
+		cpu_vmemory_RMW_b(CPU_INST_SEGREG_INDEX, madr, inst##1, UINT32_TO_PTR(src)); \
 	} \
 } \
 \
@@ -164,7 +164,7 @@ inst##_EwGw(void) \
 	} else { \
 		CPU_WORKCLOCK(7); \
 		madr = calc_ea_dst(op); \
-		cpu_memory_access_va_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##2, UINT32_TO_PTR(src)); \
+		cpu_vmemory_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##2, UINT32_TO_PTR(src)); \
 	} \
 } \
 \
@@ -184,7 +184,7 @@ inst##_EdGd(void) \
 	} else { \
 		CPU_WORKCLOCK(7); \
 		madr = calc_ea_dst(op); \
-		cpu_memory_access_va_RMW_d(CPU_INST_SEGREG_INDEX, madr, inst##4, UINT32_TO_PTR(src)); \
+		cpu_vmemory_RMW_d(CPU_INST_SEGREG_INDEX, madr, inst##4, UINT32_TO_PTR(src)); \
 	} \
 } \
 \
@@ -274,7 +274,7 @@ void CPUCALL \
 inst##_EbIb_ext(UINT32 madr, UINT32 src) \
 { \
 \
-	cpu_memory_access_va_RMW(CPU_INST_SEGREG_INDEX, madr, inst##1, UINT32_TO_PTR(src)); \
+	cpu_vmemory_RMW_b(CPU_INST_SEGREG_INDEX, madr, inst##1, UINT32_TO_PTR(src)); \
 } \
 \
 void CPUCALL \
@@ -291,7 +291,7 @@ void CPUCALL \
 inst##_EwIx_ext(UINT32 madr, UINT32 src) \
 { \
 \
-	cpu_memory_access_va_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##2, UINT32_TO_PTR(src)); \
+	cpu_vmemory_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##2, UINT32_TO_PTR(src)); \
 } \
 \
 void CPUCALL \
@@ -308,7 +308,7 @@ void CPUCALL \
 inst##_EdIx_ext(UINT32 madr, UINT32 src) \
 { \
 \
-	cpu_memory_access_va_RMW_d(CPU_INST_SEGREG_INDEX, madr, inst##4, UINT32_TO_PTR(src)); \
+	cpu_vmemory_RMW_d(CPU_INST_SEGREG_INDEX, madr, inst##4, UINT32_TO_PTR(src)); \
 }
 
 /* args == 3 */
@@ -354,7 +354,7 @@ inst##_EbGb(void) \
 	} else { \
 		CPU_WORKCLOCK(7); \
 		madr = calc_ea_dst(op); \
-		cpu_memory_access_va_RMW(CPU_INST_SEGREG_INDEX, madr, inst##1, UINT32_TO_PTR(src)); \
+		cpu_vmemory_RMW_b(CPU_INST_SEGREG_INDEX, madr, inst##1, UINT32_TO_PTR(src)); \
 	} \
 } \
 \
@@ -374,7 +374,7 @@ inst##_EwGw(void) \
 	} else { \
 		CPU_WORKCLOCK(7); \
 		madr = calc_ea_dst(op); \
-		cpu_memory_access_va_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##2, UINT32_TO_PTR(src)); \
+		cpu_vmemory_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##2, UINT32_TO_PTR(src)); \
 	} \
 } \
 \
@@ -394,7 +394,7 @@ inst##_EdGd(void) \
 	} else { \
 		CPU_WORKCLOCK(7); \
 		madr = calc_ea_dst(op); \
-		cpu_memory_access_va_RMW_d(CPU_INST_SEGREG_INDEX, madr, inst##4, UINT32_TO_PTR(src)); \
+		cpu_vmemory_RMW_d(CPU_INST_SEGREG_INDEX, madr, inst##4, UINT32_TO_PTR(src)); \
 	} \
 } \
 \
@@ -484,7 +484,7 @@ void CPUCALL \
 inst##_EbIb_ext(UINT32 madr, UINT32 src) \
 { \
 \
-	cpu_memory_access_va_RMW(CPU_INST_SEGREG_INDEX, madr, inst##1, UINT32_TO_PTR(src)); \
+	cpu_vmemory_RMW_b(CPU_INST_SEGREG_INDEX, madr, inst##1, UINT32_TO_PTR(src)); \
 } \
 \
 void CPUCALL \
@@ -501,7 +501,7 @@ void CPUCALL \
 inst##_EwIx_ext(UINT32 madr, UINT32 src) \
 { \
 \
-	cpu_memory_access_va_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##2, UINT32_TO_PTR(src)); \
+	cpu_vmemory_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##2, UINT32_TO_PTR(src)); \
 } \
 \
 void CPUCALL \
@@ -518,7 +518,7 @@ void CPUCALL \
 inst##_EdIx_ext(UINT32 madr, UINT32 src) \
 { \
 \
-	cpu_memory_access_va_RMW_d(CPU_INST_SEGREG_INDEX, madr, inst##4, UINT32_TO_PTR(src)); \
+	cpu_vmemory_RMW_d(CPU_INST_SEGREG_INDEX, madr, inst##4, UINT32_TO_PTR(src)); \
 }
 
 #endif	/* IA32_CPU_ARITH_MCR__ */

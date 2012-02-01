@@ -403,7 +403,7 @@ file_getext(const OEMCHAR *path)
 	if (q == NULL) {
 		q = p;
 	}
-	return (char *)q;
+	return (OEMCHAR *)q;
 }
 
 void

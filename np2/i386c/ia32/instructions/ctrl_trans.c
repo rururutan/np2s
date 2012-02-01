@@ -954,7 +954,6 @@ CALL16_Ap(void)
 	if (!CPU_STAT_PM || CPU_STAT_VM86) {
 		/* Real mode or VM86 mode */
 		CPU_SET_PREV_ESP();
-		SS_PUSH_CHECK(CPU_STAT_SS32 ? CPU_ESP : CPU_SP, 4);
 		load_segreg(CPU_CS_INDEX, new_cs, &sreg, &sd, GP_EXCEPTION);
 		if (new_ip > sd.u.seg.limit) {
 			EXCEPTION(GP_EXCEPTION, 0);
@@ -986,7 +985,6 @@ CALL32_Ap(void)
 	if (!CPU_STAT_PM || CPU_STAT_VM86) {
 		/* Real mode or VM86 mode */
 		CPU_SET_PREV_ESP();
-		SS_PUSH_CHECK(CPU_STAT_SS32 ? CPU_ESP : CPU_SP, 8);
 		load_segreg(CPU_CS_INDEX, new_cs, &sreg, &sd, GP_EXCEPTION);
 		if (new_ip > sd.u.seg.limit) {
 			EXCEPTION(GP_EXCEPTION, 0);
@@ -1021,7 +1019,6 @@ CALL16_Ep(UINT32 op)
 		if (!CPU_STAT_PM || CPU_STAT_VM86) {
 			/* Real mode or VM86 mode */
 			CPU_SET_PREV_ESP();
-			SS_PUSH_CHECK(CPU_STAT_SS32 ? CPU_ESP : CPU_SP, 4);
 			load_segreg(CPU_CS_INDEX, new_cs, &sreg, &sd, GP_EXCEPTION);
 			if (new_ip > sd.u.seg.limit) {
 				EXCEPTION(GP_EXCEPTION, 0);
@@ -1059,7 +1056,6 @@ CALL32_Ep(UINT32 op)
 		if (!CPU_STAT_PM || CPU_STAT_VM86) {
 			/* Real mode or VM86 mode */
 			CPU_SET_PREV_ESP();
-			SS_PUSH_CHECK(CPU_STAT_SS32 ? CPU_ESP : CPU_SP, 8);
 			load_segreg(CPU_CS_INDEX, new_cs, &sreg, &sd, GP_EXCEPTION);
 			if (new_ip > sd.u.seg.limit) {
 				EXCEPTION(GP_EXCEPTION, 0);
@@ -1332,11 +1328,6 @@ IRET(void)
 		/* Protected mode */
 		IRET_pm();
 	}
-#if defined(IA32_SUPPORT_DEBUG_REGISTER)
-	if (CPU_EFLAG & RF_FLAG) {
-		CPU_STAT_BP_EVENT |= CPU_STAT_BP_EVENT_RF;
-	}
-#endif
 	IRQCHECKTERM();
 }
 
@@ -1438,26 +1429,16 @@ void
 ENTER16_IwIb(void)
 {
 	UINT32 sp, bp;
-	UINT32 size;
 	UINT32 val;
 	UINT16 dimsize;
+	UINT16 new_bp;
 	UINT8 level;
-
-	CPU_SET_PREV_ESP();
 
 	GET_PCWORD(dimsize);
 	GET_PCBYTE(level);
 	level &= 0x1f;
 
-	/* check stack room size */
-	size = dimsize + (level + 1) * 2;
-	if (!CPU_STAT_SS32) {
-		sp = CPU_SP;
-	} else {
-		sp = CPU_ESP;
-	}
-	SS_PUSH_CHECK(sp, size);
-
+	CPU_SET_PREV_ESP();
 	PUSH0_16(CPU_BP);
 	if (level == 0) {			/* enter level=0 */
 		CPU_WORKCLOCK(11);
@@ -1483,25 +1464,27 @@ ENTER16_IwIb(void)
 			CPU_WORKCLOCK(12 + level * 4);
 			if (!CPU_STAT_SS32) {
 				bp = CPU_BP;
-				CPU_BP = CPU_SP;
+				new_bp = CPU_SP;
 				while (level--) {
 					bp -= 2;
 					CPU_SP -= 2;
 					val = cpu_vmemoryread_w(CPU_SS_INDEX, bp);
 					cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_SP, (UINT16)val);
 				}
-				REGPUSH0(CPU_BP);
+				REGPUSH0(new_bp);
+				CPU_BP = new_bp;
 				CPU_SP -= dimsize;
 			} else {
 				bp = CPU_EBP;
-				CPU_BP = CPU_SP;
+				new_bp = CPU_SP;
 				while (level--) {
 					bp -= 2;
 					CPU_ESP -= 2;
 					val = cpu_vmemoryread_w(CPU_SS_INDEX, bp);
 					cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_ESP, (UINT16)val);
 				}
-				REGPUSH0_16_32(CPU_BP);
+				REGPUSH0_16_32(new_bp);
+				CPU_BP = new_bp;
 				CPU_ESP -= dimsize;
 			}
 		}
@@ -1513,26 +1496,16 @@ void
 ENTER32_IwIb(void)
 {
 	UINT32 sp, bp;
-	UINT32 size;
+	UINT32 new_bp;
 	UINT32 val;
 	UINT16 dimsize;
 	UINT8 level;
-
-	CPU_SET_PREV_ESP();
 
 	GET_PCWORD(dimsize);
 	GET_PCBYTE(level);
 	level &= 0x1f;
 
-	/* check stack room size */
-	size = dimsize + (level + 1) * 4;
-	if (CPU_STAT_SS32) {
-		sp = CPU_ESP;
-	} else {
-		sp = CPU_SP;
-	}
-	SS_PUSH_CHECK(sp, size);
-
+	CPU_SET_PREV_ESP();
 	PUSH0_32(CPU_EBP);
 	if (level == 0) {			/* enter level=0 */
 		CPU_WORKCLOCK(11);
@@ -1558,25 +1531,27 @@ ENTER32_IwIb(void)
 			CPU_WORKCLOCK(12 + level * 4);
 			if (CPU_STAT_SS32) {
 				bp = CPU_EBP;
-				CPU_EBP = CPU_ESP;
+				new_bp = CPU_ESP;
 				while (level--) {
 					bp -= 4;
 					CPU_ESP -= 4;
 					val = cpu_vmemoryread_d(CPU_SS_INDEX, bp);
 					cpu_vmemorywrite_d(CPU_SS_INDEX, CPU_ESP, val);
 				}
-				REGPUSH0_32(CPU_EBP);
+				REGPUSH0_32(new_bp);
+				CPU_EBP = new_bp;
 				CPU_ESP -= dimsize;
 			} else {
 				bp = CPU_BP;
-				CPU_EBP = CPU_ESP;
+				new_bp = CPU_ESP;
 				while (level--) {
 					bp -= 4;
 					CPU_SP -= 4;
 					val = cpu_vmemoryread_d(CPU_SS_INDEX, bp);
 					cpu_vmemorywrite_d(CPU_SS_INDEX, CPU_SP, val);
 				}
-				REGPUSH0_32_16(CPU_EBP);
+				REGPUSH0_32_16(new_bp);
+				CPU_EBP = new_bp;
 				CPU_SP -= dimsize;
 			}
 		}
@@ -1587,26 +1562,17 @@ ENTER32_IwIb(void)
 void
 LEAVE(void)
 {
-	UINT s;
 
 	CPU_WORKCLOCK(4);
 
 	CPU_SET_PREV_ESP();
-	/* check stack room size */
-	if (!CPU_INST_OP32) {
-		s = 2;
-	} else {
-		s = 4;
-	}
 	if (!CPU_STAT_SS32) {
-		SS_POP_CHECK(CPU_SP, (CPU_BP - CPU_SP) + s);
 		CPU_SP = CPU_BP;
 	} else {
-		SS_POP_CHECK(CPU_ESP, (CPU_EBP - CPU_ESP) + s);
 		CPU_ESP = CPU_EBP;
 	}
 	if (!CPU_INST_OP32) {
-		REGPOP0(CPU_BP);
+		POP0_16(CPU_BP);
 	} else {
 		POP0_32(CPU_EBP);
 	}

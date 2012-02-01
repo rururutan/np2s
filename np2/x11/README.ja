@@ -6,7 +6,7 @@ Xnp2 - ねこープロジェクトII for X Window System
   ねこープロジェクトII はぷにゅ氏により作成された Windows 上で動作する
   i286 CPU を塔載した PC-9801 シリーズのエミュレータです。
 
-  Xnp2 はねこープロジェクトIIを UNIX 系 OS で動作する様に移植したものです。
+  Xnp2 はねこープロジェクトII を UNIX 系 OS で動作する様に移植したものです。
 
 
 2. 動作環境
@@ -215,8 +215,10 @@ Xnp2 - ねこープロジェクトII for X Window System
 
 8. 備考
 
-  ・このマニュアルに書かれている以上の情報が欲しい場合は以下の URL にある
-    ヘルプを参照すると、見つかるかもしれません。
+  ・man page がインストールされていれば man xnp2 でマニュアルが表示されます。
+
+  ・このマニュアルや man page に書かれている以上の情報が欲しい場合は、
+    以下の URL にあるヘルプを参照すると見つかるかもしれません。
 
       Xnp2 help URL: http://www.asahi-net.or.jp/~aw9k-nnk/np2/html/help/ja/
 

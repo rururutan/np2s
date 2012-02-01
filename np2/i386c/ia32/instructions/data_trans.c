@@ -765,7 +765,7 @@ XCHG_EbGb(void)
 	} else {
 		CPU_WORKCLOCK(5);
 		madr = calc_ea_dst(op);
-		*src = (UINT8)cpu_memory_access_va_RMW(CPU_INST_SEGREG_INDEX, madr, XCHG, UINT32_TO_PTR(*src));
+		*src = (UINT8)cpu_vmemory_RMW_b(CPU_INST_SEGREG_INDEX, madr, XCHG, UINT32_TO_PTR(*src));
 	}
 }
 
@@ -783,7 +783,7 @@ XCHG_EwGw(void)
 	} else {
 		CPU_WORKCLOCK(5);
 		madr = calc_ea_dst(op);
-		*src = (UINT16)cpu_memory_access_va_RMW_w(CPU_INST_SEGREG_INDEX, madr, XCHG, UINT32_TO_PTR(*src));
+		*src = (UINT16)cpu_vmemory_RMW_w(CPU_INST_SEGREG_INDEX, madr, XCHG, UINT32_TO_PTR(*src));
 	}
 }
 
@@ -801,7 +801,7 @@ XCHG_EdGd(void)
 	} else {
 		CPU_WORKCLOCK(5);
 		madr = calc_ea_dst(op);
-		*src = cpu_memory_access_va_RMW_d(CPU_INST_SEGREG_INDEX, madr, XCHG, UINT32_TO_PTR(*src));
+		*src = cpu_vmemory_RMW_d(CPU_INST_SEGREG_INDEX, madr, XCHG, UINT32_TO_PTR(*src));
 	}
 }
 
@@ -893,7 +893,7 @@ XADD_EbGb(void)
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
-		*src = (UINT8)cpu_memory_access_va_RMW(CPU_INST_SEGREG_INDEX, madr, XADD1, UINT32_TO_PTR(*src));
+		*src = (UINT8)cpu_vmemory_RMW_b(CPU_INST_SEGREG_INDEX, madr, XADD1, UINT32_TO_PTR(*src));
 	}
 }
 
@@ -914,7 +914,7 @@ XADD_EwGw(void)
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
-		*src = (UINT16)cpu_memory_access_va_RMW_w(CPU_INST_SEGREG_INDEX, madr, XADD2, UINT32_TO_PTR(*src));
+		*src = (UINT16)cpu_vmemory_RMW_w(CPU_INST_SEGREG_INDEX, madr, XADD2, UINT32_TO_PTR(*src));
 	}
 }
 
@@ -935,7 +935,7 @@ XADD_EdGd(void)
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
-		*src = cpu_memory_access_va_RMW_d(CPU_INST_SEGREG_INDEX, madr, XADD4, UINT32_TO_PTR(*src));
+		*src = cpu_vmemory_RMW_d(CPU_INST_SEGREG_INDEX, madr, XADD4, UINT32_TO_PTR(*src));
 	}
 }
 
@@ -1389,8 +1389,8 @@ PUSHA(void)
 	UINT16 sp = CPU_SP;
 
 	CPU_WORKCLOCK(17);
+	CPU_SET_PREV_ESP();
 	if (!CPU_STAT_SS32) {
-		SS_PUSH_CHECK(CPU_SP, 16);
 		REGPUSH0(CPU_AX);
 		REGPUSH0(CPU_CX);
 		REGPUSH0(CPU_DX);
@@ -1400,7 +1400,6 @@ PUSHA(void)
 		REGPUSH0(CPU_SI);
 		REGPUSH0(CPU_DI);
 	} else {
-		SS_PUSH_CHECK(CPU_ESP, 16);
 		REGPUSH0_16_32(CPU_AX);
 		REGPUSH0_16_32(CPU_CX);
 		REGPUSH0_16_32(CPU_DX);
@@ -1410,6 +1409,7 @@ PUSHA(void)
 		REGPUSH0_16_32(CPU_SI);
 		REGPUSH0_16_32(CPU_DI);
 	}
+	CPU_CLEAR_PREV_ESP();
 }
 
 void
@@ -1418,8 +1418,8 @@ PUSHAD(void)
 	UINT32 esp = CPU_ESP;
 
 	CPU_WORKCLOCK(17);
+	CPU_SET_PREV_ESP();
 	if (!CPU_STAT_SS32) {
-		SS_PUSH_CHECK(CPU_SP, 32);
 		REGPUSH0_32_16(CPU_EAX);
 		REGPUSH0_32_16(CPU_ECX);
 		REGPUSH0_32_16(CPU_EDX);
@@ -1429,7 +1429,6 @@ PUSHAD(void)
 		REGPUSH0_32_16(CPU_ESI);
 		REGPUSH0_32_16(CPU_EDI);
 	} else {
-		SS_PUSH_CHECK(CPU_ESP, 32);
 		REGPUSH0_32(CPU_EAX);
 		REGPUSH0_32(CPU_ECX);
 		REGPUSH0_32(CPU_EDX);
@@ -1439,62 +1438,81 @@ PUSHAD(void)
 		REGPUSH0_32(CPU_ESI);
 		REGPUSH0_32(CPU_EDI);
 	}
+	CPU_CLEAR_PREV_ESP();
 }
 
 void
 POPA(void)
 {
+	UINT16 ax, cx, dx, bx, bp, si, di;
 
 	CPU_WORKCLOCK(19);
+	CPU_SET_PREV_ESP();
 	if (!CPU_STAT_SS32) {
-		SS_POP_CHECK(CPU_SP, 16);
-		REGPOP0(CPU_DI);
-		REGPOP0(CPU_SI);
-		REGPOP0(CPU_BP);
+		REGPOP0(di);
+		REGPOP0(si);
+		REGPOP0(bp);
 		CPU_SP += 2;
-		REGPOP0(CPU_BX);
-		REGPOP0(CPU_DX);
-		REGPOP0(CPU_CX);
-		REGPOP0(CPU_AX);
+		REGPOP0(bx);
+		REGPOP0(dx);
+		REGPOP0(cx);
+		REGPOP0(ax);
 	} else {
-		SS_POP_CHECK(CPU_ESP, 16);
-		REGPOP0_16_32(CPU_DI);
-		REGPOP0_16_32(CPU_SI);
-		REGPOP0_16_32(CPU_BP);
+		REGPOP0_16_32(di);
+		REGPOP0_16_32(si);
+		REGPOP0_16_32(bp);
 		CPU_ESP += 2;
-		REGPOP0_16_32(CPU_BX);
-		REGPOP0_16_32(CPU_DX);
-		REGPOP0_16_32(CPU_CX);
-		REGPOP0_16_32(CPU_AX);
+		REGPOP0_16_32(bx);
+		REGPOP0_16_32(dx);
+		REGPOP0_16_32(cx);
+		REGPOP0_16_32(ax);
 	}
+	CPU_CLEAR_PREV_ESP();
+
+	CPU_AX = ax;
+	CPU_CX = cx;
+	CPU_DX = dx;
+	CPU_BX = bx;
+	CPU_BP = bp;
+	CPU_SI = si;
+	CPU_DI = di;
 }
 
 void
 POPAD(void)
 {
+	UINT32 eax, ecx, edx, ebx, ebp, esi, edi;
 
 	CPU_WORKCLOCK(19);
+	CPU_SET_PREV_ESP();
 	if (!CPU_STAT_SS32) {
-		SS_POP_CHECK(CPU_SP, 32);
-		REGPOP0_32_16(CPU_EDI);
-		REGPOP0_32_16(CPU_ESI);
-		REGPOP0_32_16(CPU_EBP);
+		REGPOP0_32_16(edi);
+		REGPOP0_32_16(esi);
+		REGPOP0_32_16(ebp);
 		CPU_SP += 4;
-		REGPOP0_32_16(CPU_EBX);
-		REGPOP0_32_16(CPU_EDX);
-		REGPOP0_32_16(CPU_ECX);
-		REGPOP0_32_16(CPU_EAX);
+		REGPOP0_32_16(ebx);
+		REGPOP0_32_16(edx);
+		REGPOP0_32_16(ecx);
+		REGPOP0_32_16(eax);
 	} else {
-		SS_POP_CHECK(CPU_ESP, 32);
-		REGPOP0_32(CPU_EDI);
-		REGPOP0_32(CPU_ESI);
-		REGPOP0_32(CPU_EBP);
+		REGPOP0_32(edi);
+		REGPOP0_32(esi);
+		REGPOP0_32(ebp);
 		CPU_ESP += 4;
-		REGPOP0_32(CPU_EBX);
-		REGPOP0_32(CPU_EDX);
-		REGPOP0_32(CPU_ECX);
-		REGPOP0_32(CPU_EAX);
+		REGPOP0_32(ebx);
+		REGPOP0_32(edx);
+		REGPOP0_32(ecx);
+		REGPOP0_32(eax);
 	}
+	CPU_CLEAR_PREV_ESP();
+
+	CPU_EAX = eax;
+	CPU_ECX = ecx;
+	CPU_EDX = edx;
+	CPU_EBX = ebx;
+	CPU_EBP = ebp;
+	CPU_ESI = esi;
+	CPU_EDI = edi;
 }
 
 /*

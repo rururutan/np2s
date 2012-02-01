@@ -64,6 +64,10 @@ static const int dftable[4][4] = {
 void CPUCALL
 exception(int num, int error_code)
 {
+#if defined(DEBUG)
+	extern int cpu_debug_rep_cont;
+	extern CPU_REGS cpu_debug_rep_regs;
+#endif
 	int errorp = 0;
 
 	__ASSERT((unsigned int)num < EXCEPTION_NUM);
@@ -74,8 +78,15 @@ exception(int num, int error_code)
 #endif
 
 	VERBOSE(("exception: -------------------------------------------------------------- start"));
-	VERBOSE(("exception: %s, error_code = %x at %04x:%08x, %04x:%08x", exception_str[num], error_code, CPU_CS, CPU_PREV_EIP, CPU_SS, CPU_ESP));
+	VERBOSE(("exception: %s, error_code = %x at %04x:%08x", exception_str[num], error_code, CPU_CS, CPU_PREV_EIP));
 	VERBOSE(("%s", cpu_reg2str()));
+	VERBOSE(("code: %dbit(%dbit), address: %dbit(%dbit)", CPU_INST_OP32 ? 32 : 16, CPU_STATSAVE.cpu_inst_default.op_32 ? 32 : 16, CPU_INST_AS32 ? 32 : 16, CPU_STATSAVE.cpu_inst_default.as_32 ? 32 : 16));
+#if defined(DEBUG)
+	if (cpu_debug_rep_cont) {
+		VERBOSE(("rep: original regs: ecx=%08x, esi=%08x, edi=%08x", cpu_debug_rep_regs.reg[CPU_ECX_INDEX].d, cpu_debug_rep_regs.reg[CPU_ESI_INDEX].d, cpu_debug_rep_regs.reg[CPU_EDI_INDEX].d));
+	}
+	VERBOSE(("%s", cpu_disasm2str(CPU_PREV_EIP)));
+#endif
 
 	CPU_STAT_EXCEPTION_COUNTER_INC();
 	if ((CPU_STAT_EXCEPTION_COUNTER >= 3) 
@@ -136,14 +147,7 @@ exception(int num, int error_code)
 
 	VERBOSE(("exception: ---------------------------------------------------------------- end"));
 
-	interrupt(num, INTR_TYPE_EXTINTR, errorp, error_code);
-#if defined(IA32_SUPPORT_DEBUG_REGISTER)
-	if (num != BP_EXCEPTION) {
-		if (CPU_INST_OP32) {
-			set_eflags(REAL_EFLAGREG|RF_FLAG, RF_FLAG);
-		}
-	}
-#endif
+	interrupt(num, INTR_TYPE_EXCEPTION, errorp, error_code);
 	CPU_STAT_EXCEPTION_COUNTER_CLEAR();
 	siglongjmp(exec_1step_jmpbuf, 1);
 }
@@ -216,7 +220,7 @@ interrupt(int num, int intrtype, int errorp, int error_code)
 	UINT16 new_cs;
 	int exc_errcode;
 
-	VERBOSE(("interrupt: num = 0x%02x, intrtype = %s, errorp = %s, error_code = %08x", num, intrtype ? "on" : "off", errorp ? "on" : "off", error_code));
+	VERBOSE(("interrupt: num = 0x%02x, intrtype = %s, errorp = %s, error_code = %08x", num, (intrtype == INTR_TYPE_EXTINTR) ? "external" : (intrtype == INTR_TYPE_EXCEPTION ? "exception" : "softint"), errorp ? "on" : "off", error_code));
 
 	CPU_SET_PREV_ESP();
 
@@ -298,8 +302,8 @@ interrupt(int num, int intrtype, int errorp, int error_code)
 		}
 
 		/* 5.10.1.1. 例外／割り込みハンドラ・プロシージャの保護 */
-		if ((intrtype != INTR_TYPE_EXTINTR) && (gsd.dpl < CPU_STAT_CPL)) {
-			VERBOSE(("interrupt: intrtype(%d) && DPL(%d) < CPL(%d)", intrtype, gsd.dpl, CPU_STAT_CPL));
+		if ((intrtype == INTR_TYPE_SOFTINTR) && (gsd.dpl < CPU_STAT_CPL)) {
+			VERBOSE(("interrupt: intrtype(softint) && DPL(%d) < CPL(%d)", gsd.dpl, CPU_STAT_CPL));
 			EXCEPTION(GP_EXCEPTION, exc_errcode);
 		}
 

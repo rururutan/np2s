@@ -45,8 +45,9 @@ ia32_initreg(void)
 
 	CPU_EDX = (CPU_FAMILY << 8) | (CPU_MODEL << 4) | CPU_STEPPING;
 	CPU_EFLAG = 2;
-	CPU_CR0 = CPU_CR0_CD | CPU_CR0_NW | CPU_CR0_ET;
+	CPU_CR0 = CPU_CR0_CD | CPU_CR0_NW;
 #if defined(USE_FPU)
+	CPU_CR0 &= ~CPU_CR0_EM;
 	CPU_CR0 |= CPU_CR0_ET;
 #else
 	CPU_CR0 |= CPU_CR0_EM | CPU_CR0_NE;
@@ -125,14 +126,6 @@ ia32(void)
 		break;
 	}
 
-#if defined(IA32_SUPPORT_DEBUG_REGISTER)
-	do {
-		exec_1step();
-		if (dmac.working) {
-			dmax86();
-		}
-	} while (CPU_REMCLOCK > 0);
-#else
 	if (CPU_TRAP) {
 		do {
 			exec_1step();
@@ -152,7 +145,6 @@ ia32(void)
 			exec_1step();
 		} while (CPU_REMCLOCK > 0);
 	}
-#endif
 }
 
 void
@@ -180,12 +172,10 @@ ia32_step(void)
 
 	do {
 		exec_1step();
-#if !defined(IA32_SUPPORT_DEBUG_REGISTER)
 		if (CPU_TRAP) {
 			CPU_DR6 |= CPU_DR6_BS;
 			INTERRUPT(1, INTR_TYPE_EXCEPTION);
 		}
-#endif
 		if (dmac.working) {
 			dmax86();
 		}
@@ -224,6 +214,7 @@ ia32_panic(const char *str, ...)
 	va_end(ap);
 	strcat(buf, "\n");
 	strcat(buf, cpu_reg2str());
+	VERBOSE(("%s", buf));
 
 	msgbox("ia32_panic", buf);
 

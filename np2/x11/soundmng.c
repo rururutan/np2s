@@ -852,7 +852,7 @@ sdlaudio_init(UINT rate, UINT samples)
 	fmt.channels = 2;
 	fmt.samples = samples;
 	fmt.callback = sdlaudio_callback;
-	fmt.userdata = (void *)(samples * 2 * sizeof(SINT16));
+	fmt.userdata = UINT32_TO_PTR(samples * 2 * sizeof(SINT16));
 
 	rv = SDL_InitSubSystem(SDL_INIT_AUDIO);
 	if (rv < 0) {
@@ -931,7 +931,8 @@ sdlmixer_init(UINT rate, UINT samples)
 		goto failure1;
 	}
 
-	Mix_HookMusic(sdlaudio_callback, (void*)(samples * 2 * sizeof(SINT16)));
+	Mix_HookMusic(sdlaudio_callback,
+	    UINT32_TO_PTR(samples * 2 * sizeof(SINT16)));
 
 	return SUCCESS;
 
@@ -1040,7 +1041,7 @@ sdlaudio_stop(void)
 static void
 sdlaudio_callback(void *userdata, unsigned char *stream, int len)
 {
-	UINT samples = (UINT)userdata;
+	UINT samples = PTR_TO_UINT32(userdata);
 	int nextbuf = sound_nextbuf;
 
 	if (sound_event != NULL)

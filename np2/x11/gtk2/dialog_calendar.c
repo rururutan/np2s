@@ -165,7 +165,7 @@ now_button_clicked(GtkButton *b, gpointer d)
 static void
 calendar_radiobutton_clicked(GtkButton *b, gpointer d)
 {
-	gint virtual = (gint)d;
+	gint virtual = GPOINTER_TO_UINT(d);
 	int i;
 
 	calendar_kind = virtual ? 0 : 1;
@@ -208,14 +208,17 @@ create_calendar_dialog(void)
 	 * calendar kind radiobutton
 	 */
 	for (i = 0; i < NELEMENTS(calendar_kind_str); i++) {
-		calendar_radiobutton[i] = gtk_radio_button_new_with_label_from_widget(i > 0 ? GTK_RADIO_BUTTON(calendar_radiobutton[i-1]) : NULL, calendar_kind_str[i]);
+		calendar_radiobutton[i] =
+		    gtk_radio_button_new_with_label_from_widget(
+		      (i > 0) ? GTK_RADIO_BUTTON(calendar_radiobutton[i-1])
+		        : NULL, calendar_kind_str[i]);
 		gtk_widget_show(calendar_radiobutton[i]);
 		gtk_table_attach_defaults(GTK_TABLE(main_widget),
 		    calendar_radiobutton[i], 0, 3, i, i+1);
 		gtk_widget_set_can_focus(calendar_radiobutton[i], FALSE);
 		g_signal_connect(GTK_OBJECT(calendar_radiobutton[i]),
 		    "clicked", G_CALLBACK(calendar_radiobutton_clicked),
-		    (gpointer)i);
+		    GUINT_TO_POINTER(i));
 	}
 
 	/*

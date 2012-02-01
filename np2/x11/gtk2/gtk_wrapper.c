@@ -138,7 +138,6 @@ static int
 check_xvid(GtkWidget *widget)
 {
 	gboolean ret = FALSE;
-	GtkWindow *window;
 	GdkWindow *w;
 	Display *xdisplay;
 	int xscreen;
@@ -151,7 +150,6 @@ check_xvid(GtkWidget *widget)
 
 	g_return_val_if_fail(widget != NULL, FALSE);
 
-	window = GTK_WINDOW(widget);
 	w = widget->window;
 	xdisplay = GDK_WINDOW_XDISPLAY(w);
 	xscreen = XDefaultScreen(xdisplay);
@@ -234,7 +232,7 @@ check_netwm(GtkWidget *widget)
 	unsigned char *prop;
 	guint32 *data;
 	int rv;
-	long i;
+	unsigned long i;
 
 	g_return_val_if_fail(widget != NULL, 0);
 

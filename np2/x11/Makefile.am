@@ -239,8 +239,10 @@ AM_CPPFLAGS=	-I$(real_topsrcdir) \
 		-I$(real_topsrcdir)/vram \
 		$(GTK_CFLAGS) $(SDL_CFLAGS)
 
+if HAVE_GCC
 AM_CFLAGS=	-fsigned-char
 CFLAGS+=	-fno-strict-aliasing
+endif
 
 xnp2_LDADD=	$(GTK_LIBS) $(SDL_LIBS) \
 		$(X_LIBS) $(X_PRE_LIBS) $(XLIB) $(X_EXTRA_LIBS)
@@ -271,6 +273,7 @@ xnp2_SOURCES+=	$(real_topsrcdir)/i386c/cpucore.c \
 		$(real_topsrcdir)/i386c/ia32/instructions/data_trans.c \
 		$(real_topsrcdir)/i386c/ia32/instructions/dec_arith.c \
 		$(real_topsrcdir)/i386c/ia32/instructions/flag_ctrl.c \
+		$(real_topsrcdir)/i386c/ia32/instructions/fpu.c \
 		$(real_topsrcdir)/i386c/ia32/instructions/logic_arith.c \
 		$(real_topsrcdir)/i386c/ia32/instructions/misc_inst.c \
 		$(real_topsrcdir)/i386c/ia32/instructions/seg_reg.c \

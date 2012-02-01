@@ -15,8 +15,8 @@
 
 typedef struct {
 	const char	*title;
-	const INITBL	*tbl;
-	const INITBL	*tblterm;
+	INITBL		*tbl;
+	INITBL		*tblterm;
 	UINT		count;
 } _INIARG, *INIARG;
 
@@ -43,7 +43,7 @@ inisetbmp(BYTE *ptr, UINT pos, BOOL set)
 }
 
 static void
-inirdargs16(const char *src, const INITBL *ini)
+inirdargs16(const char *src, INITBL *ini)
 {
 	SINT16 *dst;
 	int dsize;
@@ -71,7 +71,7 @@ inirdargs16(const char *src, const INITBL *ini)
 }
 
 static void
-inirdargh8(const char *src, const INITBL *ini)
+inirdargh8(const char *src, INITBL *ini)
 {
 	BYTE *dst;
 	int dsize;
@@ -117,7 +117,7 @@ inirdargh8(const char *src, const INITBL *ini)
 }
 
 static void
-iniwrsetargh8(char *work, int size, const INITBL *ini)
+iniwrsetargh8(char *work, int size, INITBL *ini)
 {
 	char tmp[8];
 	const BYTE *ptr;
@@ -139,7 +139,7 @@ iniwrsetargh8(char *work, int size, const INITBL *ini)
 /* ----- user */
 
 static void
-inirdbyte3(const char *src, const INITBL *ini)
+inirdbyte3(const char *src, INITBL *ini)
 {
 	UINT i;
 
@@ -155,7 +155,7 @@ inirdbyte3(const char *src, const INITBL *ini)
 }
 
 static void
-inirdkb(const char *src, const INITBL *ini)
+inirdkb(const char *src, INITBL *ini)
 {
 
 	if ((!milstr_extendcmp(src, "DOS"))
@@ -175,14 +175,14 @@ inirdkb(const char *src, const INITBL *ini)
 }
 
 static void
-inirdsnddrv(const char *src, const INITBL *ini)
+inirdsnddrv(const char *src, INITBL *ini)
 {
 
 	*(UINT8 *)ini->value = snddrv_drv2num(src);
 }
 
 static void
-inirdinterp(const char *src, const INITBL *ini)
+inirdinterp(const char *src, INITBL *ini)
 {
 
 	if (!milstr_cmp(src, "NEAREST")) {
@@ -202,7 +202,7 @@ static BOOL
 inireadcb(void *arg, const char *para, const char *key, const char *data)
 {
 	char work[512];
-	const INITBL *p;
+	INITBL *p;
 	BOOL rv;
 
 	if (arg == NULL) {
@@ -299,7 +299,7 @@ inireadcb(void *arg, const char *para, const char *key, const char *data)
 }
 
 void
-ini_read(const char *path, const char *title, const INITBL *tbl, UINT count)
+ini_read(const char *path, const char *title, INITBL *tbl, UINT count)
 {
 	_INIARG	iniarg;
 
@@ -376,13 +376,13 @@ iniwrinterp(UINT8 interp)
 static BOOL read_iniread_flag(const INITBL *p);
 
 void
-ini_write(const char *path, const char *title, const INITBL *tbl, UINT count, BOOL create)
+ini_write(const char *path, const char *title, INITBL *tbl, UINT count, BOOL create)
 {
-	char		work[512];
-	const INITBL	*p;
-	const INITBL	*pterm;
-	FILEH		fh;
-	BOOL		set;
+	char	work[512];
+	INITBL	*p;
+	INITBL	*pterm;
+	FILEH	fh;
+	BOOL	set;
 
 	fh = FILEH_INVALID;
 	if (!create) {
@@ -512,7 +512,7 @@ enum {
 	INIRO_KB	= INIFLAG_RO | INITYPE_KB
 };
 
-static const INITBL iniitem[] = {
+static INITBL iniitem[] = {
 	{"np2title", INIRO_STR,		np2oscfg.titles,	sizeof(np2oscfg.titles)},
 	{"paddingx", INIROMAX_SINT32,	&np2oscfg.paddingx,	32},
 	{"paddingy", INIROMAX_SINT32,	&np2oscfg.paddingy,	32},
@@ -669,7 +669,7 @@ calc_index(const INITBL *p)
 	UINT idx;
 
 	if (p) {
-		offset = (char *)p - (char *)iniitem;
+		offset = (const char *)p - (const char *)iniitem;
 		if ((offset % sizeof(iniitem[0])) == 0) {
 			idx = offset / sizeof(iniitem[0]);
 			if (idx < INIITEMS) {

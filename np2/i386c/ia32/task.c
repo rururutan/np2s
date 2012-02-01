@@ -69,9 +69,6 @@ load_tr(UINT16 selector)
 {
 	selector_t task_sel;
 	int rv;
-#if defined(IA32_SUPPORT_DEBUG_REGISTER)
-	int i;
-#endif
 	UINT16 iobase;
 
 	rv = parse_selector(&task_sel, selector);
@@ -118,22 +115,15 @@ load_tr(UINT16 selector)
 	/* I/O deny bitmap */
 	CPU_STAT_IOLIMIT = 0;
 	if (CPU_TR_DESC.type == CPU_SYSDESC_TYPE_TSS_BUSY_32) {
-		if (iobase != 0 && iobase < CPU_TR_DESC.u.seg.limit) {
-			CPU_STAT_IOLIMIT = (UINT16)(CPU_TR_DESC.u.seg.limit - iobase);
-			CPU_STAT_IOADDR = CPU_TR_DESC.u.seg.segbase + iobase;
+		if (iobase < CPU_TR_LIMIT) {
+			CPU_STAT_IOLIMIT = (UINT16)(CPU_TR_LIMIT - iobase);
+			CPU_STAT_IOADDR = CPU_TR_BASE + iobase;
+			VERBOSE(("load_tr: enable ioport control: iobase=0x%04x, base=0x%08x, limit=0x%08x", iobase, CPU_STAT_IOADDR, CPU_STAT_IOLIMIT));
 		}
 	}
-
-#if defined(IA32_SUPPORT_DEBUG_REGISTER)
-	/* clear local break point flags */
-	CPU_DR7 &= ~(CPU_DR7_L(0)|CPU_DR7_L(1)|CPU_DR7_L(2)|CPU_DR7_L(3)|CPU_DR7_LE);
-	CPU_STAT_BP = 0;
-	for (i = 0; i < CPU_DEBUG_REG_INDEX_NUM; i++) {
-		if (CPU_DR7 & CPU_DR7_G(i)) {
-			CPU_STAT_BP |= (1 << i);
-		}
+	if (CPU_STAT_IOLIMIT == 0) {
+		VERBOSE(("load_tr: disable ioport control."));
 	}
-#endif
 }
 
 void CPUCALL
@@ -142,7 +132,7 @@ get_stack_pointer_from_tss(UINT pl, UINT16 *new_ss, UINT32 *new_esp)
 	UINT32 tss_stack_addr;
 
 	VERBOSE(("get_stack_pointer_from_tss: pl = %d", pl));
-	VERBOSE(("CPU_TR type = %d, base = 0x%08x, limit = 0x%08x", CPU_TR_DESC.type, CPU_TR_BASE, CPU_TR_LIMIT));
+	VERBOSE(("get_stack_pointer_from_tss: CPU_TR type = %d, base = 0x%08x, limit = 0x%08x", CPU_TR_DESC.type, CPU_TR_BASE, CPU_TR_LIMIT));
 
 	__ASSERT(pl < 3);
 
@@ -165,7 +155,7 @@ get_stack_pointer_from_tss(UINT pl, UINT16 *new_ss, UINT32 *new_esp)
 	} else {
 		ia32_panic("get_stack_pointer_from_tss: task register is invalid (%d)\n", CPU_TR_DESC.type);
 	}
-	VERBOSE(("new stack pointer = %04x:%08x", *new_ss, *new_esp));
+	VERBOSE(("get_stack_pointer_from_tss: new stack pointer = %04x:%08x", *new_ss, *new_esp));
 }
 
 UINT16
@@ -468,22 +458,6 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 		CPU_STAT_IOADDR = task_base + iobase;
 	}
 	VERBOSE(("task_switch: ioaddr = %08x, limit = %08x", CPU_STAT_IOADDR, CPU_STAT_IOLIMIT));
-
-#if defined(IA32_SUPPORT_DEBUG_REGISTER)
-	/* check resume flag */
-	if (CPU_EFLAG & RF_FLAG) {
-		CPU_STAT_BP_EVENT |= CPU_STAT_BP_EVENT_RF;
-	}
-
-	/* clear local break point flags */
-	CPU_DR7 &= ~(CPU_DR7_L(0)|CPU_DR7_L(1)|CPU_DR7_L(2)|CPU_DR7_L(3)|CPU_DR7_LE);
-	CPU_STAT_BP = 0;
-	for (i = 0; i < CPU_DEBUG_REG_INDEX_NUM; i++) {
-		if (CPU_DR7 & CPU_DR7_G(i)) {
-			CPU_STAT_BP |= (1 << i);
-		}
-	}
-#endif
 
 	/* set new EFLAGS */
 	set_eflags(new_flags, I_FLAG|IOPL_FLAG|RF_FLAG|VM_FLAG|VIF_FLAG|VIP_FLAG);

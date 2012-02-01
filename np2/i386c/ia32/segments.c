@@ -162,6 +162,7 @@ load_ldtr(UINT16 selector, int exc)
 	if (rv < 0 || sel.ldt) {
 		if (rv == -2) {
 			/* null segment */
+			VERBOSE(("load_ldtr: null segment"));
 			CPU_LDTR = 0;
 			memset(&CPU_LDTR_DESC, 0, sizeof(CPU_LDTR_DESC));
 			return;

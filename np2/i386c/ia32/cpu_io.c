@@ -36,29 +36,25 @@ static void CPUCALL
 check_io(UINT port, UINT len) 
 {
 	UINT off;
-	UINT8 bit;
-	UINT8 map;
+	UINT16 map;
+	UINT16 mask;
 
 	if (CPU_STAT_IOLIMIT == 0) {
 		VERBOSE(("check_io: CPU_STAT_IOLIMIT == 0 (port = %04x, len = %d)", port, len));
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
 
-	off = port / 8;
-	bit = 1 << (port % 8);
-	for (; len > 0; ++off, bit = 0x01) {
-		if (off >= CPU_STAT_IOLIMIT) {
-			VERBOSE(("check_io: off(%08x) >= CPU_STAT_IOLIMIT(%08x) (port = %04x, len = %d)", off, CPU_STAT_IOLIMIT, port, len));
-			EXCEPTION(GP_EXCEPTION, 0);
-		}
+	if ((port + len) / 8 >= CPU_STAT_IOLIMIT) {
+		VERBOSE(("check_io: out of range: CPU_STAT_IOLIMIT(%08x) (port = %04x, len = %d)", CPU_STAT_IOLIMIT, port, len));
+		EXCEPTION(GP_EXCEPTION, 0);
+	}
 
-		map = cpu_kmemoryread(CPU_STAT_IOADDR + off);
-		for (; (len > 0) && (bit != 0x00); bit <<= 1, --len) {
-			if (map & bit) {
-				VERBOSE(("check_io: (bitmap(0x%02x) & bit(0x%02x)) != 0 (port = %04x, len = %d)", map, bit, port, len));
-				EXCEPTION(GP_EXCEPTION, 0);
-			}
-		}
+	off = port / 8;
+	mask = ((1 << len) - 1) << (port % 8);
+	map = cpu_kmemoryread_w(CPU_STAT_IOADDR + off);
+	if (map & mask) {
+		VERBOSE(("check_io: (bitmap(0x%04x) & bit(0x%04x)) != 0 (CPU_STAT_IOADDR=0x%08x, offset=0x%04x, port = 0x%04x, len = %d)", map, mask, CPU_STAT_IOADDR, off, port, len));
+		EXCEPTION(GP_EXCEPTION, 0);
 	}
 }
 

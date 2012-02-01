@@ -42,7 +42,7 @@
 #include "string_inst.h"
 #include "system_inst.h"
 
-#include "fp.h"
+#include "instructions/fpu/fp.h"
 
 
 /*

@@ -31,14 +31,14 @@ enum {
 };
 
 typedef struct {
-	const char	item[10];
-	const UINT16	itemtype;
-	const void	*value;
-	const UINT32	arg;
+	char	item[10];
+	UINT16	itemtype;
+	void	*value;
+	UINT32	arg;
 } INITBL;
 
-void ini_read(const char *path, const char *title, const INITBL *tbl, UINT count);
-void ini_write(const char *path, const char *title, const INITBL *tbl, UINT count, BOOL create);
+void ini_read(const char *path, const char *title, INITBL *tbl, UINT count);
+void ini_write(const char *path, const char *title, INITBL *tbl, UINT count, BOOL create);
 
 void initload(void);
 void initsave(void);

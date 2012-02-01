@@ -41,7 +41,7 @@ cpu_reg2str(void)
 	    "eax=%08x ecx=%08x edx=%08x ebx=%08x\n"
 	    "esp=%08x ebp=%08x esi=%08x edi=%08x\n"
 	    "eip=%08x prev_eip=%08x\n"
-	    "es=%04x cs=%04x ss=%04x ds=%04x fs=%04x gs=%04x\n"
+	    "cs=%04x ss=%04x ds=%04x es=%04x fs=%04x gs=%04x\n"
 	    "eflag=%08x "
 	    /* ID VIP VIF AC VM RF NT IOPL OF DF IF TF SF ZF AF PF CF */
 	    "[ ID=%d VIP=%d VIF=%d AC=%d VM=%d RF=%d NT=%d IOPL=%d %s %s %s TF=%d %s %s %s %s %s ]\n"
@@ -101,7 +101,7 @@ put_cpuinfo(void)
 #endif
 	strcat(buf, a20str());
 
-	printf(buf);
+	printf("%s", buf);
 }
 
 void
@@ -115,7 +115,7 @@ dbg_printf(const char *str, ...)
 	va_end(ap);
 	strcat(buf, "\n");
 
-	printf(buf);
+	printf("%s", buf);
 }
 
 void
@@ -251,7 +251,7 @@ segdesc_dump(descriptor_t *sdp)
 
 	__ASSERT(sdp != NULL);
 
-	VERBOSE(("\ndump descriptor: %p", sdp));
+	VERBOSE(("dump descriptor: %p", sdp));
 
 	VERBOSE(("valid    : %s", SEG_IS_VALID(sdp) ? "true" : "false"));
 	VERBOSE(("present  : %s", SEG_IS_PRESENT(sdp) ? "true" : "false"));
@@ -259,12 +259,14 @@ segdesc_dump(descriptor_t *sdp)
 	VERBOSE(("kind     : %s", SEG_IS_SYSTEM(sdp) ? "system" : "code/data"));
 	if (!SEG_IS_SYSTEM(sdp)) {
 		if (SEG_IS_CODE(sdp)) {
-			VERBOSE(("type     : %sconforming code",
+			VERBOSE(("type     : %dbit %sconforming code",
+			    SEG_IS_32BIT(sdp) ? 32 : 16,
 			    SEG_IS_CONFORMING_CODE(sdp) ? "" : "non-"));
 			VERBOSE(("access   : execute%s",
 			    SEG_IS_READABLE_CODE(sdp) ? "/read" : ""));
 		} else {
-			VERBOSE(("type     : expand-%s data",
+			VERBOSE(("type     : %dbit expand-%s data",
+			    SEG_IS_32BIT(sdp) ? 32 : 16,
 			    SEG_IS_EXPANDDOWN_DATA(sdp) ? "down" : "up"));
 			VERBOSE(("access   : read%s",
 			    SEG_IS_WRITABLE_DATA(sdp) ? "/write" : ""));

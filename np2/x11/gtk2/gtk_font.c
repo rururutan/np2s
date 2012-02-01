@@ -91,7 +91,7 @@ fontmng_create(int size, UINT type, const TCHAR *fontface)
 	}
 
 	g_snprintf(buf, sizeof(buf), "%s %s %s %d",
-	    fontface ? (char *)fontface : fontname,
+	    fontface ? (const char *)fontface : fontname,
 	    (type & FDAT_BOLD) ? "bold" : "medium",
 	    (type & FDAT_PROPORTIONAL) ? "" : "",
 	    size);

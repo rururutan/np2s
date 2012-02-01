@@ -51,7 +51,6 @@ create_about_dialog(void)
 	GtkWidget *ver_label;
 	GtkWidget *ok_button;
 	GtkWidget *neko_image;
-	GdkColormap *colormap;
 	GdkPixbuf *neko_pixbuf;
 
 	uninstall_idle_process();
@@ -69,7 +68,6 @@ create_about_dialog(void)
 	gtk_widget_show(main_widget);
 	gtk_container_add(GTK_CONTAINER(about_dialog), main_widget);
 
-	colormap = gtk_widget_get_colormap(about_dialog);
 	neko_pixbuf = gdk_pixbuf_new_from_xpm_data(np2_icon);
 	neko_image = gtk_image_new_from_pixbuf(neko_pixbuf);
 	g_object_unref(neko_pixbuf);

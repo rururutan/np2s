@@ -529,7 +529,7 @@ NEG_Eb(UINT32 op)
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
-		cpu_memory_access_va_RMW(CPU_INST_SEGREG_INDEX, madr, NEG1, 0);
+		cpu_vmemory_RMW_b(CPU_INST_SEGREG_INDEX, madr, NEG1, 0);
 	}
 }
 
@@ -548,7 +548,7 @@ NEG_Ew(UINT32 op)
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
-		cpu_memory_access_va_RMW_w(CPU_INST_SEGREG_INDEX, madr, NEG2, 0);
+		cpu_vmemory_RMW_w(CPU_INST_SEGREG_INDEX, madr, NEG2, 0);
 	}
 }
 
@@ -567,7 +567,7 @@ NEG_Ed(UINT32 op)
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
-		cpu_memory_access_va_RMW_d(CPU_INST_SEGREG_INDEX, madr, NEG4, 0);
+		cpu_vmemory_RMW_d(CPU_INST_SEGREG_INDEX, madr, NEG4, 0);
 	}
 }
 

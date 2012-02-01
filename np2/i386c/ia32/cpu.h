@@ -170,8 +170,8 @@ typedef struct {
 	UINT8		user_mode;
 
 	UINT8		hlt;
-	UINT8		bp;	/* break point bitmap */
-	UINT8		bp_ev;	/* break point event */
+	UINT8		bp;		/* break point bitmap */
+	UINT8		bp_ev;		/* break point event */
 
 	UINT8		backout_sp;	/* backout ESP, when exception */
 
@@ -213,20 +213,20 @@ typedef struct {
 } FPU_REGS;
 
 typedef struct {
-	UINT8		valid;	/* レジスタ有効 */
-	UINT8		sign;	/* 符号 */
-	UINT8		zero;	/* ゼロ */
-	UINT8		inf;	/* ∞ */
-	UINT8		nan;	/* NaN */
-	UINT8		denorm;	/* 非正規化 */
-	SINT16		exp;	/* 指数部 */
-	UINT64		num;	/* 小数部 */
+	UINT8		valid;
+	UINT8		sign;
+	UINT8		zero;
+	UINT8		inf;
+	UINT8		nan;
+	UINT8		denorm;
+	SINT16		exp;
+	UINT64		num;
 } FP_REG;
 
 typedef struct {
-	UINT8		top;	/* スタック位置 */
-	UINT8		pc;	/* 精度 */
-	UINT8		rc;	/* 丸め */
+	UINT8		top;
+	UINT8		pc;
+	UINT8		rc;
 	UINT8		dmy[1];
 
 	FP_REG		reg[FPU_REG_NUM];
@@ -264,7 +264,7 @@ typedef struct {
 } I386EXT;
 
 typedef struct {
-	I386STAT	s;				/* STATsaveされる奴 */
+	I386STAT	s;		/* STATsave'ed */
 	I386EXT		e;
 } I386CORE;
 
@@ -774,6 +774,7 @@ typedef struct {
 } disasm_context_t;
 
 int disasm(UINT32 *eip, disasm_context_t *ctx);
+char *cpu_disasm2str(UINT32 eip);
 
 #ifdef __cplusplus
 }

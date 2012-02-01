@@ -652,36 +652,35 @@ get_opcode(disasm_context_t *ctx)
 			return rv;
 
 		op[0] = (UINT8)(ctx->val & 0xff);
-		if (insttable_info[op[0]] & INST_PREFIX) {
-			if (ctx->prefix == 0)
-				ctx->prefix = ctx->next;
+		if (!(insttable_info[op[0]] & INST_PREFIX))
+			break;
 
-			switch (op[0]) {
-			case 0x26: 	/* ES: */
-			case 0x2e: 	/* CS: */
-			case 0x36: 	/* SS: */
-			case 0x3e: 	/* DS: */
-				ctx->useseg = TRUE;
-				ctx->seg = (op[0] >> 3) & 3;
-				break;
+		if (ctx->prefix == 0)
+			ctx->prefix = ctx->next;
 
-			case 0x64:	/* FS: */
-			case 0x65:	/* GS: */
-				ctx->useseg = TRUE;
-				ctx->seg = (op[0] - 0x64) + 4;
-				break;
+		switch (op[0]) {
+		case 0x26: 	/* ES: */
+		case 0x2e: 	/* CS: */
+		case 0x36: 	/* SS: */
+		case 0x3e: 	/* DS: */
+			ctx->useseg = TRUE;
+			ctx->seg = (op[0] >> 3) & 3;
+			break;
 
-			case 0x66:	/* OPSize: */
-				ctx->op32 = !CPU_INST_OP32;
-				break;
+		case 0x64:	/* FS: */
+		case 0x65:	/* GS: */
+			ctx->useseg = TRUE;
+			ctx->seg = (op[0] - 0x64) + 4;
+			break;
 
-			case 0x67:	/* AddrSize: */
-				ctx->as32 = !CPU_INST_AS32;
-				break;
-			}
-			continue;
+		case 0x66:	/* OPSize: */
+			ctx->op32 = !CPU_STATSAVE.cpu_inst_default.op_32;
+			break;
+
+		case 0x67:	/* AddrSize: */
+			ctx->as32 = !CPU_STATSAVE.cpu_inst_default.as_32;
+			break;
 		}
-		break;
 	}
 	if (prefix == MAX_PREFIX)
 		return 1;
@@ -793,8 +792,8 @@ disasm(UINT32 *eip, disasm_context_t *ctx)
 	ctx->arg[2] = 0;
 
 	ctx->eip = *eip;
-	ctx->op32 = CPU_INST_OP32;
-	ctx->as32 = CPU_INST_AS32;
+	ctx->op32 = CPU_STATSAVE.cpu_inst_default.op_32;
+	ctx->as32 = CPU_STATSAVE.cpu_inst_default.as_32;
 	ctx->seg = -1;
 
 	ctx->baseaddr = ctx->eip;
@@ -808,4 +807,55 @@ disasm(UINT32 *eip, disasm_context_t *ctx)
 	*eip = ctx->eip;
 
 	return 0;
+}
+
+char *
+cpu_disasm2str(UINT32 eip)
+{
+	static char output[2048];
+	disasm_context_t d;
+	UINT32 eip2 = eip;
+	int rv;
+
+	output[0] = '\0';
+	rv = disasm(&eip2, &d);
+	if (rv == 0) {
+		char buf[256];
+		char tmp[32];
+		int len = d.nopbytes > 8 ? 8 : d.nopbytes;
+		int i;
+
+		buf[0] = '\0';
+		for (i = 0; i < len; i++) {
+			snprintf(tmp, sizeof(tmp), "%02x ", d.opbyte[i]);
+			milstr_ncat(buf, tmp, sizeof(buf));
+		}
+		for (; i < 8; i++) {
+			milstr_ncat(buf, "   ", sizeof(buf));
+		}
+		snprintf(output, sizeof(output), "%04x:%08x: %s%s",
+		    CPU_CS, eip, buf, d.str);
+
+		if (i < d.nopbytes) {
+			char t[256];
+			buf[0] = '\0';
+			for (; i < d.nopbytes; i++) {
+				snprintf(tmp, sizeof(tmp), "%02x ",
+				    d.opbyte[i]);
+				milstr_ncat(buf, tmp, sizeof(buf));
+				if ((i % 8) == 7) {
+					snprintf(t, sizeof(t),
+					    "\n             : %s", buf);
+					milstr_ncat(output, t, sizeof(output));
+					buf[0] = '\0';
+				}
+			}
+			if ((i % 8) != 0) {
+				snprintf(t, sizeof(t),
+				    "\n             : %s", buf);
+				milstr_ncat(output, t, sizeof(output));
+			}
+		}
+	}
+	return output;
 }

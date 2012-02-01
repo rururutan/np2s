@@ -90,7 +90,7 @@ void CPUCALL \
 inst##_Eb_ext(UINT32 madr) \
 { \
 \
-	cpu_memory_access_va_RMW(CPU_INST_SEGREG_INDEX, madr, inst##1, 0); \
+	cpu_vmemory_RMW_b(CPU_INST_SEGREG_INDEX, madr, inst##1, 0); \
 } \
 \
 void CPUCALL \
@@ -107,7 +107,7 @@ void CPUCALL \
 inst##_Ew_ext(UINT32 madr) \
 { \
 \
-	cpu_memory_access_va_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##2, 0); \
+	cpu_vmemory_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##2, 0); \
 } \
 \
 void CPUCALL \
@@ -124,7 +124,7 @@ void CPUCALL \
 inst##_Ed_ext(UINT32 madr) \
 { \
 \
-	cpu_memory_access_va_RMW_d(CPU_INST_SEGREG_INDEX, madr, inst##4, 0); \
+	cpu_vmemory_RMW_d(CPU_INST_SEGREG_INDEX, madr, inst##4, 0); \
 } \
 \
 /* ExCL, ExIb */ \
@@ -142,7 +142,7 @@ void CPUCALL \
 inst##_EbCL_ext(UINT32 madr, UINT32 cl) \
 { \
 \
-	cpu_memory_access_va_RMW(CPU_INST_SEGREG_INDEX, madr, inst##CL1, (void *)cl); \
+	cpu_vmemory_RMW_b(CPU_INST_SEGREG_INDEX, madr, inst##CL1, UINT32_TO_PTR(cl)); \
 } \
 \
 void CPUCALL \
@@ -159,7 +159,7 @@ void CPUCALL \
 inst##_EwCL_ext(UINT32 madr, UINT32 cl) \
 { \
 \
-	cpu_memory_access_va_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##CL2, (void *)cl); \
+	cpu_vmemory_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##CL2, UINT32_TO_PTR(cl)); \
 } \
 \
 void CPUCALL \
@@ -176,7 +176,7 @@ void CPUCALL \
 inst##_EdCL_ext(UINT32 madr, UINT32 cl) \
 { \
 \
-	cpu_memory_access_va_RMW_d(CPU_INST_SEGREG_INDEX, madr, inst##CL4, (void *)cl); \
+	cpu_vmemory_RMW_d(CPU_INST_SEGREG_INDEX, madr, inst##CL4, UINT32_TO_PTR(cl)); \
 }
 
 /*
@@ -226,7 +226,7 @@ inst##_EwGwIb(void) \
 		CPU_WORKCLOCK(7); \
 		madr = calc_ea_dst(op); \
 		GET_PCBYTE(arg.cl); \
-		cpu_memory_access_va_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##2, &arg); \
+		cpu_vmemory_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##2, &arg); \
 	} \
 } \
 \
@@ -249,7 +249,7 @@ inst##_EdGdIb(void) \
 		CPU_WORKCLOCK(7); \
 		madr = calc_ea_dst(op); \
 		GET_PCBYTE(arg.cl); \
-		cpu_memory_access_va_RMW_d(CPU_INST_SEGREG_INDEX, madr, inst##4, &arg); \
+		cpu_vmemory_RMW_d(CPU_INST_SEGREG_INDEX, madr, inst##4, &arg); \
 	} \
 } \
 \
@@ -271,7 +271,7 @@ inst##_EwGwCL(void) \
 	} else { \
 		CPU_WORKCLOCK(7); \
 		madr = calc_ea_dst(op); \
-		cpu_memory_access_va_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##2, (void *)&arg); \
+		cpu_vmemory_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##2, (void *)&arg); \
 	} \
 } \
 \
@@ -293,7 +293,7 @@ inst##_EdGdCL(void) \
 	} else { \
 		CPU_WORKCLOCK(7); \
 		madr = calc_ea_dst(op); \
-		cpu_memory_access_va_RMW_d(CPU_INST_SEGREG_INDEX, madr, inst##4, (void *)&arg); \
+		cpu_vmemory_RMW_d(CPU_INST_SEGREG_INDEX, madr, inst##4, (void *)&arg); \
 	} \
 }
 

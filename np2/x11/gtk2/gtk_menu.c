@@ -1722,7 +1722,7 @@ cb_soundboard(gint idx)
 static void
 cb_radio(GtkRadioAction *action, GtkRadioAction *current, gpointer user_data)
 {
-	guint value = (guint)gtk_radio_action_get_current_value(action);
+	gint value = gtk_radio_action_get_current_value(action);
 	guint menu_idx = (guint)GPOINTER_TO_INT(user_data);
 	gint i;
 
