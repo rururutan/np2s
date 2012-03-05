@@ -135,17 +135,8 @@ ia32_setemm(UINT frame, UINT32 addr) {
 void CPUCALL
 change_pm(BOOL onoff)
 {
-#if 0
-	int i;
-#endif
 
 	if (onoff) {
-#if 0
-		for (i = 0; i < CPU_SEGREG_NUM; i++) {
-			CPU_STAT_SREG(i).valid = 1;
-			CPU_STAT_SREG(i).dpl = 0;
-		}
-#endif
 		VERBOSE(("change_pm: Entering to Protected-Mode..."));
 	} else {
 		VERBOSE(("change_pm: Leaveing from Protected-Mode..."));
@@ -181,7 +172,6 @@ change_vm(BOOL onoff)
 	if (onoff) {
 		VERBOSE(("change_vm: Entering to Virtual-8086-Mode..."));
 		for (i = 0; i < CPU_SEGREG_NUM; i++) {
-			CPU_STAT_SREGLIMIT(i) = 0xffff;
 			LOAD_SEGREG(i, CPU_REGS_SREG(i));
 		}
 		CPU_INST_OP32 = CPU_INST_AS32 =

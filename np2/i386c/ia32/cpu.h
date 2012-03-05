@@ -649,9 +649,10 @@ extern UINT16 *reg16_b53[0x100];
 extern UINT32 *reg32_b20[0x100];
 extern UINT32 *reg32_b53[0x100];
 
-extern const char *reg8_str[8];
-extern const char *reg16_str[8];
-extern const char *reg32_str[8];
+extern const char *reg8_str[CPU_REG_NUM];
+extern const char *reg16_str[CPU_REG_NUM];
+extern const char *reg32_str[CPU_REG_NUM];
+extern const char *sreg_str[CPU_SEGREG_NUM];
 
 char *cpu_reg2str(void);
 #if defined(USE_FPU)

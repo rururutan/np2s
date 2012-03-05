@@ -37,7 +37,7 @@ typedef struct {
 	union {
 		struct {
 			UINT32	segbase;
-			UINT32	segend;	/* unused */
+			UINT32	d_pad;
 			UINT32	limit;
 
 			UINT8	c;	/* 0 = data, 1 = code */
@@ -149,15 +149,7 @@ typedef struct {
 #define	CPU_SYSDESC_TYPE_TSS_BUSY_IND	0x02
 
 
-STATIC_INLINE void CPUCALL
-segdesc_clear(descriptor_t *sdp)
-{
-
-	memset((sdp), 0, sizeof(*sdp));
-}
-
 void CPUCALL segdesc_init(int idx, UINT16 sreg, descriptor_t *sdp);
-void CPUCALL segdesc_set_default(int idx, UINT16 selector, descriptor_t *sdp);
 void CPUCALL load_descriptor(descriptor_t *sdp, UINT32 addr);
 
 void CPUCALL load_segreg(int idx, UINT16 selector, UINT16 *sregp, descriptor_t *sdp, int exc);

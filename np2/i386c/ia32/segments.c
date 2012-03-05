@@ -27,6 +27,7 @@
 #include "cpu.h"
 #include "ia32.mcr"
 
+static void CPUCALL segdesc_set_default(int, UINT16, descriptor_t *);
 
 void CPUCALL
 load_segreg(int idx, UINT16 selector, UINT16 *sregp, descriptor_t *sdp, int exc)
@@ -41,8 +42,6 @@ load_segreg(int idx, UINT16 selector, UINT16 *sregp, descriptor_t *sdp, int exc)
 	if (!CPU_STAT_PM || CPU_STAT_VM86) {
 		/* real-mode or vm86 mode */
 		*sregp = selector;
-		segdesc_clear(&sel.desc);
-		sel.desc.u.seg.limit = CPU_STAT_SREGLIMIT(idx);
 		segdesc_set_default(idx, selector, &sel.desc);
 		*sdp = sel.desc;
 		return;
@@ -62,8 +61,9 @@ load_segreg(int idx, UINT16 selector, UINT16 *sregp, descriptor_t *sdp, int exc)
 		if ((rv != -2) || (idx == CPU_SS_INDEX)) {
 			EXCEPTION(exc, sel.idx);
 		}
+		/* null selector */
 		*sregp = sel.selector;
-		segdesc_clear(sdp);
+		memset(sdp, 0, sizeof(*sdp));
 		return;
 	}
 
@@ -203,7 +203,7 @@ load_descriptor(descriptor_t *sdp, UINT32 addr)
 	h = cpu_kmemoryread_d(addr + 4);
 	VERBOSE(("descriptor value = 0x%08x%08x", h, l));
 
-	segdesc_clear(sdp);
+	memset(sdp, 0, sizeof(*sdp));
 	sdp->flag = 0;
 
 	sdp->p = (h & CPU_DESC_H_P) ? 1 : 0;
@@ -384,12 +384,10 @@ segdesc_init(int idx, UINT16 sreg, descriptor_t *sdp)
 	__ASSERT((sdp != NULL));
 
 	CPU_REGS_SREG(idx) = sreg;
-	segdesc_clear(sdp);
-	sdp->u.seg.limit = 0xffff;
 	segdesc_set_default(idx, sreg, sdp);
 }
 
-void CPUCALL
+static void CPUCALL
 segdesc_set_default(int idx, UINT16 selector, descriptor_t *sdp)
 {
 
@@ -397,7 +395,7 @@ segdesc_set_default(int idx, UINT16 selector, descriptor_t *sdp)
 	__ASSERT((sdp != NULL));
 
 	sdp->u.seg.segbase = (UINT32)selector << 4;
-	/* sdp->u.seg.limit */
+	sdp->u.seg.limit = 0xffff;
 	sdp->u.seg.c = (idx == CPU_CS_INDEX) ? 1 : 0;	/* code or data */
 	sdp->u.seg.g = 0;	/* non 4k factor scale */
 	sdp->u.seg.wr = 1;	/* execute/read(CS) or read/write(others) */

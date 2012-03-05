@@ -382,7 +382,12 @@ interrupt_task_gate(const descriptor_t *gsdp, int intrtype, int errorp, int erro
 	CPU_SET_PREV_ESP();
 
 	if (errorp) {
-		XPUSH0(error_code);
+		VERBOSE(("interrupt: push error code (%08x)", error_code));
+		if (task_sel.desc.type == CPU_SYSDESC_TYPE_TSS_32) {
+			PUSH0_32(error_code);
+		} else {
+			PUSH0_16(error_code);
+		}
 	}
 
 	/* out of range */

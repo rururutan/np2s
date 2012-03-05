@@ -32,6 +32,26 @@
 #endif
 
 
+/*
+ * register strings
+ */
+const char *reg8_str[CPU_REG_NUM] = {
+	"al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"
+};
+
+const char *reg16_str[CPU_REG_NUM] = { 
+	"ax", "cx", "dx", "bx", "sp", "bp", "si", "di"
+};
+
+const char *reg32_str[CPU_REG_NUM] = { 
+	"eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi"
+};
+
+const char *sreg_str[CPU_SEGREG_NUM] = {
+	"es", "cs", "ss", "ds", "fs", "gs"
+};
+
+
 char *
 cpu_reg2str(void)
 {
@@ -256,6 +276,7 @@ segdesc_dump(descriptor_t *sdp)
 	VERBOSE(("valid    : %s", SEG_IS_VALID(sdp) ? "true" : "false"));
 	VERBOSE(("present  : %s", SEG_IS_PRESENT(sdp) ? "true" : "false"));
 	VERBOSE(("DPL      : %d", sdp->dpl));
+	VERBOSE(("type     : %d", sdp->type));
 	VERBOSE(("kind     : %s", SEG_IS_SYSTEM(sdp) ? "system" : "code/data"));
 	if (!SEG_IS_SYSTEM(sdp)) {
 		if (SEG_IS_CODE(sdp)) {

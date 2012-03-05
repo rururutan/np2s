@@ -29,25 +29,6 @@
 
 
 /*
- * register strings
- */
-const char *reg8_str[8] = {
-	"al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"
-};
-
-const char *reg16_str[8] = { 
-	"ax", "cx", "dx", "bx", "sp", "bp", "si", "di"
-};
-
-const char *reg32_str[8] = { 
-	"eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi"
-};
-
-const char *sreg_str[6] = {
-	"es", "cs", "ss", "ds", "fs", "gs"
-};
-
-/*
  * opcode strings
  */
 static const char *opcode_1byte[2][256] = {

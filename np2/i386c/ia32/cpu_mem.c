@@ -46,10 +46,10 @@ check_limit_upstairs(descriptor_t *sdp, UINT32 offset, UINT len)
 
 	len--;
 	end = offset + len;
-	limit = SEG_IS_32BIT(sdp) ? 0xffffffff : 0x0000ffff;
 
 	if (SEG_IS_DATA(sdp) && SEG_IS_EXPANDDOWN_DATA(sdp)) {
 		/* expand-down data segment */
+		limit = SEG_IS_32BIT(sdp) ? 0xffffffff : 0x0000ffff;
 		if (sdp->u.seg.limit == 0) {
 			/*
 			 *   32bit       16bit
@@ -93,37 +93,30 @@ check_limit_upstairs(descriptor_t *sdp, UINT32 offset, UINT len)
 		}
 	} else {
 		/* expand-up data or code segment */
-		if (sdp->u.seg.limit == limit) {
+		if (sdp->u.seg.limit == 0xffffffff) {
 			/*
-			 *   32bit       16bit
-			 * +-------+   +-------+ FFFFFFFFh
-			 * |       |   |       |
-			 * |       |   +  [1]  + 0000FFFFh
-			 * | valid |   |       |
-			 * |       |   +-------+ 0000FFFFh - len - 1
-			 * |       |   | valid |
-			 * +-------+   +-------+ 00000000h
+			 *  16/32bit
+			 * +-------+ FFFFFFFFh
+			 * |       |
+			 * |       |
+			 * | valid |
+			 * |       |
+			 * |       |
+			 * +-------+ 00000000h
 			 */
-			if (!SEG_IS_32BIT(sdp)) {
-				if ((len > limit)		/* len check */
-				 || (offset + len > limit)) {	/* [1] */
-					goto exc;
-				}
-			} else {
-				sdp->flag |= CPU_DESC_FLAG_WHOLEADR;
-			}
+			sdp->flag |= CPU_DESC_FLAG_WHOLEADR;
 		} else {
 			/*
-			 *   32bit       16bit
-			 * +-------+   +-------+ FFFFFFFFh
-			 * |       |   |       |
-			 * |       |   +.......+ 0000FFFFh
-			 * |  [1]  |   |  [1]  |
-			 * +.......+   +.......+ seg.limit
-			 * |       |   |       |
-			 * +-------+   +-------+ seg.limit - len - 1
-			 * | valid |   | valid |
-			 * +-------+   +-------+ 00000000h
+			 *  16/32bit
+			 * +-------+ FFFFFFFFh
+			 * |       |
+			 * |       |
+			 * |  [1]  |
+			 * +.......+ seg.limit
+			 * |       |
+			 * +-------+ seg.limit - len - 1
+			 * | valid |
+			 * +-------+ 00000000h
 			 */
 			if ((len > sdp->u.seg.limit)		/* len check */
 			 || (end < offset)			/* wrap check */
