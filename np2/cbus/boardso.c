@@ -9,7 +9,7 @@
 
 /**
  * SNE Sound Orchestra
- * YM2203(OPN) + YM3812(OPL2)
+ * YM2203(OPN) with panning + YM3812(OPL2)
  *
  */
 static void *opl2;
