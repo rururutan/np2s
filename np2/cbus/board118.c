@@ -47,11 +47,11 @@ static void IOOUTCALL ymf_o18a(UINT port, REG8 dat) {
 			}
 			else {
 				if (addr == 0x27) {
-					/* 118にCSMモードは無い */
+					/* OPL3-LにCSMモードは無い */
 					dat &= ~0x80;
+					opnch[2].extop = dat & 0xc0;
 				}
 				fmtimer_setreg(addr, dat);
-				opnch[2].extop = dat & 0xc0;
 			}
 		}
 		else if (addr < 0xc0 || (addr == 0x22)) {
