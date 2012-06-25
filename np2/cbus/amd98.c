@@ -25,7 +25,7 @@ REG8 amd98_getjoy(UINT no) {
 
 	REG8	ret;
 
-	rapids ^= 0xf0;											// ver0.28
+	rapids ^= 0xf0;
 	ret = 0xff;
 	if (no == 1) {
 		ret &= (joymng_getstat() | (rapids & 0x30));
@@ -42,18 +42,15 @@ REG8 amd98_getjoy(UINT no) {
 		ret |= rapids;
 	}
 
-	// rapid‚Æ”ñrapid‚ð‡¬								// ver0.28
+	// rapid‚Æ”ñrapid‚ð‡¬
 	ret &= ((ret >> 2) | (~0x30));
 
 	if (np2cfg.BTN_MODE) {
-		UINT8 bit1 = (ret & 0x20) >> 1;					// ver0.28
+		UINT8 bit1 = (ret & 0x20) >> 1;
 		UINT8 bit2 = (ret & 0x10) << 1;
 		ret = (ret & (~0x30)) | bit1 | bit2;
 	}
 
-	// intr ”½‰f‚µ‚ÄI‚í‚è								// ver0.28
-	ret &= 0x3f;
-	ret |= fmtimer.intr;
 	return(ret);
 }
 
