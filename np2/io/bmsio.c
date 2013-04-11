@@ -75,7 +75,7 @@ void bmsio_reset(void) {
 		bmsio_o00ec(0,0);
 	}
 	else {
-		bmsio_setnumbanks(0);
+		bmsio_setnumbanks(1);
 		bmsio_o00ec(0,0);
 	}
 }
