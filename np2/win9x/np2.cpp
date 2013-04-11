@@ -928,6 +928,15 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			update |= SYS_UPDATECFG;
 			break;
 
+#if defined(SUPPORT_BMS)
+		case IDM_BMS:
+			winuienter();
+			DialogBox(hInstance, MAKEINTRESOURCE(IDD_BMS),
+											hWnd, (DLGPROC)BMSDialogProc);
+			winuileave();
+			break;
+#endif
+
 		case IDM_MOUSE:
 			mousemng_toggle(MOUSEPROC_SYSTEM);
 			xmenu_setmouse(np2oscfg.MOUSE_SW ^ 1);

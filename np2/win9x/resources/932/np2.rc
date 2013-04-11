@@ -639,6 +639,21 @@ BEGIN
                     ES_WANTRETURN | WS_VSCROLL
 END
 
+IDD_BMS DIALOG DISCARDABLE  0, 0, 187, 95
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "IO Bank Memory"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,130,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,130,24,50,14
+    LTEXT           "I/O port",IDC_STATIC,30,32,24,8
+    COMBOBOX        IDC_BMSIO,64,30,40,52,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Use IO Bank Memory",IDC_BMS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,8,8,78,10
+    LTEXT           "Bank Size",IDC_STATIC,30,57,30,8
+    EDITTEXT        IDC_BMSBANKS,64,55,30,12,WS_GROUP
+END
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -831,6 +846,17 @@ BEGIN
         TOPMARGIN, 8
         BOTTOMMARGIN, 100
     END
+
+    IDD_BMS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        VERTGUIDE, 30
+        VERTGUIDE, 64
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 88
+        HORZGUIDE, 65
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -991,6 +1017,7 @@ BEGIN
             MENUITEM "&3.6MB",                      IDM_MEM36
             MENUITEM "&7.6MB",                      IDM_MEM76
         END
+        MENUITEM "IO &Bank Memory...",          IDM_BMS
         MENUITEM "&Mouse",                      IDM_MOUSE
         MENUITEM SEPARATOR
         MENUITEM "Se&rial option...",           IDM_SERIAL1

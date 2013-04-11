@@ -1170,6 +1170,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\io\bmsio.c"
+					>
+				</File>
+				<File
 					RelativePath="..\io\cgrom.c"
 					>
 				</File>
@@ -1901,6 +1905,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\dialog\d_bms.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\dialog\d_clnd.cpp"
 						>
 					</File>
@@ -2525,6 +2533,10 @@
 				>
 				<File
 					RelativePath="..\io\artic.h"
+					>
+				</File>
+				<File
+					RelativePath="..\io\bmsio.h"
 					>
 				</File>
 				<File

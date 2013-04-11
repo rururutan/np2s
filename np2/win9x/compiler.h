@@ -151,6 +151,8 @@ typedef	signed __int64		SINT64;
 #define	IA32_PAGING_EACHSIZE
 #define	SUPPORT_CRT31KHZ
 #define	SUPPORT_PC9801_119
+#else
+#define SUPPORT_BMS
 #endif
 #define	SUPPORT_CRT15KHZ
 #define	SUPPORT_PC9861K

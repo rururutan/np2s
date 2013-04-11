@@ -12,7 +12,7 @@
 #include	"ini.h"
 #include	"winkbd.h"
 #include	"pccore.h"
-
+#include	"bmsio.h"
 
 
 
@@ -491,6 +491,12 @@ static const PFTBL iniitem[] = {
 	PFEXT("FDDRIVE2", PFRO_BITMAP,		&np2cfg.fddequip,		1),
 	PFEXT("FDDRIVE3", PFRO_BITMAP,		&np2cfg.fddequip,		2),
 	PFEXT("FDDRIVE4", PFRO_BITMAP,		&np2cfg.fddequip,		3),
+
+#if defined(SUPPORT_BMS)
+	PFEXT("Use_BMS_", PFTYPE_BOOL,		&bmsiocfg.enabled,		0),
+	PFEXT("BMS_Port", PFTYPE_HEX16,		&bmsiocfg.port,			0),
+	PFEXT("BMS_Size", PFTYPE_UINT8,		&bmsiocfg.numbanks,		0),
+#endif
 
 	// OSàÀë∂ÅH
 	PFVAL("keyboard", PFRO_KB,			&np2oscfg.KEYBOARD),

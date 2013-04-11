@@ -7,6 +7,7 @@
 #include	"scsiio.h"
 #include	"pc9861k.h"
 #include	"mpu98ii.h"
+#include	"bmsio.h"
 
 
 static const FNIORESET resetfn[] = {
@@ -23,6 +24,9 @@ static const FNIORESET resetfn[] = {
 			pc9861k_reset,
 #endif
 			mpu98ii_reset,
+#if defined(SUPPORT_BMS)
+			bmsio_reset,
+#endif
 	};
 
 static const FNIOBIND bindfn[] = {
@@ -39,6 +43,9 @@ static const FNIOBIND bindfn[] = {
 			pc9861k_bind,
 #endif
 			mpu98ii_bind,
+#if defined(SUPPORT_BMS)
+			bmsio_bind,
+#endif
 	};
 
 

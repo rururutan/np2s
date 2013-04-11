@@ -39,6 +39,7 @@
 #include	"fddfile.h"
 #include	"fdd_mtr.h"
 #include	"sxsi.h"
+#include	"bmsio.h"
 #if defined(SUPPORT_HOSTDRV)
 #include	"hostdrv.h"
 #endif
@@ -352,6 +353,9 @@ void pccore_reset(void) {
 	}
 
 	pccore_set(&np2cfg);
+#if defined(SUPPORT_BMS)
+	bmsio_set();
+#endif
 	nevent_allreset();
 
 #if defined(VAEG_FIX)

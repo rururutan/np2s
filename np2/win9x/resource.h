@@ -30,6 +30,7 @@
 #define IDD_SNDPAD1                     157
 #define IDD_CALENDAR                    161
 #define IDD_ABOUT                       171
+#define IDD_BMS                         172
 #define IDR_SYS                         201
 #define IDR_SYSKEYDISP                  202
 #define IDR_SYSSOFTKBD                  203
@@ -255,6 +256,10 @@
 #define IDC_MORE                        17103
 #define IDC_NP2INFO                     17104
 #define IDC_NP2STR                      17105
+#define IDC_BMSIO                       17209
+#define IDC_BMS                         17210
+#define IDC_BMSIOBANK                   17210
+#define IDC_BMSBANKS                    17211
 #define IDC_TOOL_HDDACC                 18001
 #define IDC_TOOL_FDD1ACC                18002
 #define IDC_TOOL_FDD1LIST               18003
@@ -540,6 +545,8 @@
 #define IDM_TOOL_SKINMRU1               41152
 #define IDM_TOOL_SKINMRU2               41153
 #define IDM_TOOL_SKINMRU3               41154
+#define IDM_BMS                         41155
+
 #define IDM_KDISPFM                     42001
 #define IDM_KDISPMIDI                   42002
 #define IDM_VIEWWINNEW                  43001
