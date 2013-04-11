@@ -32,6 +32,7 @@
 #include	"hostdrv.h"
 #include	"calendar.h"
 #include	"keystat.h"
+#include	"bmsio.h"
 
 #if defined(MACOS)
 #define	CRCONST		str_cr
@@ -73,6 +74,9 @@ enum {
 	STATFLAG_HDRV,
 #endif
 	STATFLAG_MEM,
+#if defined(SUPPORT_BMS)
+	STATFLAG_BMS,
+#endif
 	STATFLAG_SXSI
 };
 
@@ -1270,6 +1274,35 @@ flcom_err1:
 	return(ret);
 }
 
+// ---- bms
+
+#if defined(SUPPORT_BMS)
+
+static int flagsave_bms(STFLAGH sfh, const SFENTRY *tbl) {
+
+	int		ret;
+
+	ret = STATFLAG_SUCCESS;
+	if (bmsiowork.bmsmem) {
+		ret = statflag_write(sfh, bmsiowork.bmsmem, bmsiowork.bmsmemsize);
+	}
+	(void)tbl;
+	return(ret);
+}
+
+static int flagload_bms(STFLAGH sfh, const SFENTRY *tbl) {
+
+	int		ret;
+
+	ret = STATFLAG_SUCCESS;
+	if (bmsiowork.bmsmem) {
+		ret = statflag_read(sfh, bmsiowork.bmsmem, bmsiowork.bmsmemsize);
+	}
+	(void)tbl;
+	return(ret);
+}
+
+#endif
 
 // ----
 
@@ -1368,6 +1401,12 @@ const SFENTRY	*tblterm;
 			case STATFLAG_MEM:
 				ret |= flagsave_mem(&sffh->sfh, tbl);
 				break;
+
+#if defined(SUPPORT_BMS)
+			case STATFLAG_BMS:
+				ret |= flagsave_bms(&sffh->sfh, tbl);
+				break;
+#endif
 
 			case STATFLAG_SXSI:
 				ret |= flagsave_sxsi(&sffh->sfh, tbl);
@@ -1571,6 +1610,12 @@ const SFENTRY	*tblterm;
 				case STATFLAG_MEM:
 					ret |= flagload_mem(&sffh->sfh, tbl);
 					break;
+
+#if defined(SUPPORT_BMS)
+				case STATFLAG_BMS:
+					ret |= flagload_bms(&sffh->sfh, tbl);
+					break;
+#endif
 
 				case STATFLAG_SXSI:
 					ret |= flagload_sxsi(&sffh->sfh, tbl);
