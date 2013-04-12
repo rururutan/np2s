@@ -1,16 +1,10 @@
 
-SUPPORT_PC88VA	equ		0		; added by Shinra
 VAEG_EXT		equ		0		; added by Shinra
 
 				struc	dmach_t
 .adrs			resd	1		; 00
 .leng			resw	1		; 04
-%if SUPPORT_PC88VA
-.dmy			resw	1		; 06
-.adrsorg		resd	1		; 08
-%else
 .adrsorg		resw	1		; 06
-%endif
 .lengorg		resw	1		; 08
 .action			resw	1		; 0a
 .outproc		resd	1		; 0c
@@ -47,10 +41,6 @@ section .bss
 	extern	_dmac
 
 section	.data
-
-%if SUPPORT_PC88VA
-	extern	_dma_access
-%endif
 
 section .text
 
@@ -102,13 +92,7 @@ dmap_exec:		mov		al, [edi + dmach_t.mode]
 				cmp		al, 04h
 				je		short dmap_port2mem
 				mov		ecx, [edi + dmach_t.adrs]
-%if SUPPORT_PC88VA
-				mov		byte [_dma_access], 80h
-%endif
 				call	@i286_memoryread@4
-%if SUPPORT_PC88VA
-				mov		byte [_dma_access], 00h
-%endif
 				mov		cl, al
 				call	dword [edi + dmach_t.outproc]
 				jmp		short dmap_inccnt
@@ -117,13 +101,7 @@ dmap_verify:	call	dword [edi + dmach_t.inproc]
 dmap_port2mem:	call	dword [edi + dmach_t.inproc]
 				mov		ecx, [edi + dmach_t.adrs]
 				mov		dl, al
-%if SUPPORT_PC88VA
-				mov		byte [_dma_access], 80h
-%endif
 				call	@i286_memorywrite@8
-%if SUPPORT_PC88VA
-				mov		byte [_dma_access], 00h
-%endif
 
 dmap_inccnt:	test	byte [edi + dmach_t.mode], 20h
 				jne		short dmap_adrsdec
