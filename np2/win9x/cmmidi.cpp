@@ -153,6 +153,11 @@ struct _cmmidi {
 	UINT		recvsize;
 	UINT8		recvbuf[MIDI_BUFFER];
 	UINT8		midiinbuf[MIDI_BUFFER];
+
+#if defined(VAEG_FIX)
+	BYTE		rsflag;		// RS-232C bit5..RTS bit1..DTR
+							// ToDo: STATSAVE‚Å•Û‘¶‚·‚é‚×‚«
+#endif
 };
 
 typedef struct {
@@ -617,7 +622,14 @@ static UINT midiwrite(COMMNG self, UINT8 data) {
 
 static UINT8 midigetstat(COMMNG self) {
 
+#if defined(VAEG_FIX)
+	CMMIDI	midi;
+	midi = (CMMIDI)(self + 1);
+	// ~CTS = RTS
+	return (midi->rsflag & 0x20) ? 0x00 : 0x40 /*CTS=1*/ ;
+#else
 	return(0x00);
+#endif
 }
 
 static long midimsg(COMMNG self, UINT msg, long param) {
@@ -662,6 +674,12 @@ static long midimsg(COMMNG self, UINT msg, long param) {
 		case COMMSG_MIMPIDEFEN:
 			midi->def_en = (param)?TRUE:FALSE;
 			return(1);
+
+#if defined(VAEG_FIX)
+		case COMMSG_SETRSFLAG:
+			midi->rsflag = (BYTE)param;
+			return(1);
+#endif
 	}
 	return(0);
 }
@@ -857,6 +875,9 @@ COMMNG cmmidi_create(const OEMCHAR *midiout, const OEMCHAR *midiin,
 	midi->midilast = 0x80;
 //	midi->midiexcvwait = 0;
 	midi->midimodule = (UINT8)module2number(module);
+#if defined(VAEG_FIX)
+	midi->rsflag = 0x20;
+#endif
 	FillMemory(midi->mch, sizeof(midi->mch), 0xff);
 	return(ret);
 

@@ -163,6 +163,9 @@ void rs232c_open(void) {
 
 	if (cm_rs232c == NULL) {
 		cm_rs232c = commng_create(COMCREATE_SERIAL);
+#if defined(VAEG_FIX)
+		cm_rs232c->msg(cm_rs232c, COMMSG_SETRSFLAG, rs232c.cmd & 0x22); /* RTS, DTR */
+#endif
 	}
 }
 
@@ -194,7 +197,11 @@ void rs232c_callback(void) {
 UINT8 rs232c_stat(void) {
 
 	if (cm_rs232c == NULL) {
+#if defined(VAEG_FIX)
+		rs232c_open();
+#else
 		cm_rs232c = commng_create(COMCREATE_SERIAL);
+#endif
 	}
 	return(cm_rs232c->getstat(cm_rs232c));
 }
@@ -276,9 +283,21 @@ static void IOOUTCALL rs232c_o32(UINT port, REG8 dat) {
 			break;
 
 		case 0x02:			// cmd
+#if defined(VAEG_FIX)
+			rs232c.cmd = dat;
+			if (cm_rs232c) {
+				cm_rs232c->msg(cm_rs232c, COMMSG_SETRSFLAG, dat & 0x22); /* RTS, DTR */
+			}
+#else
+									// sysport.c下位3bitはRS-232Cの割り込みマスクで
+									// あって、cmdでは変化しないはずなのだが・・・
+									// また、rs232c.pos++ により、次回以降のcmdを
+									// 受け付けなくなる。
+									// (Shinra)
 			sysport.c &= ~7;
 			sysport.c |= (dat & 7);
 			rs232c.pos++;
+#endif
 			break;
 	}
 	(void)port;
@@ -320,6 +339,9 @@ void rs232c_reset(const NP2CFG *pConfig) {
 	rs232c.pos = 0;
 	rs232c.dummyinst = 0;
 	rs232c.mul = 10 * 16;
+#if defined(VAEG_FIX)
+	rs232c.cmd = 0;
+#endif
 
 	(void)pConfig;
 }
