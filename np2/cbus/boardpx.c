@@ -119,7 +119,7 @@ static REG8 IOINPCALL spb_i18e(UINT port) {
 
 	UINT	addr;
 
-	addr = opn.addr - 0x100;
+	addr = opn.extaddr;
 	if (addr == 0x08) {
 		return(adpcm_readsample(&adpcm));
 	}
@@ -268,8 +268,8 @@ static void IOOUTCALL p86_o28a(UINT port, REG8 dat) {
 
 	UINT	addr;
 
-	opn.data = dat;
-	addr = opn.addr;
+	opn3.data = dat;
+	addr = opn3.addr;
 	if (addr >= 0x100) {
 		return;
 	}
@@ -311,6 +311,7 @@ static void IOOUTCALL p86_o28a(UINT port, REG8 dat) {
 static void IOOUTCALL p86_o28c(UINT port, REG8 dat) {
 
 	opn3.addr = dat + 0x100;
+	opn3.extaddr = dat;
 	opn3.data = dat;
 	(void)port;
 }
@@ -319,8 +320,11 @@ static void IOOUTCALL p86_o28e(UINT port, REG8 dat) {
 
 	UINT	addr;
 
+	if (!opn3.extend) {
+		return;
+	}
 	opn3.data = dat;
-	addr = opn3.addr - 0x100;
+	addr = opn3.extaddr;
 	if (addr >= 0x100) {
 		return;
 	}
@@ -345,7 +349,7 @@ static REG8 IOINPCALL p86_i28a(UINT port) {
 
 	UINT	addr;
 
-	addr = opn.addr;
+	addr = opn3.addr;
 	if (addr == 0x0e) {
 		return(fmboard_getjoy(&psg3));
 	}
@@ -359,6 +363,15 @@ static REG8 IOINPCALL p86_i28a(UINT port) {
 		(void)port;
 		return(opn3.data);
 	}
+}
+
+static REG8 IOINPCALL p86_i28c(UINT port) {
+
+	if (opn3.extend) {
+		return((fmtimer.status & 3) | adpcm_status(&adpcm3));
+	}
+	(void)port;
+	return(0xff);
 }
 
 static REG8 IOINPCALL p86_i28e(UINT port) {
@@ -615,7 +628,7 @@ static const IOOUT p86_o3[4] = {
 			p86_o288,	p86_o28a,	p86_o28c,	p86_o28e};
 
 static const IOINP p86_i3[4] = {
-			p86_i288,	p86_i28a,	p86_i288,	p86_i28e};
+			p86_i288,	p86_i28a,	p86_i28c,	p86_i28e};
 
 // ----
 
@@ -682,7 +695,7 @@ static void extendchannelx2(REG8 enable) {
 	else {
 		opn3.channels = 3;
 		opngen_setcfg(27, OPN_MONORAL | 0x07000000);
-		rhythm_setreg(&rhythm2, 0x10, 0xff);
+		rhythm_setreg(&rhythm3, 0x10, 0xff);
 	}
 }
 
@@ -731,11 +744,11 @@ void boardpx2_bind(void) {
 
 	pcm86io_bind();
 
-	cbuscore_attachsndex(0x188, spb_o, spb_i);
-	cbuscore_attachsndex(0x588, spr_o, spr_i);
+	cbuscore_attachsndex(0x188, p86_o3, p86_i3);
+	cbuscore_attachsndex(0x288, spb_o, spb_i);
+	cbuscore_attachsndex(0x688, spr_o, spr_i);
 	cbuscore_attachsndex(0x088, spb_o2, spb_i2);
 	cbuscore_attachsndex(0x488, spr_o2, spr_i2);
-	cbuscore_attachsndex(0x288, p86_o3, p86_i3);
 }
 
 #endif	// defined(SUPPORT_PX)
