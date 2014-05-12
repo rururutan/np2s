@@ -53,7 +53,7 @@ static UINT8 serialgetstat(COMMNG self) {
 	}
 }
 
-static long serialmsg(COMMNG self, UINT msg, long param) {
+static INTPTR serialmsg(COMMNG self, UINT msg, INTPTR param) {
 
 	(void)self;
 	(void)msg;

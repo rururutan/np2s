@@ -89,11 +89,7 @@ static void View_AddString(const OEMCHAR *string) {
 	int		vlen;
 	TCHAR	c;
 
-#if defined(OEMCHAR_SAME_TCHAR)
 	slen = lstrlen(string);
-#else
-	slen = oemtotchar(NULL, 0, string, (UINT)-1) - 1;
-#endif
 	if ((slen == 0) || ((slen + 3) > VIEW_BUFFERSIZE)) {
 		return;
 	}
@@ -115,11 +111,7 @@ static void View_AddString(const OEMCHAR *string) {
 			viewpos = 0;
 		}
 	}
-#if defined(OEMCHAR_SAME_TCHAR)
 	CopyMemory(viewbuf + vpos + vlen, string, slen * sizeof(TCHAR));
-#else
-	oemtotchar(viewbuf + vpos + vlen, slen + 1, string, (UINT)-1);
-#endif
 	vlen += slen;
 	viewbuf[vpos + vlen + 0] = '\r';
 	viewbuf[vpos + vlen + 1] = '\n';

@@ -27,7 +27,7 @@ static UINT8 paragetstat(COMMNG self) {
 	return(0);
 }
 
-static long paramsg(COMMNG self, UINT msg, long param) {
+static INTPTR paramsg(COMMNG self, UINT msg, INTPTR param) {
 
 	(void)self;
 	(void)msg;

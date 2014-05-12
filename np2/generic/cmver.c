@@ -322,7 +322,7 @@ static UINT8 midigetstat(COMMNG self) {
 	return(0x00);
 }
 
-static long midimsg(COMMNG self, UINT msg, long param) {
+static INTPTR midimsg(COMMNG self, UINT msg, INTPTR param) {
 
 	CMMIDI	midi;
 	COMFLAG	flag;
@@ -353,7 +353,7 @@ static long midimsg(COMMNG self, UINT msg, long param) {
 				flag->ver = 0;
 				flag->param = 0;
 				CopyMemory(flag + 1, midi->mch, sizeof(midi->mch));
-				return((long)flag);
+				return((INTPTR)flag);
 			}
 			break;
 	}

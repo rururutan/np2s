@@ -180,6 +180,10 @@ typedef	signed __int64		SINT64;
 
 #define	SUPPORT_TEXTCNV
 
+#if defined(CPUCORE_IA32)
+#pragma warning(disable: 4819)
+#endif
+
 #define SUPPORT_PX
 #define SUPPORT_V30ORIGINAL
 #define SUPPORT_V30EXT

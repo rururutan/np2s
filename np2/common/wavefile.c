@@ -85,7 +85,7 @@ WAVEWR wavewr_open(const OEMCHAR *filename, UINT rate, UINT bits, UINT ch) {
 		goto wwope_err2;
 	}
 	ZeroMemory(ret, sizeof(_WAVEWR));
-	ret->fh = (long)fh;
+	ret->fh = (INTPTR)fh;
 	ret->rate = rate;
 	ret->bits = bits;
 	ret->ch = ch;

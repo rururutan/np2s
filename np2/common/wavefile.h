@@ -33,7 +33,7 @@ typedef struct {
 // ---- write
 
 typedef struct {
-	long	fh;
+	INTPTR	fh;
 	UINT	rate;
 	UINT	bits;
 	UINT	ch;

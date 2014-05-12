@@ -130,7 +130,7 @@ static const SFENTRY np2tbl[] = {
 	{"SXSI",		0,	STATFLAG_SXSI,	NULL,			0},
 #if !defined(DISABLE_SOUND)
 	{"FMBOARD",		0,	STATFLAG_FM,	NULL,			0},
-	{"BEEP",		0,	STATFLAG_BIN,	&beep,			sizeof(beep)},
+	{"BEEP",		0,	STATFLAG_BIN,	&g_beep,		sizeof(g_beep)},
 	{"MUSICGEN",	0,	STATFLAG_BIN,	&musicgen,		sizeof(musicgen)},
 	{"AMD98",		0,	STATFLAG_BIN,	&amd98,			sizeof(amd98)},
 #endif

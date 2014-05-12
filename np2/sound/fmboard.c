@@ -332,7 +332,7 @@ void fmboard_bind(void) {
 			boardsov_bind();
 			break;
 	}
-	sound_streamregist(&beep, (SOUNDCB)beep_getpcm);
+	sound_streamregist(&g_beep, (SOUNDCB)beep_getpcm);
 }
 
 

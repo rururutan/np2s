@@ -345,8 +345,8 @@ static BRESULT proc2num(void *func, const PROCTBL *tbl, int size) {
 	int		i;
 
 	for (i=0; i<size; i++) {
-		if (*(long *)func == (long)tbl->proc) {
-			*(long *)func = (long)tbl->id;
+		if (*(INTPTR *)func == (INTPTR)tbl->proc) {
+			*(INTPTR *)func = (INTPTR)tbl->id;
 			return(SUCCESS);
 		}
 		tbl++;
@@ -359,8 +359,8 @@ static BRESULT num2proc(void *func, const PROCTBL *tbl, int size) {
 	int		i;
 
 	for (i=0; i<size; i++) {
-		if (*(long *)func == (long)tbl->id) {
-			*(long *)func = (long)tbl->proc;
+		if (*(INTPTR *)func == (INTPTR)tbl->id) {
+			*(INTPTR *)func = (INTPTR)tbl->proc;
 			return(SUCCESS);
 		}
 		tbl++;
@@ -480,8 +480,8 @@ static int flagsave_cgwnd(STFLAGH sfh, const SFENTRY *tbl) {
 	_CGWINDOW	cgwnd;
 
 	cgwnd = cgwindow;
-	cgwnd.fontlow -= (long)fontrom;
-	cgwnd.fonthigh -= (long)fontrom;
+	cgwnd.fontlow -= (INTPTR)fontrom;
+	cgwnd.fonthigh -= (INTPTR)fontrom;
 	(void)tbl;
 	return(statflag_write(sfh, &cgwindow, sizeof(cgwindow)));
 }
@@ -491,8 +491,8 @@ static int flagload_cgwnd(STFLAGH sfh, const SFENTRY *tbl) {
 	int		ret;
 
 	ret = statflag_read(sfh, &cgwindow, sizeof(cgwindow));
-	cgwindow.fontlow += (long)fontrom;
-	cgwindow.fonthigh += (long)fontrom;
+	cgwindow.fontlow += (INTPTR)fontrom;
+	cgwindow.fonthigh += (INTPTR)fontrom;
 	(void)tbl;
 	return(ret);
 }
@@ -551,8 +551,8 @@ static int flagsave_egc(STFLAGH sfh, const SFENTRY *tbl) {
 	_EGC	egcbak;
 
 	egcbak = egc;
-	egcbak.inptr -= (long)egc.buf;
-	egcbak.outptr -= (long)egc.buf;
+	egcbak.inptr -= (INTPTR)egc.buf;
+	egcbak.outptr -= (INTPTR)egc.buf;
 	(void)tbl;
 	return(statflag_write(sfh, &egcbak, sizeof(egcbak)));
 }
@@ -562,8 +562,8 @@ static int flagload_egc(STFLAGH sfh, const SFENTRY *tbl) {
 	int		ret;
 
 	ret = statflag_read(sfh, &egc, sizeof(egc));
-	egc.inptr += (long)egc.buf;
-	egc.outptr += (long)egc.buf;
+	egc.inptr += (INTPTR)egc.buf;
+	egc.outptr += (INTPTR)egc.buf;
 	(void)tbl;
 	return(ret);
 }
@@ -1195,7 +1195,7 @@ static int flagsave_com(STFLAGH sfh, const SFENTRY *tbl) {
 	int		ret;
 	COMFLAG	flag;
 
-	device = (UINT)(long)tbl->arg1;
+	device = (UINT)(INTPTR)tbl->arg1;
 	switch(device) {
 		case 0:
 			cm = cm_mpu98;
@@ -1245,7 +1245,7 @@ static int flagload_com(STFLAGH sfh, const SFENTRY *tbl) {
 		goto flcom_err2;
 	}
 
-	device = (UINT)(long)tbl->arg1;
+	device = (UINT)(INTPTR)tbl->arg1;
 	switch(device) {
 		case 0:
 			commng_destroy(cm_mpu98);
@@ -1264,7 +1264,7 @@ static int flagload_com(STFLAGH sfh, const SFENTRY *tbl) {
 			break;
 	}
 	if (cm) {
-		cm->msg(cm, COMMSG_SETFLAG, (long)flag);
+		cm->msg(cm, COMMSG_SETFLAG, (INTPTR)flag);
 	}
 
 flcom_err2:

@@ -87,8 +87,8 @@ static REG8 searchkeynum(const OEMCHAR *str, BOOL user) {
 const KEYNAME	*n;
 const KEYNAME	*nterm;
 
-	n = keyname;
-	nterm = keyname + NELEMENTS(keyname);
+	n = s_keyname;
+	nterm = s_keyname + NELEMENTS(s_keyname);
 	while(n < nterm) {
 		if (!milstr_cmp(n->str, str)) {
 			return(n->num);
