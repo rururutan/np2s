@@ -342,7 +342,7 @@ static LRESULT CALLBACK dlgitem_proc(HWND hWnd, UINT msg,
 					milstr_ncpy(cfg->def, str.mdef, NELEMENTS(cfg->def));
 					update |= SYS_UPDATEOSCFG;
 					if (cm) {
-						cm->msg(cm, COMMSG_MIMPIDEFFILE, (long)str.mdef);
+						cm->msg(cm, COMMSG_MIMPIDEFFILE, (INTPTR)str.mdef);
 					}
 				}
 				sysmng_update(update);

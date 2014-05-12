@@ -142,7 +142,7 @@ static void mpuupdate(HWND hWnd) {
 	if (milstr_cmp(np2oscfg.mpu.def, s.mdef)) {
 		milstr_ncpy(np2oscfg.mpu.def, s.mdef, NELEMENTS(np2oscfg.mpu.def));
 		if (cm_mpu98) {
-			cm_mpu98->msg(cm_mpu98, COMMSG_MIMPIDEFFILE, (long)s.mdef);
+			cm_mpu98->msg(cm_mpu98, COMMSG_MIMPIDEFFILE, (INTPTR)s.mdef);
 		}
 		update |= SYS_UPDATEOSCFG;
 	}

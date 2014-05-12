@@ -96,9 +96,10 @@ typedef	signed __int64		SINT64;
 #include "_memory.h"
 #include "rect.h"
 #include "lstarray.h"
+#include "tickcounter.h"
 #include "trace.h"
 
-#define	GETTICK()			GetTickCount()
+#define	GETTICK()			GetTickCounter()
 #if defined(TRACE)
 #define	__ASSERT(s)			assert(s)
 #else

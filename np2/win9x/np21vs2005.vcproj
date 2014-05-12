@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="shift_jis"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
-	Name="np2"
-	ProjectGUID="{54B29DEE-A8FC-46B5-840E-9C85794BC4F9}"
-	RootNamespace="np2vs2008"
+	Version="8.00"
+	Name="np21"
+	ProjectGUID="{A5EF7198-33D1-432A-B2C7-DD25B2553D1C}"
+	RootNamespace="np21vs2005"
 	Keyword="Win32Proj"
-	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
 		<Platform
@@ -37,7 +36,7 @@
 			/>
 			<Tool
 				Name="NASM"
-				IncludePaths=".\x86\;..\i286x\;..\io\x86\"
+				IncludePaths=".\x86\;..\i386c\x86\;..\io\x86\"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -57,13 +56,14 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\;.\x86;.\dialog;.\debuguty;..\;..\common;..\codecnv;..\i286x;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
+				AdditionalIncludeDirectories=".\;.\x86;.\dialog;.\debuguty;..\;..\common;..\codecnv;..\i386c;..\i386c\ia32;..\i386c\ia32\instructions;..\i386c\ia32\instructions\fpu;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
+				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -71,6 +71,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_UNICODE;UNICODE;SUPPORT_PC9821"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -101,6 +102,9 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -122,7 +126,7 @@
 			/>
 			<Tool
 				Name="YASM"
-				IncludePaths=".\x64;..\i286c\x64;..\io\x64"
+				IncludePaths=".\x64;..\i386c\x64;..\io\x64"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -137,13 +141,14 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\;.\x64;.\dialog;.\debuguty;..\;..\common;..\codecnv;..\i286c;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
+				AdditionalIncludeDirectories=".\;.\x64;.\dialog;.\debuguty;..\;..\common;..\codecnv;..\i386c;..\i386c\ia32;..\i386c\ia32\instructions;..\i386c\ia32\instructions\fpu;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
+				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -151,7 +156,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_WIN64;_UNICODE;UNICODE"
+				PreprocessorDefinitions="_WIN64;_UNICODE;UNICODE;SUPPORT_PC9821"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -183,6 +188,9 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -199,7 +207,7 @@
 			/>
 			<Tool
 				Name="NASM"
-				IncludePaths=".\x86\;..\i286x\;..\io\x86\"
+				IncludePaths=".\x86\;..\i386c\x86\;..\io\x86\"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -218,14 +226,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
-				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories=".\;.\x86;.\dialog;.\debuguty;..\;..\common;..\codecnv;..\i286x;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
+				AdditionalIncludeDirectories=".\;.\x86;.\dialog;.\debuguty;..\;..\common;..\codecnv;..\i386c;..\i386c\ia32;..\i386c\ia32\instructions;..\i386c\ia32\instructions\fpu;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821"
+				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
+				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -233,6 +239,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_UNICODE;UNICODE;SUPPORT_PC9821"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -263,6 +270,9 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -287,7 +297,7 @@
 			/>
 			<Tool
 				Name="YASM"
-				IncludePaths=".\x64;..\i286c\x64;..\io\x64"
+				IncludePaths=".\x64;..\i386c\x64;..\io\x64"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -301,14 +311,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
-				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories=".\;.\x64;.\dialog;.\debuguty;..\;..\common;..\codecnv;..\i286c;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
+				AdditionalIncludeDirectories=".\;.\x64;.\dialog;.\debuguty;..\;..\common;..\codecnv;..\i386c;..\i386c\ia32;..\i386c\ia32\instructions;..\i386c\ia32\instructions\fpu;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821"
+				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
+				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -316,7 +324,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_WIN64;_UNICODE;UNICODE"
+				PreprocessorDefinitions="_WIN64;_UNICODE;UNICODE;SUPPORT_PC9821"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -350,6 +358,9 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -367,7 +378,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\debugsub.c"
+				RelativePath="..\debugsub386.c"
 				>
 			</File>
 			<File
@@ -454,7 +465,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\cbus\board118.c"
+					RelativePath=".\board118.cpp"
 					>
 				</File>
 				<File
@@ -470,27 +481,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\cbus\boardlol.c"
-					>
-				</File>
-				<File
-					RelativePath="..\cbus\boardmo.c"
-					>
-				</File>
-				<File
 					RelativePath="..\cbus\boardpx.c"
-					>
-				</File>
-				<File
-					RelativePath="..\cbus\boardsb16.c"
-					>
-				</File>
-				<File
-					RelativePath="..\cbus\boardso.c"
-					>
-				</File>
-				<File
-					RelativePath="..\cbus\boardsov.c"
 					>
 				</File>
 				<File
@@ -507,14 +498,6 @@
 				</File>
 				<File
 					RelativePath="..\cbus\cs4231io.c"
-					>
-				</File>
-				<File
-					RelativePath="..\cbus\ct1741io.c"
-					>
-				</File>
-				<File
-					RelativePath="..\cbus\ct1745io.c"
 					>
 				</File>
 				<File
@@ -762,6 +745,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\generic\memdbg32.c"
+					>
+				</File>
+				<File
 					RelativePath="..\generic\np2info.c"
 					>
 				</File>
@@ -775,402 +762,150 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="i286c"
+				Name="i386c"
 				>
 				<File
-					RelativePath="..\i286c\i286c.c"
+					RelativePath="..\i386c\cpucore.c"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\i286c\i286c_0f.c"
+					RelativePath="..\i386c\memory.c"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
 				</File>
-				<File
-					RelativePath="..\i286c\i286c_8x.c"
+				<Filter
+					Name="ia32"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
+					<File
+						RelativePath="..\i386c\ia32\cpu.c"
 						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\cpu_io.c"
 						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\i286c\i286c_ea.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\cpu_mem.c"
 						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\ctrlxfer.c"
 						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\i286c\i286c_f6.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\debug.c"
 						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\disasm.c"
 						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\i286c\i286c_fe.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\exception.c"
 						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\groups.c"
 						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\i286c\i286c_mn.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\ia32.c"
 						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\inst_table.c"
 						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\i286c\i286c_rp.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\interface.c"
 						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\paging.c"
 						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\i286c\i286c_sf.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\resolve.c"
 						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\segments.c"
 						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\i286c\memory.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\task.c"
 						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
+					</File>
+					<Filter
+						Name="instructions"
 						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\i286c\v30patch.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-			</Filter>
-			<Filter
-				Name="i286x"
-				>
-				<File
-					RelativePath="..\i286x\DMAP.X86"
-					>
-					<FileConfiguration
-						Name="Debug|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="NASM"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="NASM"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\i286x\i286x.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\i286x\i286xadr.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\i286x\i286xcts.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\i286x\i286xrep.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\i286x\i286xs.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\i286x\memory.x86"
-					>
-					<FileConfiguration
-						Name="Debug|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="NASM"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="NASM"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\i286x\v30patch.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
+						<File
+							RelativePath="..\i386c\ia32\instructions\bin_arith.c"
+							>
+						</File>
+						<File
+							RelativePath="..\i386c\ia32\instructions\bit_byte.c"
+							>
+						</File>
+						<File
+							RelativePath="..\i386c\ia32\instructions\ctrl_trans.c"
+							>
+						</File>
+						<File
+							RelativePath="..\i386c\ia32\instructions\data_trans.c"
+							>
+						</File>
+						<File
+							RelativePath="..\i386c\ia32\instructions\dec_arith.c"
+							>
+						</File>
+						<File
+							RelativePath="..\i386c\ia32\instructions\flag_ctrl.c"
+							>
+						</File>
+						<File
+							RelativePath="..\i386c\ia32\instructions\fpu.c"
+							>
+						</File>
+						<File
+							RelativePath="..\i386c\ia32\instructions\logic_arith.c"
+							>
+						</File>
+						<File
+							RelativePath="..\i386c\ia32\instructions\misc_inst.c"
+							>
+						</File>
+						<File
+							RelativePath="..\i386c\ia32\instructions\seg_reg.c"
+							>
+						</File>
+						<File
+							RelativePath="..\i386c\ia32\instructions\shift_rotate.c"
+							>
+						</File>
+						<File
+							RelativePath="..\i386c\ia32\instructions\string_inst.c"
+							>
+						</File>
+						<File
+							RelativePath="..\i386c\ia32\instructions\system_inst.c"
+							>
+						</File>
+						<Filter
+							Name="fpu"
+							>
+							<File
+								RelativePath="..\i386c\ia32\instructions\fpu\fpdummy.c"
+								>
+							</File>
+						</Filter>
+					</Filter>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="io"
 				>
 				<File
 					RelativePath="..\io\artic.c"
-					>
-				</File>
-				<File
-					RelativePath="..\io\bmsio.c"
 					>
 				</File>
 				<File
@@ -1306,164 +1041,32 @@
 				Name="mem"
 				>
 				<File
-					RelativePath="..\mem\dmav30.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath="..\mem\dmax86.c"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\mem\memegc.c"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\mem\memems.c"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\mem\memepp.c"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\mem\memtram.c"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\mem\memvga.c"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\mem\memvram.c"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
 				</File>
 			</Filter>
 			<Filter
@@ -1606,22 +1209,6 @@
 					</File>
 					<File
 						RelativePath="..\sound\vermouth\midvoice.c"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="mame"
-					>
-					<File
-						RelativePath="..\sound\mame\fmopl.c"
-						>
-					</File>
-					<File
-						RelativePath="..\sound\mame\ymdeltat.c"
-						>
-					</File>
-					<File
-						RelativePath="..\sound\mame\ymf262.c"
 						>
 					</File>
 				</Filter>
@@ -1909,10 +1496,6 @@
 						>
 					</File>
 					<File
-						RelativePath=".\dialog\d_bms.cpp"
-						>
-					</File>
-					<File
 						RelativePath=".\dialog\d_clnd.cpp"
 						>
 					</File>
@@ -2037,47 +1620,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\mem\x86\dmax86.x86"
-						>
-						<FileConfiguration
-							Name="Debug|x64"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="NASM"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|x64"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="NASM"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
 						RelativePath=".\x86\makegrph.x86"
-						>
-						<FileConfiguration
-							Name="Debug|x64"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="NASM"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|x64"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="NASM"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\mem\x86\memegc.x86"
 						>
 						<FileConfiguration
 							Name="Debug|x64"
@@ -2464,6 +2007,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\generic\memdbg32.h"
+					>
+				</File>
+				<File
 					RelativePath="..\generic\np2info.h"
 					>
 				</File>
@@ -2477,70 +2024,134 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="i286c"
+				Name="i386c"
 				>
 				<File
-					RelativePath="..\i286c\cpucore.h"
+					RelativePath="..\i386c\cpucore.h"
 					>
 				</File>
 				<File
-					RelativePath="..\i286c\i286c.h"
+					RelativePath="..\i386c\memory.h"
 					>
 				</File>
-				<File
-					RelativePath="..\i286c\memory.h"
+				<Filter
+					Name="ia32"
 					>
-				</File>
-				<File
-					RelativePath="..\i286c\v30patch.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="i286x"
-				>
-				<File
-					RelativePath="..\i286x\cpucore.h"
-					>
-				</File>
-				<File
-					RelativePath="..\i286x\i286x.h"
-					>
-				</File>
-				<File
-					RelativePath="..\i286x\i286xadr.h"
-					>
-				</File>
-				<File
-					RelativePath="..\i286x\i286xcts.h"
-					>
-				</File>
-				<File
-					RelativePath="..\i286x\i286xrep.h"
-					>
-				</File>
-				<File
-					RelativePath="..\i286x\i286xs.h"
-					>
-				</File>
-				<File
-					RelativePath="..\i286x\memory.h"
-					>
-				</File>
-				<File
-					RelativePath="..\i286x\v30patch.h"
-					>
-				</File>
+					<File
+						RelativePath="..\i386c\ia32\cpu.h"
+						>
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\cpu_io.h"
+						>
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\cpu_mem.h"
+						>
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\ctrlxfer.h"
+						>
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\exception.h"
+						>
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\groups.h"
+						>
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\inst_table.h"
+						>
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\interface.h"
+						>
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\paging.h"
+						>
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\resolve.h"
+						>
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\segments.h"
+						>
+					</File>
+					<File
+						RelativePath="..\i386c\ia32\task.h"
+						>
+					</File>
+					<Filter
+						Name="instructions"
+						>
+						<File
+							RelativePath="..\i386c\ia32\instructions\bin_arith.h"
+							>
+						</File>
+						<File
+							RelativePath="..\i386c\ia32\instructions\bit_byte.h"
+							>
+						</File>
+						<File
+							RelativePath="..\i386c\ia32\instructions\ctrl_trans.h"
+							>
+						</File>
+						<File
+							RelativePath="..\i386c\ia32\instructions\data_trans.h"
+							>
+						</File>
+						<File
+							RelativePath="..\i386c\ia32\instructions\dec_arith.h"
+							>
+						</File>
+						<File
+							RelativePath="..\i386c\ia32\instructions\flag_ctrl.h"
+							>
+						</File>
+						<File
+							RelativePath="..\i386c\ia32\instructions\logic_arith.h"
+							>
+						</File>
+						<File
+							RelativePath="..\i386c\ia32\instructions\misc_inst.h"
+							>
+						</File>
+						<File
+							RelativePath="..\i386c\ia32\instructions\seg_reg.h"
+							>
+						</File>
+						<File
+							RelativePath="..\i386c\ia32\instructions\shift_rotate.h"
+							>
+						</File>
+						<File
+							RelativePath="..\i386c\ia32\instructions\string_inst.h"
+							>
+						</File>
+						<File
+							RelativePath="..\i386c\ia32\instructions\system_inst.h"
+							>
+						</File>
+						<Filter
+							Name="fpu"
+							>
+							<File
+								RelativePath="..\i386c\ia32\instructions\fpu\fp.h"
+								>
+							</File>
+						</Filter>
+					</Filter>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="io"
 				>
 				<File
 					RelativePath="..\io\artic.h"
-					>
-				</File>
-				<File
-					RelativePath="..\io\bmsio.h"
 					>
 				</File>
 				<File
@@ -2663,10 +2274,6 @@
 			<Filter
 				Name="mem"
 				>
-				<File
-					RelativePath="..\mem\dmav30.h"
-					>
-				</File>
 				<File
 					RelativePath="..\mem\dmax86.h"
 					>
@@ -2932,10 +2539,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\pcifunc.h"
-					>
-				</File>
-				<File
 					RelativePath=".\resource.h"
 					>
 				</File>
@@ -2973,6 +2576,10 @@
 				</File>
 				<File
 					RelativePath=".\taskmng.h"
+					>
+				</File>
+				<File
+					RelativePath=".\tickcounter.h"
 					>
 				</File>
 				<File
