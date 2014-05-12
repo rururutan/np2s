@@ -14,7 +14,9 @@
 #include "soundmng.h"
 #include "extromio.h"
 #include "sound.h"
+#if defined(SUPPORT_ROMEO)
 #include "juliet.h"
+#endif
 #if defined(VERMOUTH_LIB)
 #include "vermouth.h"
 #endif
@@ -212,7 +214,10 @@ static void streamenable(BOOL play) {
 			pDSData3->Stop();
 		}
 	}
-	juliet_YMF288Enable(play);
+
+#if defined(SUPPORT_ROMEO)
+	CJuliet::GetInstance()->Mute(!play);
+#endif
 }
 
 void soundmng_play(void) {

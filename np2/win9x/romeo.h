@@ -1,49 +1,51 @@
-#ifndef _ROMEO_ROMEO_H
-#define _ROMEO_ROMEO_H
+/**
+ * @file	romeo.h
+ * @brief	ROMEO 用の PCI 定義です
+ */
 
-#define	ROMEO_VENDORID		0x6809
-#define	ROMEO_DEVICEID		0x2151
-#define	ROMEO_DEVICEID2		0x8121		/* for Developer version */
+#pragma once
 
-enum {
-	PCIERR_SUCCESS			= 0x00,
-	PCIERR_INVALIDCLASS		= 0x83,
-	PCIERR_DEVNOTFOUND		= 0x86
+#define	ROMEO_VENDORID		0x6809		/*!< ベンダー ID */
+#define	ROMEO_DEVICEID		0x2151		/*!< デバイス ID */
+#define	ROMEO_DEVICEID2		0x8121		/*!< for Developer version */
+
+/**
+ * PCIDEBUG リザルト コード
+ */
+enum
+{
+	PCIERR_SUCCESS			= 0x00,		/*!< 成功 */
+	PCIERR_INVALIDCLASS		= 0x83,		/*!< 不正なデバイス クラス */
+	PCIERR_DEVNOTFOUND		= 0x86		/*!< デバイスが見つからない */
 };
 
-enum {
-	ROMEO_DEVICE_VENDOR		= 0x00,
-	ROMEO_STATUS_COMMAND	= 0x04,
-	ROMEO_CLASS_REVISON		= 0x08,
-	ROMEO_HEADTYPE			= 0x0c,
-	ROMEO_BASEADDRESS0		= 0x10,
-	ROMEO_BASEADDRESS1		= 0x14,
-	ROMEO_SUB_DEVICE_VENDOR	= 0x2c,
-	ROMEO_PCIINTERRUPT		= 0x3c
+/**
+ * コンフィグレーション レジスタ
+ */
+enum
+{
+	ROMEO_DEVICE_VENDOR		= 0x00,		/*!< ベンダ/デバイス ID */
+	ROMEO_STATUS_COMMAND	= 0x04,		/*!< コマンド/ステータス レジスタ */
+	ROMEO_CLASS_REVISON		= 0x08,		/*!< リビジョン ID / クラス コード */
+	ROMEO_HEADTYPE			= 0x0c,		/*!< キャッシュ ライン サイズ / マスタ レイテンシ タイマ / ヘッダ タイプ */
+	ROMEO_BASEADDRESS0		= 0x10,		/*!< ベース アドレス 0 */
+	ROMEO_BASEADDRESS1		= 0x14,		/*!< ベース アドレス 1 */
+	ROMEO_SUB_DEVICE_VENDOR	= 0x2c,		/*!< サブ システム ベンダID */
+	ROMEO_PCIINTERRUPT		= 0x3c		/*!< インタラプト ライン / インタラプト ピン / 最小グラント / 最大レイテンシ */
 };
 
-enum {
-	ROMEO_YM2151ADDR		= 0x0000,
-	ROMEO_YM2151DATA		= 0x0004,
-	ROMEO_CMDQUEUE			= 0x0018,
-	ROMEO_YM2151CTRL		= 0x001c,
-	ROMEO_YMF288ADDR1		= 0x0100,
-	ROMEO_YMF288DATA1		= 0x0104,
-	ROMEO_YMF288ADDR2		= 0x0108,
-	ROMEO_YMF288DATA2		= 0x010c,
-	ROMEO_YMF288CTRL		= 0x011c
+/**
+ * アドレス
+ */
+enum
+{
+	ROMEO_YM2151ADDR		= 0x0000,	/*!< YM2151 アドレス */
+	ROMEO_YM2151DATA		= 0x0004,	/*!< YM2151 データ */
+	ROMEO_CMDQUEUE			= 0x0018,	/*!< コマンド キュー */
+	ROMEO_YM2151CTRL		= 0x001c,	/*!< YM2151 コントロール */
+	ROMEO_YMF288ADDR1		= 0x0100,	/*!< YMF288 アドレス */
+	ROMEO_YMF288DATA1		= 0x0104,	/*!< YMF288 データ */
+	ROMEO_YMF288ADDR2		= 0x0108,	/*!< YMF288 拡張アドレス */
+	ROMEO_YMF288DATA2		= 0x010c,	/*!< YMF288 拡張データ */
+	ROMEO_YMF288CTRL		= 0x011c	/*!< YMF288 コントロール */
 };
-
-
-#define	PCIDEBUG_DLL	_T("pcidebug.dll")
-
-#define	FN_PCIFINDDEV	"_pciFindPciDevice"
-#define	FN_PCICFGREAD32	"_pciConfigReadLong"
-#define	FN_PCIMEMWR8	"_MemWriteChar"
-#define	FN_PCIMEMWR16	"_MemWriteShort"
-#define	FN_PCIMEMWR32	"_MemWriteLong"
-#define	FN_PCIMEMRD8	"_MemReadChar"
-#define	FN_PCIMEMRD16	"_MemReadShort"
-#define	FN_PCIMEMRD32	"_MemReadLong"
-
-#endif /* _ROMEO_ROMEO_H */

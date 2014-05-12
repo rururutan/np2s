@@ -10,47 +10,11 @@
 #include	"juliet.h"
 #include	"keydisp.h"
 
+#if !defined(SUPPORT_ROMEO)
+#error Not support ROMEO
+#endif
 
 // ROMEO‘Î‰ž”Å PC-9801-118
-
-static void romeo_restore(BOOL opna) {
-
-	REG8	i;
-
-	for (i=0x30; i<0xa0; i++) {
-		juliet_YMF288A(i, opn.reg[i]);
-	}
-	for (i=0; i<3; i++) {
-		juliet_YMF288A((UINT8)(i + 0xa4), opn.reg[i + 0x0a4]);
-		juliet_YMF288A((UINT8)(i + 0xa0), opn.reg[i + 0x0a0]);
-		juliet_YMF288A((UINT8)(i + 0xb0), opn.reg[i + 0x0b0]);
-		juliet_YMF288A((UINT8)(i + 0xb4), opn.reg[i + 0x0b4]);
-	}
-	if (opna) {
-		for (i=0x30; i<0xa0; i++) {
-			juliet_YMF288B(i, opn.reg[i + 0x100]);
-		}
-		for (i=0; i<3; i++) {
-			juliet_YMF288B((UINT8)(i + 0xa4), opn.reg[i + 0x1a4]);
-			juliet_YMF288B((UINT8)(i + 0xa0), opn.reg[i + 0x1a0]);
-			juliet_YMF288B((UINT8)(i + 0xb0), opn.reg[i + 0x1b0]);
-			juliet_YMF288B((UINT8)(i + 0xb4), opn.reg[i + 0x1b4]);
-		}
-		juliet_YMF288A(0x11, opn.reg[0x11]);
-		juliet_YMF288A(0x18, opn.reg[0x18]);
-		juliet_YMF288A(0x19, opn.reg[0x19]);
-		juliet_YMF288A(0x1a, opn.reg[0x1a]);
-		juliet_YMF288A(0x1b, opn.reg[0x1b]);
-		juliet_YMF288A(0x1c, opn.reg[0x1c]);
-		juliet_YMF288A(0x1d, opn.reg[0x1d]);
-	}
-	for (i=0; i<0x0e; i++) {
-		juliet_YMF288A(i, ((UINT8 *)&psg1.reg)[i]);
-	}
-}
-
-
-// ----
 
 static void IOOUTCALL ymf_o188(UINT port, REG8 dat) {
 
@@ -122,10 +86,10 @@ static void IOOUTCALL ymf_o18e(UINT port, REG8 dat) {
 		return;
 	}
 	opn.data = dat;
-	addr = opn.addr - 0x100;
-	if (addr >= 0x100) {
+	if (opn.addr < 0x100) {
 		return;
 	}
+	addr = opn.addr - 0x100;
 	S98_put(EXTEND2608, addr, dat);
 	opn.reg[addr + 0x100] = dat;
 	if (addr >= 0x30) {
@@ -204,79 +168,97 @@ static REG8 IOINPCALL ymf_ia460(UINT port) {
 
 // ---- with romeo
 
-static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat) {
+static void RestoreRomeo()
+{
+	UINT8 data[0x200];
+	CopyMemory(data, opn.reg, 0x200);
+	CopyMemory(data, &psg1.reg, 14);
+	CJuliet::GetInstance()->Restore(data, true);
+}
 
-	UINT	addr;
-
+static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
+{
 	opn.data = dat;
-	addr = opn.addr;
-	if (addr >= 0x100) {
+	const UINT nAddr = opn.addr;
+	if (nAddr >= 0x100) {
 		return;
 	}
-	S98_put(NORMAL2608, addr, dat);
-	if (addr < 0x10) {
-		*((UINT8 *)(&psg1.reg) + addr) = dat;
-		if (addr < 0x0e) {
-			juliet_YMF288A(addr, dat);
-			if (addr == 0x07) {
+	S98_put(NORMAL2608, nAddr, dat);
+
+	if (nAddr < 0x10)
+	{
+		(reinterpret_cast<UINT8*>(&psg1.reg))[nAddr] = dat;
+		if (nAddr < 0x0e)
+		{
+			CJuliet::GetInstance()->WriteRegister(nAddr, dat);
+
+			if (nAddr == 0x07)
+			{
 				keydisp_psgmix(&psg1);
 			}
-			else if ((addr == 0x08) || (addr == 0x09) || (addr == 0x0a)) {
-				keydisp_psgvol(&psg1, (UINT8)(addr - 8));
+			else if ((nAddr == 0x08) || (nAddr == 0x09) || (nAddr == 0x0a))
+			{
+				keydisp_psgvol(&psg1, static_cast<UINT8>(nAddr - 8));
 			}
 		}
 	}
-	else {
-		if (addr < 0x20) {
-			juliet_YMF288A(addr, dat);
+	else
+	{
+		if (nAddr < 0x20)
+		{
+			CJuliet::GetInstance()->WriteRegister(nAddr, dat);
 		}
-		else if (addr < 0x30) {
-			if (addr == 0x28) {
-				juliet_YMF288A(addr, dat);
-				if ((dat & 0x0f) < 3) {
-					keydisp_fmkeyon((UINT8)(dat & 0x0f), dat);
+		else if (nAddr < 0x30) {
+			if (nAddr == 0x28)
+			{
+				CJuliet::GetInstance()->WriteRegister(nAddr, dat);
+				if ((dat & 0x0f) < 3)
+				{
+					keydisp_fmkeyon(static_cast<UINT8>(dat & 0x0f), dat);
 				}
-				else if (((dat & 0x0f) != 3) && ((dat & 0x0f) < 7)) {
-					keydisp_fmkeyon((UINT8)((dat & 0x0f) - 1), dat);
+				else if (((dat & 0x0f) != 3) && ((dat & 0x0f) < 7))
+				{
+					keydisp_fmkeyon(static_cast<UINT8>((dat & 0x0f) - 1), dat);
 				}
 			}
 			else {
-				if (addr == 0x27) {
-					juliet_YMF288A(addr, dat & 0xc0);
+				if (nAddr == 0x27) {
+					CJuliet::GetInstance()->WriteRegister(nAddr, dat & 0xc0);
 				}
-				fmtimer_setreg(addr, dat);
+				fmtimer_setreg(nAddr, dat);
 			}
 		}
-		else if (addr < 0xc0) {
-			juliet_YMF288A(addr, dat);
+		else if (nAddr < 0xc0)
+		{
+			CJuliet::GetInstance()->WriteRegister(nAddr, dat);
 		}
-		opn.reg[addr] = dat;
+		opn.reg[nAddr] = dat;
 	}
 	(void)port;
 }
 
-static void IOOUTCALL ymfr_o18e(UINT port, REG8 dat) {
-
-	UINT	addr;
-
-	if (!opn.extend) {
+static void IOOUTCALL ymfr_o18e(UINT port, REG8 dat)
+{
+	if (!opn.extend)
+	{
 		return;
 	}
 	opn.data = dat;
-	addr = opn.addr - 0x100;
-	if (addr >= 0x100) {
+	if (opn.addr < 0x100) {
 		return;
 	}
-	S98_put(EXTEND2608, addr, dat);
-	opn.reg[addr + 0x100] = dat;
-	if (addr >= 0x30) {
-		juliet_YMF288B(addr, dat);
+	const UINT nAddr = opn.addr - 0x100;
+	S98_put(EXTEND2608, nAddr, dat);
+	opn.reg[nAddr + 0x100] = dat;
+	if (nAddr >= 0x30)
+	{
+		CJuliet::GetInstance()->WriteRegister(0x100 + nAddr, dat);
 	}
-	else {
-		if (addr == 0x10) {
-			if (!(dat & 0x80)) {
-				opn.adpcmmask = ~(dat & 0x1c);
-			}
+	else if (nAddr == 0x10)
+	{
+		if (!(dat & 0x80))
+		{
+			opn.adpcmmask = ~(dat & 0x1c);
 		}
 	}
 	(void)port;
@@ -291,9 +273,10 @@ static const IOOUT ymf_o[4] = {
 static const IOINP ymf_i[4] = {
 			ymf_i188,	ymf_i18a,	ymf_i18c,	NULL};
 
-static const IOOUT ymfr_o[4] = {
-			ymf_o188,	ymfr_o18a,	ymf_o18c,	ymfr_o18e};
-
+static const IOOUT ymfr_o[4] =
+{
+			ymf_o188,	ymfr_o18a,	ymf_o18c,	ymfr_o18e
+};
 
 void board118_reset(const NP2CFG *pConfig) {
 
@@ -302,21 +285,27 @@ void board118_reset(const NP2CFG *pConfig) {
 	cs4231io_reset();
 	soundrom_load(0xcc000, OEMTEXT("118"));
 	fmboard_extreg(extendchannel);
-	juliet_YMF288Reset();
+
+	CJuliet::GetInstance()->Reset();
 }
 
-void board118_bind(void) {
-
-	if (juliet_YMF288IsEnable()) {
-		juliet_YMF288A(0x22, 0x00);
-		juliet_YMF288A(0x29, 0x80);
-		juliet_YMF288A(0x10, 0xbf);
-		juliet_YMF288A(0x11, 0x30);
+void board118_bind(void)
+{
+	CJuliet* juliet = CJuliet::GetInstance();
+	if (juliet->IsEnabled())
+	{
+		juliet->WriteRegister(0x22, 0x00);
+		juliet->WriteRegister(0x29, 0x80);
+		juliet->WriteRegister(0x10, 0xbf);
+		juliet->WriteRegister(0x11, 0x30);
 		Sleep(100);
-		romeo_restore(TRUE);
+
+		RestoreRomeo();
+
 		cbuscore_attachsndex(0x188, ymfr_o, ymf_i);
 	}
-	else {
+	else
+	{
 		fmboard_fmrestore(0, 0);
 		fmboard_fmrestore(3, 1);
 		psggen_restore(&psg1);

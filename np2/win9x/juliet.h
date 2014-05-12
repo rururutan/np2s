@@ -1,35 +1,77 @@
+/**
+ * @file	juliet.h
+ * @brief	ROMEO アクセス クラスの宣言およびインターフェイスの定義をします
+ */
 
-#if !defined(SUPPORT_ROMEO)
+#pragma once
 
-#define	juliet_initialize()		(FAILURE)
-#define	juliet_deinitialize()
+/**
+ * @brief ROMEO アクセス クラス
+ */
+class CJuliet
+{
+public:
+	static CJuliet* GetInstance();
+	CJuliet();
+	bool Initialize();
+	void Deinitialize();
+	bool IsEnabled() const;
+	bool IsBusy() const;
+	void Reset() const;
+	void WriteRegister(UINT nAddr, UINT8 cData);
+	void Mute(bool bMute) const;
+	void Restore(const UINT8* data, bool bOpna);
 
-#define	juliet_YMF288Reset()
-#define juliet_YMF288IsEnable()	(FALSE)
-#define juliet_YMF288IsBusy()	(FALSE)
-#define juliet_YMF288A(a, d)
-#define juliet_YMF288B(a, d)
-#define juliet_YMF288Enable(e)
+private:
+	//! @brief ロード関数
+	struct ProcItem
+	{
+		LPCSTR lpSymbol;		//!< 関数名
+		size_t nOffset;			//!< オフセット
+	};
 
-#else
+	// 定義
+	typedef ULONG (WINAPI * FnRead32)(ULONG ulPciAddress, ULONG ulRegAddress);	//!< コンフィグレーション読み取り関数定義
+	typedef VOID (WINAPI * FnOut8)(ULONG ulAddress, UCHAR ucParam);				//!< outp 関数定義
+	typedef VOID (WINAPI * FnOut32)(ULONG ulAddress, ULONG ulParam);			//!< outpd 関数定義
+	typedef UCHAR (WINAPI * FnIn8)(ULONG ulAddress);							//!< inp 関数定義
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
-BOOL juliet_initialize(void);
-void juliet_deinitialize(void);
+	static CJuliet sm_instance;	//!< 唯一のインスタンスです
 
-void juliet_YMF288Reset(void);
-BOOL juliet_YMF288IsEnable(void);
-BOOL juliet_YMF288IsBusy(void);
-void juliet_YMF288A(UINT addr, UINT8 data);
-void juliet_YMF288B(UINT addr, UINT8 data);
-void juliet_YMF288Enable(BOOL enable);
+	HMODULE m_hModule;			//!< モジュール
+	FnRead32 m_fnRead32;		//!< コンフィグレーション読み取り関数
+	FnOut8 m_fnOut8;			//!< outp 関数
+	FnOut32 m_fnOut32;			//!< outpd 関数
+	FnIn8 m_fnIn8;				//!< inp 関数
+	bool m_bOpna;				//!< OPNA 有効フラグ
+	UCHAR m_ucIrq;				//!< ROMEO IRQ
+	UINT8 m_cPsgMix;			//!< PSG ミキサー
+	ULONG m_ulAddress;			//!< ROMEO ベース アドレス
+	UINT8 m_cAlgorithm[8];		//!< アルゴリズム テーブル
+	UINT8 m_cTtl[8 * 4];		//!< TTL テーブル
 
-#ifdef __cplusplus
+	void Clear();
+	ULONG SearchRomeo() const;
+	void WriteRegisterInner(UINT nAddr, UINT8 cData) const;
+	void SetVolume(UINT nChannel, int nVolume) const;
+};
+
+/**
+ * インスタンスを得る
+ * @return インスタンス
+ */
+inline CJuliet* CJuliet::GetInstance()
+{
+	return &sm_instance;
 }
-#endif
 
-#endif
-
+/**
+ * ROMEO は有効?
+ * @retval true 有効
+ * @retval false 無効
+ */
+inline bool CJuliet::IsEnabled() const
+{
+	return (m_hModule != NULL);
+}

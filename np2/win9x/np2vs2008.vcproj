@@ -454,7 +454,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\cbus\board118.c"
+					RelativePath=".\board118.cpp"
 					>
 				</File>
 				<File
