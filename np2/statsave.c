@@ -1438,7 +1438,7 @@ const SFENTRY	*tblterm;
 		tbl = np2tbl;
 		tblterm = tbl + NELEMENTS(np2tbl);
 		while(tbl < tblterm) {
-			if (!memcmp(sffh->sfh.hdr.index, tbl->index, 10)) {
+			if (!memcmp(sffh->sfh.hdr.index, tbl->index, sizeof(sffh->sfh.hdr.index))) {
 				break;
 			}
 			tbl++;
@@ -1510,7 +1510,7 @@ const SFENTRY	*tblterm;
 	// PCCORE read!
 	ret = statflag_readsection(sffh);
 	if ((ret != STATFLAG_SUCCESS) ||
-		(memcmp(sffh->sfh.hdr.index, np2tbl[0].index, 10))) {
+		(memcmp(sffh->sfh.hdr.index, np2tbl[0].index, sizeof(sffh->sfh.hdr.index)))) {
 		statflag_close(sffh);
 		return(STATFLAG_FAILURE);
 	}
@@ -1542,7 +1542,7 @@ const SFENTRY	*tblterm;
 		tbl = np2tbl + 1;
 		tblterm = np2tbl + NELEMENTS(np2tbl);
 		while(tbl < tblterm) {
-			if (!memcmp(sffh->sfh.hdr.index, tbl->index, 10)) {
+			if (!memcmp(sffh->sfh.hdr.index, tbl->index, sizeof(sffh->sfh.hdr.index))) {
 				break;
 			}
 			tbl++;

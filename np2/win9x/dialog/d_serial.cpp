@@ -220,9 +220,9 @@ static LRESULT CALLBACK dlgitem_proc(HWND hWnd, UINT msg,
 	UINT8	b;
 	LRESULT	r;
 	union {
-		OEMCHAR	mmap[MAXPNAMELEN];
-		OEMCHAR	mmdl[64];
-		OEMCHAR	mdef[MAX_PATH];
+		TCHAR	mmap[MAXPNAMELEN];
+		TCHAR	mmdl[64];
+		TCHAR	mdef[MAX_PATH];
 	} str;
 	COMCFG	*cfg;
 	UINT	update;

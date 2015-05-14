@@ -22,7 +22,7 @@ typedef struct {
 } _STFLAGH, *STFLAGH;
 
 typedef struct {
-	char	index[10];
+	char	index[12];
 	UINT16	ver;
 	UINT16	type;
 	void	*arg1;

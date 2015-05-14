@@ -224,25 +224,6 @@ UINT textcnv_getinfo(TCINF *inf, const UINT8 *hdr, UINT hdrsize) {
 			info.caps = TEXTCNV_READ | TEXTCNV_WRITE;
 			break;
 	}
-#elif defined(OSLANG_UTF8)
-	switch(textcode) {
-		case TEXTCNV_DEFAULT:
-		case TEXTCNV_SJIS:
-			info.caps = TEXTCNV_READ | TEXTCNV_WRITE;
-			info.tooem = (TCTOOEM)oemtext_chartoutf8;
-			info.fromoem = (TCFROMOEM)oemtext_utf8tochar;
-			break;
-
-		case TEXTCNV_UTF8:
-			info.caps = TEXTCNV_READ | TEXTCNV_WRITE;
-			break;
-
-		case TEXTCNV_UCS2:
-			info.caps = TEXTCNV_READ | TEXTCNV_WRITE;
-			info.tooem = (TCTOOEM)codecnv_ucs2toutf8;
-			info.fromoem = (TCFROMOEM)codecnv_utf8toucs2;
-			break;
-	}
 #elif defined(OSLANG_UCS2)
 	switch(textcode) {
 		case TEXTCNV_DEFAULT:

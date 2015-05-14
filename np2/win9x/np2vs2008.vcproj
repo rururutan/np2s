@@ -61,7 +61,7 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
@@ -141,7 +141,7 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
@@ -222,7 +222,7 @@
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories=".\;.\x86;.\dialog;.\debuguty;..\;..\common;..\codecnv;..\i286x;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -305,7 +305,7 @@
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories=".\;.\x64;.\dialog;.\debuguty;..\;..\common;..\codecnv;..\i286c;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -1758,10 +1758,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\extromio.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\fontmng.cpp"
 					>
 				</File>
@@ -1771,10 +1767,6 @@
 				</File>
 				<File
 					RelativePath=".\joymng.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\juliet.cpp"
 					>
 				</File>
 				<File
@@ -1827,10 +1819,6 @@
 				</File>
 				<File
 					RelativePath=".\taskmng.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\tickcounter.cpp"
 					>
 				</File>
 				<File
@@ -2135,6 +2123,50 @@
 								Name="NASM"
 							/>
 						</FileConfiguration>
+					</File>
+				</Filter>
+				<Filter
+					Name="ext"
+					>
+					<File
+						RelativePath=".\ext\externalopna.cpp"
+						>
+					</File>
+					<Filter
+						Name="c86ctl"
+						>
+						<File
+							RelativePath=".\ext\c86ctl\c86ctlif.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="romeo"
+						>
+						<File
+							RelativePath=".\ext\romeo\juliet.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="rebirth"
+						>
+						<File
+							RelativePath=".\ext\rebirth\rebirth.cpp"
+							>
+						</File>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="misc"
+					>
+					<File
+						RelativePath=".\misc\extrom.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\tickcounter.cpp"
+						>
 					</File>
 				</Filter>
 			</Filter>
@@ -2888,10 +2920,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\extromio.h"
-					>
-				</File>
-				<File
 					RelativePath=".\fontmng.h"
 					>
 				</File>
@@ -2901,10 +2929,6 @@
 				</File>
 				<File
 					RelativePath=".\joymng.h"
-					>
-				</File>
-				<File
-					RelativePath=".\juliet.h"
 					>
 				</File>
 				<File
@@ -2932,15 +2956,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\pcifunc.h"
-					>
-				</File>
-				<File
 					RelativePath=".\resource.h"
-					>
-				</File>
-				<File
-					RelativePath=".\romeo.h"
 					>
 				</File>
 				<File
@@ -3060,6 +3076,74 @@
 					>
 					<File
 						RelativePath=".\x86\cputype.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="ext"
+					>
+					<File
+						RelativePath=".\ext\extendmodule.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ext\externalopna.h"
+						>
+					</File>
+					<Filter
+						Name="c86ctl"
+						>
+						<File
+							RelativePath=".\ext\c86ctl\c86ctl.h"
+							>
+						</File>
+						<File
+							RelativePath=".\ext\c86ctl\c86ctlif.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="romeo"
+						>
+						<File
+							RelativePath=".\ext\romeo\juliet.h"
+							>
+						</File>
+						<File
+							RelativePath=".\ext\romeo\romeo.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="rebirth"
+						>
+						<File
+							RelativePath=".\ext\rebirth\rebirth.h"
+							>
+						</File>
+						<File
+							RelativePath=".\ext\rebirth\scci.h"
+							>
+						</File>
+						<File
+							RelativePath=".\ext\rebirth\SCCIDefines.h"
+							>
+						</File>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="misc"
+					>
+					<File
+						RelativePath=".\misc\extrom.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\tickcounter.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\vc6macros.h"
 						>
 					</File>
 				</Filter>

@@ -2,7 +2,6 @@
 #include	"strres.h"
 #include	"resource.h"
 #include	"np2.h"
-#include	"oemtext.h"
 #include	"dosio.h"
 #include	"sysmng.h"
 #include	"toolwin.h"
@@ -82,9 +81,9 @@ static const FSPARAM fpNewDisk =
 
 void dialog_changefdd(HWND hWnd, REG8 drv) {
 
-const OEMCHAR	*p;
-	OEMCHAR		path[MAX_PATH];
-	int			readonly;
+	LPCTSTR	p;
+	TCHAR	path[MAX_PATH];
+	int		readonly;
 
 	if (drv < 4) {
 		p = fdd_diskname(drv);
@@ -105,9 +104,9 @@ const OEMCHAR	*p;
 void dialog_changehdd(HWND hWnd, REG8 drv) {
 
 	UINT		num;
-const OEMCHAR	*p;
+	LPCTSTR		p;
 	PCFSPARAM	pfp;
-	OEMCHAR		path[MAX_PATH];
+	TCHAR		path[MAX_PATH];
 
 	p = diskdrv_getsxsi(drv);
 	num = drv & 0x0f;
@@ -154,7 +153,7 @@ const OEMCHAR	*p;
 
 // ---- newdisk
 
-static const OEMCHAR str_newdisk[] = OEMTEXT("newdisk");
+static const TCHAR str_newdisk[] = TEXT("newdisk");
 static const UINT32 hddsizetbl[5] = {20, 41, 65, 80, 128};
 
 static const UINT16 sasires[6] = {
@@ -163,7 +162,7 @@ static const UINT16 sasires[6] = {
 				IDC_NEWSASI30MB, IDC_NEWSASI40MB};
 
 static	UINT8	makefdtype = DISKTYPE_2HD << 4;
-static	OEMCHAR	disklabel[16+1];
+static	TCHAR	disklabel[16+1];
 static	UINT	hddsize;
 static	UINT	hddminsize;
 static	UINT	hddmaxsize;
@@ -187,7 +186,7 @@ static LRESULT CALLBACK NewHddDlgProc(HWND hWnd, UINT msg,
 				case IDOK:
 					GetWindowText(GetDlgItem(hWnd, IDC_HDDSIZE),
 													work, NELEMENTS(work));
-					val = (UINT)miltchar_solveINT(work);
+					val = (UINT)milstr_solveINT(work);
 					if (val < hddminsize) {
 						val = hddminsize;
 					}
@@ -265,9 +264,6 @@ static LRESULT CALLBACK NewdiskDlgProc(HWND hWnd, UINT msg,
 													WPARAM wp, LPARAM lp) {
 
 	UINT16	res;
-#if defined(OSLANG_UTF8)
-	TCHAR	buf[17];
-#endif
 
 	switch (msg) {
 		case WM_INITDIALOG:
@@ -291,17 +287,11 @@ static LRESULT CALLBACK NewdiskDlgProc(HWND hWnd, UINT msg,
 		case WM_COMMAND:
 			switch(LOWORD(wp)) {
 				case IDOK:
-#if defined(OSLANG_UTF8)
-					GetWindowText(GetDlgItem(hWnd, IDC_DISKLABEL),
-														buf, NELEMENTS(buf));
-					tchartooem(disklabel, NELEMENTS(disklabel), buf, -1);
-#else
 					GetWindowText(GetDlgItem(hWnd, IDC_DISKLABEL),
 											disklabel, NELEMENTS(disklabel));
 					if (milstr_kanji1st(disklabel, NELEMENTS(disklabel) - 1)) {
 						disklabel[NELEMENTS(disklabel) - 1] = '\0';
 					}
-#endif
 					if (GetDlgItemCheck(hWnd, IDC_MAKE2DD)) {
 						makefdtype = (DISKTYPE_2DD << 4);
 					}
@@ -335,9 +325,9 @@ static LRESULT CALLBACK NewdiskDlgProc(HWND hWnd, UINT msg,
 
 void dialog_newdisk(HWND hWnd) {
 
-	OEMCHAR		path[MAX_PATH];
+	TCHAR		path[MAX_PATH];
 	HINSTANCE	hinst;
-const OEMCHAR	*ext;
+	LPCTSTR ext;
 
 	file_cpyname(path, fddfolder, NELEMENTS(path));
 	file_cutname(path);

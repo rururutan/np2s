@@ -12,7 +12,6 @@
 #include "strres.h"
 #include "resource.h"
 #include "np2.h"
-#include "oemtext.h"
 #include "dosio.h"
 #include "joymng.h"
 #include "sysmng.h"
@@ -26,6 +25,7 @@
 #include "fmboard.h"
 #include "s98.h"
 #include "dipswbmp.h"
+#include "recvideo.h"
 
 #if !defined(__GNUC__)
 #pragma comment(lib, "comctl32.lib")
@@ -93,7 +93,7 @@ static void slidersetvaluestr(HWND hWnd, const SLIDERTBL *item, UINT8 value) {
 
 	TCHAR	work[32];
 
-	wsprintf(work, tchar_d, value);
+	wsprintf(work, str_d, value);
 	SetDlgItemText(hWnd, item->resstr, work);
 }
 
@@ -992,12 +992,12 @@ static const FSPARAM fpS98 =
 	MAKEINTRESOURCE(IDS_S98FILTER),
 	1
 };
-static const OEMCHAR szS98File[] = OEMTEXT("NP2_####.S98");
+static const TCHAR szS98File[] = TEXT("NP2_####.S98");
 
 void dialog_s98(HWND hWnd)
 {
 	BOOL	bCheck;
-	OEMCHAR	szPath[MAX_PATH];
+	TCHAR	szPath[MAX_PATH];
 
 	S98_close();
 	bCheck = FALSE;
@@ -1027,18 +1027,23 @@ static const FSPARAM fpWave =
 	MAKEINTRESOURCE(IDS_WAVEFILTER),
 	1
 };
-static const OEMCHAR szWaveFile[] = OEMTEXT("NP2_####.WAV");
+static const TCHAR szWaveFile[] = TEXT("NP2_####.WAV");
 
 void dialog_waverec(HWND hWnd)
 {
-	UINT8	bCheck;
-	OEMCHAR	szPath[MAX_PATH];
+#if defined(SUPPORT_RECVIDEO)
+	const bool bShiftDown = (::GetKeyState(VK_SHIFT) < 0);
+	recvideo_close();
+#endif	// defined(SUPPORT_RECVIDEO)
 
-	bCheck = FALSE;
 	sound_recstop();
+
+	TCHAR szPath[MAX_PATH];
 	file_cpyname(szPath, bmpfilefolder, NELEMENTS(szPath));
 	file_cutname(szPath);
 	file_catname(szPath, szWaveFile, NELEMENTS(szPath));
+
+	UINT8 bCheck = FALSE;
 	if ((dlgs_createfilenum(hWnd, &fpWave, szPath, NELEMENTS(szPath))) &&
 		(sound_recstart(szPath) == SUCCESS))
 	{
@@ -1046,6 +1051,16 @@ void dialog_waverec(HWND hWnd)
 		sysmng_update(SYS_UPDATEOSCFG);
 		bCheck = TRUE;
 	}
+
+#if defined(SUPPORT_RECVIDEO)
+	if (bShiftDown)
+	{
+		file_cutext(szPath);
+		file_catname(szPath, _T(".avi"), NELEMENTS(szPath));
+		recvideo_open(hWnd, szPath);
+	}
+#endif	// defined(SUPPORT_RECVIDEO)
+
 	xmenu_setwaverec(bCheck);
 }
 #endif	// defined(SUPPORT_WAVEREC)

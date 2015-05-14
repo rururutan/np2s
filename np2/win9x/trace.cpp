@@ -3,7 +3,6 @@
 #include	"resource.h"
 #include	"strres.h"
 #include	"textfile.h"
-#include	"oemtext.h"
 #include	"dosio.h"
 #include	"ini.h"
 #include	"menu.h"

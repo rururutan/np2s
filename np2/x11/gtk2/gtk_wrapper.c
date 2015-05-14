@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2004 NONAKA Kimihiro
+ * Copyright (c) 2002-2013 NONAKA Kimihiro
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -126,12 +126,27 @@ static gint orig_x, orig_y;
 static inline Bool
 XF86VidModeGetModeInfo(Display *d, int s, XF86VidModeModeInfo *info)
 {
-	XF86VidModeModeLine *line;
+	XF86VidModeModeLine line;
+	int dotclock;
 
 	memset(info, 0, sizeof(*info));
-	line = (void *)((char *)info + sizeof(info->dotclock));
 
-	return XF86VidModeGetModeLine(d, s, (int *)&info->dotclock, line);
+	Bool ret = XF86VidModeGetModeLine(d, s, &dotclock, &line);
+	if (ret) {
+		info->dotclock = dotclock;
+		info->hdisplay = line.hdisplay;
+		info->hsyncstart = line.hsyncstart;
+		info->hsyncend = line.hsyncend;
+		info->htotal = line.htotal;
+		info->vdisplay = line.vdisplay;
+		info->vsyncstart = line.vsyncstart;
+		info->vsyncend = line.vsyncend;
+		info->vtotal = line.vtotal;
+		info->flags = line.flags;
+		info->privsize = line.privsize;
+		info->private = line.private;
+	}
+	return ret;
 }
 
 static int
@@ -338,6 +353,7 @@ gtk_window_restore_mode(GtkWidget *widget)
 
 	if (!is_fullscreen)
 		return;
+	is_fullscreen = 0;
 
 #ifdef HAVE_XF86VIDMODE
 	if (use_xvid) {
@@ -364,14 +380,14 @@ gtk_window_restore_mode(GtkWidget *widget)
 			}
 		}
 
-		if (np2running) {
+		if (np2running && GTK_IS_WINDOW(widget)) {
 			gtk_window_move(GTK_WINDOW(widget), orig_x, orig_y);
 		}
 
 		XUnlockDisplay(fs_xdisplay);
 	}
 #endif	/* HAVE_XF86VIDMODE */
-	if (use_netwm) {
+	if (use_netwm && GTK_IS_WINDOW(widget)) {
 		gtk_window_unfullscreen(GTK_WINDOW(widget));
 	}
 }

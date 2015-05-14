@@ -238,7 +238,7 @@ static BRESULT readlineAtoOEM(TEXTFILE tf, void *buffer, UINT size) {
 
 	ret = readlineA(tf, tf->cnvbuf, tf->cnvbufsize);
 	if (ret == SUCCESS) {
-		(tf->tooem)(buffer, size, tf->cnvbuf, (UINT)-1);
+		(tf->tooem)((OEMCHAR *)buffer, size, tf->cnvbuf, (UINT)-1);
 	}
 	return(ret);
 }
@@ -249,7 +249,7 @@ static BRESULT readlineWtoOEM(TEXTFILE tf, void *buffer, UINT size) {
 
 	ret = readlineW(tf, tf->cnvbuf, tf->cnvbufsize / 2);
 	if (ret == SUCCESS) {
-		(tf->tooem)(buffer, size, tf->cnvbuf, (UINT)-1);
+		(tf->tooem)((OEMCHAR *)buffer, size, tf->cnvbuf, (UINT)-1);
 	}
 	return(ret);
 }

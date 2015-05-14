@@ -127,7 +127,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\codecnv" /I "..\i286x" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\trap" /I "..\zlib" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_WAVEREC" /D "SUPPORT_PX" /YX"compiler.h" /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\codecnv" /I "..\i286x" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\trap" /I "..\zlib" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_UNICODE" /D "UNICODE" /D "SUPPORT_WAVEREC" /D "SUPPORT_PX" /D "SUPPORT_RECVIDEO" /YX"compiler.h" /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -734,7 +734,7 @@ SOURCE=..\CBUS\ATAPICMD.C
 # End Source File
 # Begin Source File
 
-SOURCE=.\BOARD118.C
+SOURCE=.\BOARD118.CPP
 # End Source File
 # Begin Source File
 
@@ -1323,7 +1323,7 @@ SOURCE=..\TRAP\INTTRAP.C
 SOURCE=..\TRAP\STEPTRAP.C
 # End Source File
 # End Group
-# Begin Group "Win9x"
+# Begin Group "win9x"
 
 # PROP Default_Filter ""
 # Begin Group "dialog"
@@ -1414,6 +1414,98 @@ SOURCE=.\DEBUGUTY\VIEWSEG.CPP
 SOURCE=.\DEBUGUTY\VIEWSND.CPP
 # End Source File
 # End Group
+# Begin Group "ext"
+
+# PROP Default_Filter ""
+# Begin Group "c86ctl"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\ext\c86ctl\c86ctl.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\c86ctl\c86ctlif.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\c86ctl\c86ctlif.h
+# End Source File
+# End Group
+# Begin Group "romeo"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\ext\romeo\juliet.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\romeo\juliet.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\romeo\romeo.h
+# End Source File
+# End Group
+# Begin Group "rebirth"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\ext\rebirth\rebirth.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\rebirth\rebirth.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\rebirth\scci.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\rebirth\SCCIDefines.h
+# End Source File
+# End Group
+# Begin Source File
+
+SOURCE=.\ext\extendmodule.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalopna.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalopna.h
+# End Source File
+# End Group
+# Begin Group "misc"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\misc\extrom.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\extrom.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\tickcounter.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\tickcounter.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\vc6macros.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\CMMIDI.CPP
@@ -1433,33 +1525,7 @@ SOURCE=.\COMMNG.CPP
 # Begin Source File
 
 SOURCE=.\COMPILER.CPP
-
-!IF  "$(CFG)" == "np2 - Win32 Release"
-
 # ADD CPP /Yc"compiler.h"
-
-!ELSEIF  "$(CFG)" == "np2 - Win32 Release NT"
-
-# ADD CPP /Yc"compiler.h"
-
-!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
-
-# ADD CPP /Yc"compiler.h"
-
-!ELSEIF  "$(CFG)" == "np2 - Win32 WaveRec"
-
-# ADD CPP /Yc"compiler.h"
-
-!ELSEIF  "$(CFG)" == "np2 - Win32 Trap"
-
-# ADD CPP /Yc"compiler.h"
-
-!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
-
-# ADD CPP /Yc"compiler.h"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -1633,10 +1699,6 @@ SOURCE=.\DOSIO.CPP
 # End Source File
 # Begin Source File
 
-SOURCE=.\EXTROMIO.CPP
-# End Source File
-# Begin Source File
-
 SOURCE=.\FONTMNG.CPP
 # End Source File
 # Begin Source File
@@ -1646,10 +1708,6 @@ SOURCE=.\INI.CPP
 # Begin Source File
 
 SOURCE=.\JOYMNG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\JULIET.CPP
 # End Source File
 # Begin Source File
 
@@ -1674,6 +1732,14 @@ SOURCE=.\NP2ARG.CPP
 # Begin Source File
 
 SOURCE=.\OEMTEXT.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\recvideo.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\recvideo.h
 # End Source File
 # Begin Source File
 

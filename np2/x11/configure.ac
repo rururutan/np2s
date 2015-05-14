@@ -4,9 +4,8 @@ dnl
 
 dnl require autoconf 2.59
 AC_PREREQ(2.59)
-AC_REVISION($Revision: 1.37 $)
 
-AC_INIT(Xnp2,0.83-20120618,nonakap@gmail.com,xnp2)
+AC_INIT(Xnp2,0.83-20140531,nonakap@gmail.com,xnp2)
 AM_INIT_AUTOMAKE([no-define no-dist no-installinfo subdir-objects])
 AC_CONFIG_SRCDIR([../np2ver.h])
 AC_CONFIG_HEADERS(config.h)
@@ -20,6 +19,7 @@ AM_PROG_CC_C_O
 AC_PROG_GCC_TRADITIONAL
 AC_PROG_RANLIB
 AC_PROG_INSTALL
+AC_PROG_LN_S
 
 dnl
 dnl Checks for header files.
@@ -93,12 +93,18 @@ AC_ARG_ENABLE(xf86vidmode,
 AC_ARG_ENABLE(ia32,
   AC_HELP_STRING([--enable-ia32],[Use IA-32 emulation [default=no]]),,
   [enable_ia32="no"])
+AC_ARG_ENABLE(build-all,
+  AC_HELP_STRING([--enable-build-all],[Build xnp2(i286 emulation) and xnp21(IA-32 emulation) programs [default=no]]),,
+  [enable_build_all="no"])
 AC_ARG_ENABLE(debug,
   AC_HELP_STRING([--enable-debug],[Enable debugging [default=no]]),,
   [enable_debug="no"])
 AC_ARG_ENABLE(warning,
   AC_HELP_STRING([--enable-warning],[Enable warning [default=no]]),,
   [enable_warning="no"])
+AC_ARG_ENABLE(gtk-deprecated-api,
+  AC_HELP_STRING([--enable-gtk-deprecated-api],[Enable GTK+ deprecated API [default=yes]]),,
+  [enable_gtk_deprecated_api="yes"])
 
 dnl
 dnl Checks for GTK+
@@ -149,13 +155,22 @@ dnl
 AC_CHECK_PROGS(nasm,[nasm nasmw],no)
 
 dnl
+dnl Checks for build all programs
+dnl
+AC_MSG_CHECKING([whether to build all programs])
+AM_CONDITIONAL(BUILD_ALL,test x"$enable_build_all" = "xyes")
+if test x"$enable_build_all" = "xyes"; then
+  if test x"$enable_ia32" != "xyes"; then
+    enable_ia32="yes"
+  fi
+fi
+AC_MSG_RESULT($enable_build_all)
+
+dnl
 dnl Checks for IA-32 CPU emulation
 dnl
 AC_MSG_CHECKING([whether to use IA-32 emulation])
 AM_CONDITIONAL(CPUCORE_IA32,test x"$enable_ia32" = "xyes")
-if test x"$enable_ia32" = "xyes"; then
-  AC_DEFINE(CPUCORE_IA32,,[Define if use IA-32 emulation])
-fi
 AC_MSG_RESULT($enable_ia32)
 
 dnl
@@ -176,13 +191,26 @@ dnl Checks for warning
 dnl
 AC_MSG_CHECKING([whether to enable warning])
 if test x"$enable_warning" = "xyes"; then
-  CFLAGS="$CFLAGS -Wall -Wstrict-prototypes -Wmissing-prototypes -Wpointer-arith"
+  CFLAGS="$CFLAGS -Wall -Wextra"
+  CFLAGS="$CFLAGS -Wstrict-prototypes -Wmissing-prototypes -Wpointer-arith"
   CFLAGS="$CFLAGS -Wreturn-type -Wswitch -Wshadow"
   CFLAGS="$CFLAGS -Wcast-qual -Wwrite-strings"
-  CFLAGS="$CFLAGS -Wextra -Wno-unused-parameter"
+  CFLAGS="$CFLAGS -Wno-unused-parameter -Wno-missing-field-initializers"
   CFLAGS="$CFLAGS -Wformat=2"
 fi
 AC_MSG_RESULT($enable_warning)
+
+dnl
+dnl Checks for gtk-deprecated-api
+dnl
+AC_MSG_CHECKING([whether to enable GTK+ deprecated API])
+if test x"$enable_gtk_deprecated_api" != "xyes"; then
+  GTK_CFLAGS="$GTK_CFLAGS -DGTK_DISABLE_DEPRECATED"
+  GTK_CFLAGS="$GTK_CFLAGS -DGDK_DISABLE_DEPRECATED"
+  GTK_CFLAGS="$GTK_CFLAGS -DGLIB_DISABLE_DEPRECATED"
+  CPPFLAGS="$CPPFLAGS -Werror=deprecated-declarations"
+fi
+AC_MSG_RESULT($enable_gtk_deprecated_api)
 
 dnl
 dnl Checks for Xnp2 version

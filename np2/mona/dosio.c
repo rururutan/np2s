@@ -251,7 +251,7 @@ short file_delete_c(const char *path) {
 short file_attr_c(const char *path) {
 
 	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
-	return(file_attr_c(curpath));
+	return(file_attr(curpath));
 }
 
 

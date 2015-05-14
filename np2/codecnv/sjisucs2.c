@@ -1187,7 +1187,7 @@ UINT codecnv_sjistoucs2(UINT16 *lpOutput, UINT cchOutput, const char *lpInput, U
 	else
 	{
 		// String mode
-		nLength = sjis2ucs2(lpOutput, cchOutput - 1, lpInput, strlen(lpInput));
+		nLength = sjis2ucs2(lpOutput, cchOutput - 1, lpInput, (UINT)strlen(lpInput));
 		if (lpOutput)
 		{
 			lpOutput[nLength] = '\0';
@@ -1274,7 +1274,7 @@ UINT codecnv_sjistoutf8(char *lpOutput, UINT cchOutput, const char *lpInput, UIN
 	else
 	{
 		// String mode
-		nLength = sjis2utf8(lpOutput, cchOutput - 1, lpInput, strlen(lpInput));
+		nLength = sjis2utf8(lpOutput, cchOutput - 1, lpInput, (UINT)strlen(lpInput));
 		if (lpOutput)
 		{
 			lpOutput[nLength] = '\0';

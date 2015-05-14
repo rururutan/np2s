@@ -3,7 +3,6 @@
 #include	"resource.h"
 #include	"np2.h"
 #include	"winloc.h"
-#include	"oemtext.h"
 #include	"dosio.h"
 #include	"soundmng.h"
 #include	"sysmng.h"
@@ -142,13 +141,7 @@ static HBITMAP skinload(const OEMCHAR *path) {
 		milstr_ncpy(fname, path, NELEMENTS(fname));
 		file_cutname(fname);
 		file_catname(fname, toolskin.main, NELEMENTS(fname));
-#if defined(OSLANG_UTF8)
-		TCHAR tchr[MAX_PATH];
-		oemtotchar(tchr, NELEMENTS(tchr), fname, -1);
-#else
-		const TCHAR *tchr = fname;
-#endif
-		ret = (HBITMAP)LoadImage(g_hInstance, tchr, IMAGE_BITMAP,
+		ret = (HBITMAP)LoadImage(g_hInstance, fname, IMAGE_BITMAP,
 													0, 0, LR_LOADFROMFILE);
 		if (ret != NULL) {
 			return(ret);
@@ -357,13 +350,7 @@ static LRESULT CALLBACK twsub(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 	else if (msg == WM_DROPFILES) {
    	    files = DragQueryFile((HDROP)wp, (UINT)-1, NULL, 0);
 		if (files == 1) {
-#if defined(OSLANG_UTF8)
-			TCHAR tchr[MAX_PATH];
-			DragQueryFile((HDROP)wp, 0, tchr, NELEMENTS(tchr));
-			tchartooem(fname, NELEMENTS(fname), tchr, -1);
-#else
 			DragQueryFile((HDROP)wp, 0, fname, NELEMENTS(fname));
-#endif
 			if (idc == IDC_TOOLFDD1LIST) {
 				diskdrv_setfdd(0, fname, 0);
 				toolwin_setfdd(0, fname);
@@ -398,15 +385,9 @@ static LRESULT CALLBACK twsub(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 static void toolwincreate(HWND hWnd) {
 
-#if defined(OSLANG_UTF8)
-	TCHAR fontface[64];
-	oemtotchar(fontface, NELEMENTS(fontface), toolskin.font, -1);
-#else
-	const TCHAR *fontface = toolskin.font;
-#endif
 	toolwin.hfont = CreateFont(toolskin.fontsize, 0, 0, 0, 0, 0, 0, 0,
 					SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-					DEFAULT_QUALITY, FIXED_PITCH, fontface);
+					DEFAULT_QUALITY, FIXED_PITCH, toolskin.font);
 	HDC hdc = GetDC(NULL);
 	toolwin.hdcfont = CreateCompatibleDC(hdc);
 	ReleaseDC(NULL, hdc);
@@ -444,13 +425,7 @@ static void toolwincreate(HWND hWnd) {
 				break;
 		}
 		if ((cls) && (p->width > 0) && (p->height > 0)) {
-#if defined(OSLANG_UTF8)
-			TCHAR ptext[64];
-			oemtotchar(ptext, NELEMENTS(ptext), p->text, -1);
-#else
-			const TCHAR *ptext = p->text;
-#endif
-			sub = CreateWindow(cls, ptext, WS_CHILD | WS_VISIBLE | style,
+			sub = CreateWindow(cls, p->text, WS_CHILD | WS_VISIBLE | style,
 							p->posx, p->posy, p->width, p->height,
 							hWnd, (HMENU)(i + IDC_BASE), g_hInstance, NULL);
 		}
@@ -610,13 +585,8 @@ const OEMCHAR	*pcszMruList[SKINMRU_MAX];
 	{
 		j = uID[i];
 		uFlag = MFCHECK(!file_cmpname(pcszBase, np2tool.skinmru[j]));
-#if defined(OSLANG_UTF8)
-		TCHAR szPath[MAX_PATH];
-		oemtotchar(szPath, NELEMENTS(szPath), pcszMruList[j], -1);
-#else
 		const TCHAR *szPath = pcszMruList[j];
-#endif
-		AppendMenu(hmenuSub, MF_STRING + uFlag, IDM_TOOL_SKINMRU + j, szPath);
+		AppendMenu(hmenuSub, MF_STRING + uFlag, IDM_TOOL_SKINMRU + j, pcszMruList[j]);
 	}
 }
 
@@ -664,13 +634,7 @@ const OEMCHAR	*pcszMruList[SKINMRU_MAX];
 	{
 		j = uID[i];
 		uFlag = MFCHECK(!file_cmpname(pcszBase, np2tool.skinmru[j]));
-#if defined(OSLANG_UTF8)
-		TCHAR szPath[MAX_PATH];
-		oemtotchar(szPath, NELEMENTS(szPath), pcszMruList[j], -1);
-#else
-		const TCHAR *szPath = pcszMruList[j];
-#endif
-		AppendMenu(hMenu, MF_STRING + uFlag, IDM_TOOL_SKINMRU + j, szPath);
+		AppendMenu(hMenu, MF_STRING + uFlag, IDM_TOOL_SKINMRU + j, pcszMruList[j]);
 	}
 	return hMenu;
 }

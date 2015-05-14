@@ -39,7 +39,7 @@ UINT codecnv_utf8toucs2(UINT16 *lpOutput, UINT cchOutput, const char *lpInput, U
 	else
 	{
 		// String mode
-		nLength = utf8toucs2(lpOutput, cchOutput - 1, lpInput, strlen(lpInput));
+		nLength = utf8toucs2(lpOutput, cchOutput - 1, lpInput, (UINT)strlen(lpInput));
 		if (lpOutput)
 		{
 			lpOutput[nLength] = '\0';

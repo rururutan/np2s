@@ -18,7 +18,6 @@
 #include "np2.h"
 #include "np2arg.h"
 #include "dosio.h"
-#include "extromio.h"
 #include "commng.h"
 #include "joymng.h"
 #include "mousemng.h"
@@ -58,8 +57,9 @@
 #include "dclock.h"
 #endif
 #if defined(SUPPORT_ROMEO)
-#include "juliet.h"
+#include "ext\externalopna.h"
 #endif
+#include "recvideo.h"
 
 #ifdef BETA_RELEASE
 #define		OPENING_WAIT		1500
@@ -120,24 +120,16 @@ static const OEMCHAR szNp2ResDll[] = OEMTEXT("np2_%u.dll");
 
 static int messagebox(HWND hWnd, LPCTSTR lpcszText, UINT uType)
 {
-	int		nRet;
-	LPTSTR	lpszText;
-
-#if defined(OSLANG_UTF8)
-	TCHAR szCation[128];
-	oemtotchar(szCaption, NELEMENTS(szCaption), np2oscfg.titles, -1);
-#else	// defined(OSLANG_UTF8)
 	LPCTSTR szCaption = np2oscfg.titles;
-#endif	// defined(OSLANG_UTF8)
 
-	nRet = 0;
+	int nRet = 0;
 	if (HIWORD(lpcszText))
 	{
 		nRet = MessageBox(hWnd, lpcszText, szCaption, uType);
 	}
 	else
 	{
-		lpszText = lockstringresource(lpcszText);
+		LPTSTR lpszText = lockstringresource(lpcszText);
 		nRet = MessageBox(hWnd, lpszText, szCaption, uType);
 		unlockstringresource(lpszText);
 	}
@@ -381,14 +373,8 @@ static int flagload(HWND hWnd, const OEMCHAR *ext, LPCTSTR title, BOOL force)
 	}
 	else if ((!force) && (nRet & STATFLAG_DISKCHG))
 	{
-#if defined(OSLANG_UTF8)
-		TCHAR szStat2[128];
-		oemtotchar(szStat2, NELEMENTS(szStat2), szStat, -1);
-#else	// defined(OSLANG_UTF8)
-		LPCTSTR szStat2 = szStat;
-#endif	// defined(OSLANG_UTF8)
 		loadstringresource(IDS_CONFIRM_RESUME, szFormat, NELEMENTS(szFormat));
-		wsprintf(szMessage, szFormat, szStat2);
+		wsprintf(szMessage, szFormat, szStat);
 		nID = messagebox(hWnd, szMessage, MB_YESNOCANCEL | MB_ICONQUESTION);
 	}
 	if (nID == IDYES)
@@ -1526,6 +1512,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	return(0L);
 }
 
+/**
+ * 1フレーム実行
+ * @param[in] bDraw 描画フラグ
+ */
+static void ExecuteOneFrame(BOOL bDraw)
+{
+	if (recvideo_isEnabled())
+	{
+		bDraw = TRUE;
+	}
+
+	joymng_sync();
+	mousemng_sync();
+	pccore_exec(bDraw);
+	recvideo_write();
+#if defined(SUPPORT_DCLOCK)
+	dclock_callback();
+#endif
+}
 
 static void framereset(UINT cnt) {
 
@@ -1574,7 +1579,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	GetModuleFileName(NULL, modulefile, NELEMENTS(modulefile));
 	dosio_init();
 	file_setcd(modulefile);
-	np2arg_analize();
+	Np2Arg::GetInstance()->Parse();
 	initload();
 	toolwin_readini();
 	kdispwin_readini();
@@ -1706,7 +1711,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	sysmenu_setscrnmul(8);
 
 	scrnmode = 0;
-	if (np2arg.fullscreen) {
+	if (Np2Arg::GetInstance()->fullscreen())
+	{
 		scrnmode |= SCRNMODE_FULLSCREEN;
 	}
 	if (np2cfg.RASTER) {
@@ -1728,8 +1734,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	}
 
 	if (soundmng_initialize() == SUCCESS) {
-		soundmng_pcmload(SOUND_PCMSEEK, OEMTEXT("SEEKWAV"), EXTROMIO_RES);
-		soundmng_pcmload(SOUND_PCMSEEK1, OEMTEXT("SEEK1WAV"), EXTROMIO_RES);
+		soundmng_pcmload(SOUND_PCMSEEK, TEXT("SEEKWAV"));
+		soundmng_pcmload(SOUND_PCMSEEK1, TEXT("SEEK1WAV"));
 		soundmng_pcmvolume(SOUND_PCMSEEK, np2cfg.MOTORVOL);
 		soundmng_pcmvolume(SOUND_PCMSEEK1, np2cfg.MOTORVOL);
 	}
@@ -1737,7 +1743,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 #if defined(SUPPORT_ROMEO)
 	if (np2oscfg.useromeo)
 	{
-		CJuliet::GetInstance()->Initialize();
+		CExternalOpna::GetInstance()->Initialize();
 	}
 #endif
 
@@ -1770,10 +1776,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 		int		id;
 
 		id = flagload(hWnd, str_sav, _T("Resume"), FALSE);
-		if (id == IDYES) {
-			for (i=0; i<4; i++) {
-				np2arg.disk[i] = NULL;
-			}
+		if (id == IDYES)
+		{
+			Np2Arg::GetInstance()->ClearDisk();
 		}
 		else if (id == IDCANCEL) {
 			DestroyWindow(hWnd);
@@ -1793,9 +1798,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 #endif
 
 //	リセットしてから… コマンドラインのディスク挿入。
-	for (i=0; i<4; i++) {
-		if (np2arg.disk[i]) {
-			diskdrv_readyfdd((REG8)i, np2arg.disk[i], 0);
+	for (i = 0; i < 4; i++)
+	{
+		LPCTSTR lpDisk = Np2Arg::GetInstance()->disk(i);
+		if (lpDisk)
+		{
+			diskdrv_readyfdd((REG8)i, lpDisk, 0);
 		}
 	}
 
@@ -1823,12 +1831,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 			}
 			else {
 				if (np2oscfg.NOWAIT) {
-					joymng_sync();
-					mousemng_sync();
-					pccore_exec(framecnt == 0);
-#if defined(SUPPORT_DCLOCK)
-					dclock_callback();
-#endif
+					ExecuteOneFrame(framecnt == 0);
 					if (np2oscfg.DRAW_SKIP) {		// nowait frame skip
 						framecnt++;
 						if (framecnt >= np2oscfg.DRAW_SKIP) {
@@ -1844,12 +1847,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 				}
 				else if (np2oscfg.DRAW_SKIP) {		// frame skip
 					if (framecnt < np2oscfg.DRAW_SKIP) {
-						joymng_sync();
-						mousemng_sync();
-						pccore_exec(framecnt == 0);
-#if defined(SUPPORT_DCLOCK)
-						dclock_callback();
-#endif
+						ExecuteOneFrame(framecnt == 0);
 						framecnt++;
 					}
 					else {
@@ -1859,12 +1857,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 				else {								// auto skip
 					if (!waitcnt) {
 						UINT cnt;
-						joymng_sync();
-						mousemng_sync();
-						pccore_exec(framecnt == 0);
-#if defined(SUPPORT_DCLOCK)
-						dclock_callback();
-#endif
+						ExecuteOneFrame(framecnt == 0);
 						framecnt++;
 						cnt = timing_getcount();
 						if (framecnt > cnt) {
@@ -1922,8 +1915,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 #endif
 
 #if defined(SUPPORT_ROMEO)
-	CJuliet::GetInstance()->Reset();
-	CJuliet::GetInstance()->Deinitialize();
+	CExternalOpna::GetInstance()->Reset();
+	CExternalOpna::GetInstance()->Deinitialize();
 #endif
 	pccore_term();
 
@@ -1931,6 +1924,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 
 	soundmng_deinitialize();
 	scrnmng_destroy();
+	recvideo_close();
 
 	if (sys_updates	& (SYS_UPDATECFG | SYS_UPDATEOSCFG)) {
 		initsave();

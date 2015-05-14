@@ -402,7 +402,7 @@ static PFILEH registfile(FILEH fh) {
 		if (buf2 == NULL) {
 			goto rf_err2;
 		}
-		(inf.tooem)(buf2, size, buf, rsize);
+		(inf.tooem)((OEMCHAR *)buf2, size, buf, rsize);
 		_MFREE(buf);
 		buf = buf2;
 		rsize = size;
@@ -414,7 +414,7 @@ static PFILEH registfile(FILEH fh) {
 		goto rf_err2;
 	}
 	ZeroMemory(ret, sizeof(_PFILEH));
-	ret->buffer = buf;
+	ret->buffer = (OEMCHAR *)buf;
 	ret->buffers = newsize;
 	ret->size = rsize;
 	if (hdrsize) {
@@ -520,12 +520,12 @@ void profile_close(PFILEH hdl) {
 			goto wf_err1;
 		}
 		if (inf.fromoem) {
-			buf2size = (inf.fromoem)(NULL, 0, buf, bufsize);
+			buf2size = (inf.fromoem)(NULL, 0, (const OEMCHAR *)buf, bufsize);
 			buf2 = _MALLOC(buf2size * inf.width, "profile tmp");
 			if (buf2 == NULL) {
 				goto wf_err1;
 			}
-			(inf.fromoem)(buf2, buf2size, buf, bufsize);
+			(inf.fromoem)(buf2, buf2size, (const OEMCHAR *)buf, bufsize);
 			_MFREE(buf);
 			buf = buf2;
 			bufsize = buf2size;

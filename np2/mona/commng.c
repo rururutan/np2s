@@ -25,7 +25,7 @@ static UINT8 ncgetstat(COMMNG self) {
 	return(0xf0);
 }
 
-static long ncmsg(COMMNG self, UINT msg, long param) {
+static INTPTR ncmsg(COMMNG self, UINT msg, INTPTR param) {
 
 	(void)self;
 	(void)msg;

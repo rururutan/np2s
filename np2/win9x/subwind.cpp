@@ -425,11 +425,6 @@ static	MDBGCFG		mdbgcfg;
 static const TCHAR mdbgtitle[] = _T("Memory Map");
 static const TCHAR mdbgclass[] = _T("NP2-MemDbgWin");
 
-#if defined(OSLANG_UTF8)
-static const OEMCHAR mdbgapp[] = OEMTEXT("Memory Map");
-#else
-#define	mdbgapp		mdbgtitle
-#endif
 static const PFTBL mdbgini[] = {
 				PFVAL("WindposX", PFTYPE_SINT32,	&mdbgcfg.posx),
 				PFVAL("WindposY", PFTYPE_SINT32,	&mdbgcfg.posy),
@@ -664,7 +659,7 @@ void mdbgwin_readini(void) {
 	mdbgcfg.posx = CW_USEDEFAULT;
 	mdbgcfg.posy = CW_USEDEFAULT;
 	initgetfile(path, NELEMENTS(path));
-	ini_read(path, mdbgapp, mdbgini, NELEMENTS(mdbgini));
+	ini_read(path, mdbgtitle, mdbgini, NELEMENTS(mdbgini));
 }
 
 void mdbgwin_writeini(void) {
@@ -672,7 +667,7 @@ void mdbgwin_writeini(void) {
 	OEMCHAR	path[MAX_PATH];
 
 	initgetfile(path, NELEMENTS(path));
-	ini_write(path, mdbgapp, mdbgini, NELEMENTS(mdbgini));
+	ini_write(path, mdbgtitle, mdbgini, NELEMENTS(mdbgini));
 }
 #endif
 

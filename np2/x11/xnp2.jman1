@@ -1,4 +1,4 @@
-.TH Xnp2 1 "17 Nov 2003"
+.TH Xnp2 1 "June 7, 2014"
 .SH NAME
 Xnp2 \- PC-9801 シリーズエミュレータ
 .SH SYNOPSIS
@@ -119,4 +119,4 @@ tk800 <tk_np2x@yahoo.co.jp>,
 を MacOS X に移植した Neko Project IIx を開発しました。
 .SH "SEE ALSO"
 .B Xnp2
-の最新版等の情報は http://www.asahi-net.or.jp/~aw9k-nnk/np2/ を参照してください。
+の最新版等の情報は http://www.nonakap.org/np2/ を参照してください。

@@ -2,7 +2,6 @@
 #include	"strres.h"
 #include	"resource.h"
 #include	"np2.h"
-#include	"oemtext.h"
 #include	"commng.h"
 #include	"sysmng.h"
 #include	"dialog.h"
@@ -74,7 +73,7 @@ static void mpucreate(HWND hWnd)
 	mpu = np2cfg.mpuopt;
 	for (i=0; i<16; i++)
 	{
-		wsprintf(szBuf, tchar_4X, 0xC0D0 + (i << 10));
+		wsprintf(szBuf, str_4X, 0xC0D0 + (i << 10));
 		nIndex = (int)SendDlgItemMessage(hWnd, IDC_MPUIO, CB_ADDSTRING,
 														0, (LPARAM)szBuf);
 		if (nIndex >= 0)
@@ -106,10 +105,10 @@ static void mpucreate(HWND hWnd)
 static void mpuupdate(HWND hWnd) {
 
 	union {
-		OEMCHAR	mmap[MAXPNAMELEN];
-		OEMCHAR	mmdl[64];
-		OEMCHAR	mdef[MAX_PATH];
-		OEMCHAR	mdin[MAXPNAMELEN];
+		TCHAR	mmap[MAXPNAMELEN];
+		TCHAR	mmdl[64];
+		TCHAR	mdef[MAX_PATH];
+		TCHAR	mdin[MAXPNAMELEN];
 	} s;
 	UINT	update;
 

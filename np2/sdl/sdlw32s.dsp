@@ -179,6 +179,10 @@ SOURCE=..\CODECNV\EUCUCS2.C
 
 SOURCE=..\CODECNV\SJISEUC.C
 # End Source File
+# Begin Source File
+
+SOURCE=..\codecnv\sjisucs2.c
+# End Source File
 # End Group
 # Begin Group "cpu"
 

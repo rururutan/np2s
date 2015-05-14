@@ -1,5 +1,9 @@
+/**
+ * @file	np2ver.h
+ * @brief	The version
+ */
 
-#define	NP2VER_CORE			"ver.0.83"
+#define	NP2VER_CORE			"ver.0.84"
 
 // #define	NP2VER_WIN9X
 // #define	NP2VER_MACOS9

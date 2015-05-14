@@ -619,7 +619,7 @@ int STRCALL milstr_getarg(OEMCHAR *str, OEMCHAR *arg[], int maxarg) {
 
 	int		ret = 0;
 	OEMCHAR	*p;
-	BRESULT	quot;
+	BOOL	quot;
 
 	while(maxarg--) {
 		quot = FALSE;

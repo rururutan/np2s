@@ -12,10 +12,10 @@
 #include "wavefile.h"
 #include "np2.h"
 #include "soundmng.h"
-#include "extromio.h"
+#include "misc\extrom.h"
 #include "sound.h"
 #if defined(SUPPORT_ROMEO)
-#include "juliet.h"
+#include "ext\externalopna.h"
 #endif
 #if defined(VERMOUTH_LIB)
 #include "vermouth.h"
@@ -216,7 +216,7 @@ static void streamenable(BOOL play) {
 	}
 
 #if defined(SUPPORT_ROMEO)
-	CJuliet::GetInstance()->Mute(!play);
+	CExternalOpna::GetInstance()->Mute(!play);
 #endif
 }
 
@@ -345,9 +345,14 @@ static void pcmstop(void) {
 	}
 }
 
-void soundmng_pcmload(UINT num, const OEMCHAR *filename, UINT type) {
-
-	EXTROMH				erh;
+/**
+ * PCM データ読み込み
+ * @param[in] num PCM 番号
+ * @param[in] lpFilename ファイル名
+ */
+void soundmng_pcmload(UINT num, LPCTSTR lpFilename)
+{
+	CExtRom				extrom;
 	RIFF_HEADER			riff;
 	BOOL				head;
 	WAVE_HEADER			whead;
@@ -365,11 +370,11 @@ void soundmng_pcmload(UINT num, const OEMCHAR *filename, UINT type) {
 	if ((pDSound == NULL) || (num >= SOUND_MAXPCM)) {
 		goto smpl_err1;
 	}
-	erh = extromio_open(filename, type);
-	if (erh == NULL) {
+	if (!extrom.Open(lpFilename))
+	{
 		goto smpl_err1;
 	}
-	if ((extromio_read(erh, &riff, sizeof(riff)) != sizeof(riff)) ||
+	if ((extrom.Read(&riff, sizeof(riff)) != sizeof(riff)) ||
 		(riff.sig != WAVE_SIG('R','I','F','F')) ||
 		(riff.fmt != WAVE_SIG('W','A','V','E'))) {
 		goto smpl_err2;
@@ -377,13 +382,15 @@ void soundmng_pcmload(UINT num, const OEMCHAR *filename, UINT type) {
 
 	head = FALSE;
 	while(1) {
-		if (extromio_read(erh, &whead, sizeof(whead)) != sizeof(whead)) {
+		if (extrom.Read(&whead, sizeof(whead)) != sizeof(whead))
+		{
 			goto smpl_err2;
 		}
 		size = LOADINTELDWORD(whead.size);
 		if (whead.sig == WAVE_SIG('f','m','t',' ')) {
 			if (size >= sizeof(info)) {
-				if (extromio_read(erh, &info, sizeof(info)) != sizeof(info)) {
+				if (extrom.Read(&info, sizeof(info)) != sizeof(info))
+				{
 					goto smpl_err2;
 				}
 				size -= sizeof(info);
@@ -394,7 +401,7 @@ void soundmng_pcmload(UINT num, const OEMCHAR *filename, UINT type) {
 			break;
 		}
 		if (size) {
-			extromio_seek(erh, size, ERSEEK_CUR);
+			extrom.Seek(size, FILE_CURRENT);
 		}
 	}
 	if (!head) {
@@ -430,9 +437,10 @@ void soundmng_pcmload(UINT num, const OEMCHAR *filename, UINT type) {
 									(LPVOID *)&blockptr2, &blocksize2, 0);
 	}
 	if (SUCCEEDED(hr)) {
-		extromio_read(erh, blockptr1, blocksize1);
-		if ((blockptr2) && (blocksize2)) {
-			extromio_read(erh, blockptr2, blocksize2);
+		extrom.Read(blockptr1, blocksize1);
+		if ((blockptr2) && (blocksize2))
+		{
+			extrom.Read(blockptr2, blocksize2);
 		}
 		dsbuf->Unlock(blockptr1, blocksize1, blockptr2, blocksize2);
 		pDSwave3[num] = dsbuf;
@@ -442,7 +450,6 @@ void soundmng_pcmload(UINT num, const OEMCHAR *filename, UINT type) {
 	}
 
 smpl_err2:
-	extromio_close(erh);
 
 smpl_err1:
 	return;

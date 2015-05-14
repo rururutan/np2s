@@ -35,19 +35,19 @@ extern	MIDIMOD	vermouth_module;
 #define MIDIOUTS3(a)		((*(UINT32 *)(a)) & 0xffffff)
 
 
-const OEMCHAR cmmidi_midimapper[] = OEMTEXT("MIDI MAPPER");
+const TCHAR cmmidi_midimapper[] = TEXT("MIDI MAPPER");
 #if defined(VERMOUTH_LIB)
-const OEMCHAR cmmidi_vermouth[] = OEMTEXT("VERMOUTH");
+const TCHAR cmmidi_vermouth[] = TEXT("VERMOUTH");
 #endif
 #if defined(MT32SOUND_DLL)
-const OEMCHAR cmmidi_mt32sound[] = OEMTEXT("MT32Sound");
+const TCHAR cmmidi_mt32sound[] = TEXT("MT32Sound");
 #endif
 
-const OEMCHAR *cmmidi_mdlname[12] = {
-		OEMTEXT("MT-32"),	OEMTEXT("CM-32L"),		OEMTEXT("CM-64"),
-		OEMTEXT("CM-300"),	OEMTEXT("CM-500(LA)"),	OEMTEXT("CM-500(GS)"),
-		OEMTEXT("SC-55"),	OEMTEXT("SC-88"),		OEMTEXT("LA"),
-		OEMTEXT("GM"),		OEMTEXT("GS"),			OEMTEXT("XG")};
+LPCTSTR cmmidi_mdlname[12] = {
+		TEXT("MT-32"),	TEXT("CM-32L"),		TEXT("CM-64"),
+		TEXT("CM-300"),	TEXT("CM-500(LA)"),	TEXT("CM-500(GS)"),
+		TEXT("SC-55"),	TEXT("SC-88"),		TEXT("LA"),
+		TEXT("GM"),		TEXT("GS"),			TEXT("XG")};
 
 enum {		MIDI_MT32 = 0,	MIDI_CM32L,		MIDI_CM64,
 			MIDI_CM300,		MIDI_CM500LA,	MIDI_CM500GS,
@@ -775,8 +775,7 @@ void cmmidi_initailize(void) {
 	midictrlindex[32] = 1;
 }
 
-COMMNG cmmidi_create(const OEMCHAR *midiout, const OEMCHAR *midiin,
-													const OEMCHAR *module) {
+COMMNG cmmidi_create(LPCTSTR midiout, LPCTSTR midiin, LPCTSTR module) {
 
 	UINT		opened;
 	UINT		id;

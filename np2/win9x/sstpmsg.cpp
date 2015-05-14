@@ -1,7 +1,6 @@
 #include	"compiler.h"
 #include	"strres.h"
 #include	"np2.h"
-#include	"oemtext.h"
 #include	"scrnmng.h"
 #include	"sysmng.h"
 #include	"sstp.h"
@@ -11,6 +10,9 @@
 #include	"sound.h"
 #include	"fmboard.h"
 #include	"np2info.h"
+#if defined(OSLANG_UCS2)
+#include	"oemtext.h"
+#endif	// defined(OSLANG_UCS2)
 
 
 static const OEMCHAR cr[] = OEMTEXT("\\n");
@@ -191,7 +193,7 @@ static OEMCHAR *sstpsolve(OEMCHAR *buf, const UINT8 *dat) {
 
 	UINT8	c;
 	UINT8	last;
-#if defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
+#if defined(OSLANG_UCS2)
 	char	sjis[4];
 #endif
 
@@ -240,7 +242,7 @@ static OEMCHAR *sstpsolve(OEMCHAR *buf, const UINT8 *dat) {
 			UINT8 c2;
 			GETSSTPDAT1(c2);
 			if (c2) {
-#if defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
+#if defined(OSLANG_UCS2)
 				sjis[0] = c2;
 				sjis[1] = '\0';
 				buf += oemtext_sjistooem(buf, 4, sjis, 1);
@@ -271,7 +273,7 @@ static OEMCHAR *sstpsolve(OEMCHAR *buf, const UINT8 *dat) {
 			buf = sstpsolve(buf, p);
 		}
 		else if ((c >= 0xa0) && (c < 0xe0)) {
-#if defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
+#if defined(OSLANG_UCS2)
 			sjis[0] = (UINT8)0x82;
 			sjis[1] = prs2[c-0xa0];
 			sjis[2] = '\0';
@@ -286,7 +288,7 @@ static OEMCHAR *sstpsolve(OEMCHAR *buf, const UINT8 *dat) {
 			UINT8 c2;
 			GETSSTPDAT1(c2);
 			if (c2) {
-#if defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
+#if defined(OSLANG_UCS2)
 				sjis[0] = c;
 				sjis[1] = c2;
 				sjis[2] = '\0';
@@ -318,13 +320,7 @@ static int check_keropi(void) {
 	for (i=0; i<NELEMENTS(prcs); i++) {
 		OEMCHAR	buf[64];
 		sstpsolve(buf, prcs[i]);
-#if defined(OSLANG_UTF8)
-		TCHAR tchr[64];
-		oemtotchar(tchr, NELEMENTS(tchr), buf, -1);
-#else
-		const TCHAR *tchr = buf;
-#endif
-		if (FindWindow(tchr, NULL)) {
+		if (FindWindow(buf, NULL)) {
 			return(i + 1);
 		}
 	}

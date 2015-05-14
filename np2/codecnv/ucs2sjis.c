@@ -2876,7 +2876,7 @@ UINT codecnv_utf8tosjis(char *lpOutput, UINT cchOutput, const char *lpInput, UIN
 	else
 	{
 		// String mode
-		nLength = utf8tosjis(lpOutput, cchOutput - 1, lpInput, strlen(lpInput));
+		nLength = utf8tosjis(lpOutput, cchOutput - 1, lpInput, (UINT)strlen(lpInput));
 		if (lpOutput)
 		{
 			lpOutput[nLength] = '\0';

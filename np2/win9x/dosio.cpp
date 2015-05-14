@@ -4,7 +4,6 @@
  */
 
 #include "compiler.h"
-#include "oemtext.h"
 #include "dosio.h"
 
 //! カレント パス バッファ
@@ -184,7 +183,7 @@ static bool convertDateTime(const FILETIME& ft, DOSDATE* dosdate, DOSTIME* dosti
 short DOSIOCALL file_getdatetime(FILEH hFile, DOSDATE* dosdate, DOSTIME* dostime)
 {
 	FILETIME ft;
-	if (::GetFileTime(hFile, NULL, NULL, &ft))
+	if (!::GetFileTime(hFile, NULL, NULL, &ft))
 	{
 		return -1;
 	}

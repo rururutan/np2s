@@ -39,7 +39,7 @@ UINT codecnv_sjistoeuc(char *lpOutput, UINT cchOutput, const char *lpInput, UINT
 	else
 	{
 		// String mode
-		nLength = sjistoeuc(lpOutput, cchOutput - 1, lpInput, strlen(lpInput));
+		nLength = sjistoeuc(lpOutput, cchOutput - 1, lpInput, (UINT)strlen(lpInput));
 		if (lpOutput)
 		{
 			lpOutput[nLength] = '\0';

@@ -196,7 +196,7 @@ static void drvflush(FDDFILE fdd) {
 static BRESULT trkseek(FDDFILE fdd, UINT track) {
 
 	D88TRK	trk;
-	BOOL	r;
+	BRESULT	r;
 
 	trk = &d88trk;
 	if ((trk->fdd == fdd) && (trk->track == track) &&

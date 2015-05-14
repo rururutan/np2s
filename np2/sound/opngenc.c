@@ -78,7 +78,7 @@ void opngen_initialize(UINT rate) {
 		sft = ENVTBL_BIT;
 		while(sft < (ENVTBL_BIT + 8)) {
 			pom = (double)(1 << sft) / pow(10.0, EG_STEP*(EVC_ENT-i)/20.0);
-			opncfg.envtable[i] = (long)pom;
+			opncfg.envtable[i] = (SINT32)pom;
 			envshift[i] = sft - TL_BITS;
 			if (opncfg.envtable[i] >= (1 << (ENVTBL_BIT - 1))) {
 				break;
@@ -87,7 +87,7 @@ void opngen_initialize(UINT rate) {
 		}
 #else
 		pom = (double)(1 << ENVTBL_BIT) / pow(10.0, EG_STEP*(EVC_ENT-i)/20.0);
-		opncfg.envtable[i] = (long)pom;
+		opncfg.envtable[i] = (SINT32)pom;
 #endif
 	}
 	for (i=0; i<SIN_ENT; i++) {
@@ -96,7 +96,7 @@ void opngen_initialize(UINT rate) {
 		sft = SINTBL_BIT;
 		while(sft < (SINTBL_BIT + 8)) {
 			pom = (double)(1 << sft) * sin(2*PI*i/SIN_ENT);
-			opncfg.sintable[i] = (long)pom;
+			opncfg.sintable[i] = (SINT32)pom;
 			sinshift[i] = sft;
 			if (opncfg.sintable[i] >= (1 << (SINTBL_BIT - 1))) {
 				break;
@@ -108,12 +108,12 @@ void opngen_initialize(UINT rate) {
 		}
 #else
 		pom = (double)((1 << SINTBL_BIT) - 1) * sin(2*PI*i/SIN_ENT);
-		opncfg.sintable[i] = (long)pom;
+		opncfg.sintable[i] = (SINT32)pom;
 #endif
 	}
 	for (i=0; i<EVC_ENT; i++) {
 		pom = pow(((double)(EVC_ENT-1-i)/EVC_ENT), 8) * EVC_ENT;
-		opncfg.envcurve[i] = (long)pom;
+		opncfg.envcurve[i] = (SINT32)pom;
 		opncfg.envcurve[EVC_ENT + i] = i;
 	}
 	opncfg.envcurve[EVC_ENT*2] = EVC_ENT;
@@ -143,8 +143,8 @@ void opngen_initialize(UINT rate) {
 				detune >>= (0 - sft);
 			}
 
-			detunetable[i][j]   = detune;
-			detunetable[i+4][j] = -detune;
+			detunetable[i][j]   = (SINT32)detune;
+			detunetable[i+4][j] = (SINT32)-detune;
 		}
 	}
 	for (i=0; i<4; i++) {
@@ -160,11 +160,11 @@ void opngen_initialize(UINT rate) {
 		}
 		freq *= (double)(1 << ((i >> 2) - 1));
 #if 0
-		attacktable[i] = (long)((freq + OPM_ARRATE - 1) / OPM_ARRATE);
-		decaytable[i] = (long)((freq + OPM_DRRATE - 1) / OPM_DRRATE);
+		attacktable[i] = (SINT32)((freq + OPM_ARRATE - 1) / OPM_ARRATE);
+		decaytable[i] = (SINT32)((freq + OPM_DRRATE - 1) / OPM_DRRATE);
 #else
-		attacktable[i] = (long)(freq / OPM_ARRATE);
-		decaytable[i] = (long)(freq / OPM_DRRATE);
+		attacktable[i] = (SINT32)(freq / OPM_ARRATE);
+		decaytable[i] = (SINT32)(freq / OPM_DRRATE);
 #endif
 		if (attacktable[i] >= EC_DECAY) {
 			TRACEOUT(("attacktable %d %d %ld", i, attacktable[i], EC_DECAY));

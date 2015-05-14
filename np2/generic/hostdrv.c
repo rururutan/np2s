@@ -435,7 +435,7 @@ const HDRVDIR	*di;
 			di = &hdd_parent;
 		}
 		else {
-			hdl = listarray_getitem(hostdrv.flist, pos - 2);
+			hdl = (HDRVLST)listarray_getitem(hostdrv.flist, pos - 2);
 			if (hdl == NULL) {
 				listarray_destroy(hostdrv.flist);
 				hostdrv.flist = NULL;
@@ -517,7 +517,7 @@ static void close_file(INTRST intrst) {
 	}
 	if (handle_count == 0) {
 		start_sector = LOADINTELWORD(sft.start_sector);
-		hdf = listarray_getitem(hostdrv.fhdl, start_sector);
+		hdf = (HDRVFILE)listarray_getitem(hostdrv.fhdl, start_sector);
 		if (hdf) {
 			file_close((FILEH)hdf->hdl);
 			hdf->hdl = (long)FILEH_INVALID;

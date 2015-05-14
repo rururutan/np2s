@@ -104,8 +104,8 @@ serialgetstat(COMMNG self)
 	return 0x00;
 }
 
-static long
-serialmsg(COMMNG self, UINT msg, long param)
+static INTPTR
+serialmsg(COMMNG self, UINT msg, INTPTR param)
 {
 
 	(void)self;

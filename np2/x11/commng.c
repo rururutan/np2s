@@ -28,8 +28,8 @@ ncgetstat(COMMNG self)
 	return 0xf0;
 }
 
-static long
-ncmsg(COMMNG self, UINT msg, long param)
+static INTPTR
+ncmsg(COMMNG self, UINT msg, INTPTR param)
 {
 
 	return 0;
@@ -99,8 +99,8 @@ commng_create(UINT device)
 		} else if (cfg->port == COMPORT_MIDI) {
 			ret = cmmidi_create(cfg->mout, cfg->min, cfg->mdl);
 			if (ret) {
-				(*ret->msg)(ret, COMMSG_MIMPIDEFFILE, (long)cfg->def);
-				(*ret->msg)(ret, COMMSG_MIMPIDEFEN, (long)cfg->def_en);
+				(*ret->msg)(ret, COMMSG_MIMPIDEFFILE, (INTPTR)cfg->def);
+				(*ret->msg)(ret, COMMSG_MIMPIDEFEN, (INTPTR)cfg->def_en);
 			}
 		}
 	}

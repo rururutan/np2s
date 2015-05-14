@@ -2,7 +2,6 @@
 #include	"strres.h"
 #include	"resource.h"
 #include	"np2.h"
-#include	"oemtext.h"
 #include	"dosio.h"
 #include	"sysmng.h"
 #include	"dialog.h"
@@ -29,7 +28,7 @@ static void setclock(HWND hWnd, UINT uMultiple)
 	if (uMultiple == 0)
 	{
 		GetDlgItemText(hWnd, IDC_MULTIPLE, szWork, NELEMENTS(szWork));
-		uMultiple = (UINT)miltchar_solveINT(szWork);
+		uMultiple = (UINT)milstr_solveINT(szWork);
 	}
 	uMultiple = max(uMultiple, 1);
 	uMultiple = min(uMultiple, 128);
@@ -56,7 +55,7 @@ static void cfgcreate(HWND hWnd) {
 	dlgs_setcbcur(hWnd, IDC_BASECLOCK, val);
 
 	SETLISTUINT32(hWnd, IDC_MULTIPLE, mulval);
-	wsprintf(work, tchar_u, np2cfg.multiple);
+	wsprintf(work, str_u, np2cfg.multiple);
 	SetDlgItemText(hWnd, IDC_MULTIPLE, work);
 
 	if (!milstr_cmp(np2cfg.model, str_VM))
@@ -86,7 +85,7 @@ static void cfgcreate(HWND hWnd) {
 		val = IDC_RATE44;
 	}
 	SetDlgItemCheck(hWnd, val, TRUE);
-	wsprintf(work, tchar_u, np2cfg.delayms);
+	wsprintf(work, str_u, np2cfg.delayms);
 	SetDlgItemText(hWnd, IDC_SOUNDBUF, work);
 
 	SetDlgItemCheck(hWnd, IDC_ALLOWRESIZE, np2oscfg.thickframe);
@@ -109,10 +108,10 @@ static void cfgcreate(HWND hWnd) {
 
 static void cfgupdate(HWND hWnd)
 {
-	UINT		update;
-	TCHAR		work[32];
-	UINT		val;
-const OEMCHAR	*str;
+	UINT	update;
+	TCHAR	work[32];
+	UINT	val;
+	LPCTSTR	str;
 
 	update = 0;
 
@@ -124,7 +123,7 @@ const OEMCHAR	*str;
 	}
 
 	GetDlgItemText(hWnd, IDC_MULTIPLE, work, sizeof(work));
-	val = (UINT)miltchar_solveINT(work);
+	val = (UINT)milstr_solveINT(work);
 	if (val < 1) {
 		val = 1;
 	}
@@ -166,7 +165,7 @@ const OEMCHAR	*str;
 	}
 
 	GetDlgItemText(hWnd, IDC_SOUNDBUF, work, NELEMENTS(work));
-	val = (UINT)miltchar_solveINT(work);
+	val = (UINT)milstr_solveINT(work);
 	if (val < 40) {
 		val = 40;
 	}

@@ -2,7 +2,6 @@
 #include	"strres.h"
 #include	"resource.h"
 #include	"np2.h"
-#include	"oemtext.h"
 #include	"viewer.h"
 #include	"viewcmn.h"
 #include	"viewmenu.h"
@@ -23,7 +22,7 @@ static const FMSNDTBL fmsndtbl[] = {
 		{_T("Sound-Board I"), 0, 0},
 		{NULL, 0x0000, 0xffff},
 		{NULL, 0x0010, 0x3f07},
-		{NULL, 0x0020, 0x07e6},
+		{NULL, 0x0020, 0x07f6},
 		{NULL, 0x0030, 0x7777},
 		{NULL, 0x0040, 0x7777},
 		{NULL, 0x0050, 0x7777},
@@ -33,7 +32,7 @@ static const FMSNDTBL fmsndtbl[] = {
 		{NULL, 0x0090, 0x7777},
 		{NULL, 0x00a0, 0x7777},
 		{NULL, 0x00b0, 0x0077},
-		{tchar_null, 0, 0},
+		{str_null, 0, 0},
 		{NULL, 0x0100, 0xffff},
 		{NULL, 0x0110, 0x0001},
 		{NULL, 0x0130, 0x7777},
@@ -45,7 +44,7 @@ static const FMSNDTBL fmsndtbl[] = {
 		{NULL, 0x0190, 0x7777},
 		{NULL, 0x01a0, 0x7777},
 		{NULL, 0x01b0, 0x0077},
-		{tchar_null, 0, 0},
+		{str_null, 0, 0},
 		{_T("Sound-Board II"), 0, 0},
 		{NULL, 0x0200, 0xffff},
 		{NULL, 0x0220, 0x07e6},
@@ -58,7 +57,7 @@ static const FMSNDTBL fmsndtbl[] = {
 		{NULL, 0x0290, 0x7777},
 		{NULL, 0x02a0, 0x7777},
 		{NULL, 0x02b0, 0x0077},
-		{tchar_null, 0, 0},
+		{str_null, 0, 0},
 		{NULL, 0x0230, 0x7777},
 		{NULL, 0x0240, 0x7777},
 		{NULL, 0x0250, 0x7777},

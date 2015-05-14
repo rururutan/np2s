@@ -141,7 +141,7 @@ LISTARRAY hostdrvs_getpathlist(const OEMCHAR *path) {
 		if ((realname2fcb(fcbname, &fli) == SUCCESS) &&
 			(fcbname[0] != ' ') &&
 			(listarray_enum(ret, hddsea, fcbname) == NULL)) {
-			hdd = listarray_append(ret, NULL);
+			hdd = (HDRVLST)listarray_append(ret, NULL);
 			if (hdd == NULL) {
 				break;
 			}

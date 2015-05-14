@@ -39,7 +39,7 @@ UINT codecnv_euctosjis(char *lpOutput, UINT cchOutput, const char *lpInput, UINT
 	else
 	{
 		// String mode
-		nLength = euctosjis(lpOutput, cchOutput - 1, lpInput, strlen(lpInput));
+		nLength = euctosjis(lpOutput, cchOutput - 1, lpInput, (UINT)strlen(lpInput));
 		if (lpOutput)
 		{
 			lpOutput[nLength] = '\0';

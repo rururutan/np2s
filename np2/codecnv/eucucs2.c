@@ -39,7 +39,7 @@ UINT codecnv_euctoucs2(UINT16 *lpOutput, UINT cchOutput, const char *lpInput, UI
 	else
 	{
 		// String mode
-		nLength = euctoucs2(lpOutput, cchOutput - 1, lpInput, strlen(lpInput));
+		nLength = euctoucs2(lpOutput, cchOutput - 1, lpInput, (UINT)strlen(lpInput));
 		if (lpOutput)
 		{
 			lpOutput[nLength] = '\0';

@@ -32,7 +32,7 @@ struct _commng {
 	UINT	(*read)(COMMNG self, BYTE *data);
 	UINT	(*write)(COMMNG self, BYTE data);
 	BYTE	(*getstat)(COMMNG self);
-	long	(*msg)(COMMNG self, UINT msg, long param);
+	INTPTR	(*msg)(COMMNG self, UINT msg, INTPTR param);
 	void	(*release)(COMMNG self);
 };
 

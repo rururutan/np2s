@@ -9,16 +9,6 @@
 #include	"pccore.h"
 #include	"calendar.h"
 
-
-#if !defined(OSLANG_UTF8)
-#define	tchar_2x		str_2x
-#define	tchar_2d		str_2d
-#else
-static const TCHAR tchar_2x[] = _T("%.2x");
-static const TCHAR tchar_2d[] = _T("%.2d");
-#endif
-
-
 static	UINT8	cbuf[8];
 
 typedef struct {
@@ -42,10 +32,10 @@ static void set_cal2dlg(HWND hWnd, const UINT8 *cbuf) {
 
 	for (i=0; i<6; i++) {
 		if (i != 1) {
-			wsprintf(work, tchar_2x, cbuf[i]);
+			wsprintf(work, str_2x, cbuf[i]);
 		}
 		else {
-			wsprintf(work, tchar_2d, cbuf[1] >> 4);
+			wsprintf(work, str_2d, cbuf[1] >> 4);
 		}
 		SetDlgItemText(hWnd, vircal[i].res, work);
 	}

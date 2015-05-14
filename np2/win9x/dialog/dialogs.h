@@ -50,12 +50,9 @@ typedef const struct tagCBNParam	*PCCBNPARAM;
 void dlgs_enablebyautocheck(HWND hWnd, UINT uID, UINT uCheckID);
 void dlgs_disablebyautocheck(HWND hWnd, UINT uID, UINT uCheckID);
 
-BOOL dlgs_openfile(HWND hWnd, PCFSPARAM pcParam,
-									OEMCHAR *pszPath, UINT uSize, int *puRO);
-BOOL dlgs_createfile(HWND hWnd, PCFSPARAM pcParam,
-												OEMCHAR *pszPath, UINT uSize);
-BOOL dlgs_createfilenum(HWND hWnd, PCFSPARAM pcParam,
-												OEMCHAR *pszPath, UINT uSize);
+BOOL dlgs_openfile(HWND hWnd, PCFSPARAM pcParam, LPTSTR pszPath, UINT uSize, int *puRO);
+BOOL dlgs_createfile(HWND hWnd, PCFSPARAM pcParam, LPTSTR pszPath, UINT uSize);
+BOOL dlgs_createfilenum(HWND hWnd, PCFSPARAM pcParam, LPTSTR pszPath, UINT uSize);
 
 void dlgs_browsemimpidef(HWND hWnd, UINT16 res);
 
@@ -67,8 +64,8 @@ void dlgs_setcbnumber(HWND hWnd, UINT uID, PCCBNPARAM pcItem, UINT uItems);
 void dlgs_setcbcur(HWND hWnd, UINT uID, int nItemData);
 int dlgs_getcbcur(HWND hWnd, UINT uID, int nDefault);
 
-void dlgs_setlistmidiout(HWND hWnd, UINT16 res, const OEMCHAR *defname);
-void dlgs_setlistmidiin(HWND hWnd, UINT16 res, const OEMCHAR *defname);
+void dlgs_setlistmidiout(HWND hWnd, UINT16 res, LPCTSTR defname);
+void dlgs_setlistmidiin(HWND hWnd, UINT16 res, LPCTSTR defname);
 
 void dlgs_drawbmp(HDC hdc, UINT8 *bmp);
 

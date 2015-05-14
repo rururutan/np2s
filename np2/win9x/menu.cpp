@@ -313,7 +313,7 @@ void xmenu_initialize(void)
 
 #if defined(SUPPORT_PX)
 	(void)menu_addmenubyid(hMenu, IDM_SPARKBOARD, IDR_PXMENU);
-#endif	// defined(SUPPORT_PX)
+#endif
 
 #if defined(SUPPORT_WAVEREC)
 	(void)menu_addmenubyid(hMenu, IDM_S98LOGGING, IDR_WAVEREC);

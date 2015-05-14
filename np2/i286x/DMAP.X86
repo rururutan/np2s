@@ -14,7 +14,7 @@ VAEG_EXT		equ		0		; added by Shinra
 .sreq			resb	1		; 19
 .ready			resb	1		; 1a
 .mask			resb	1		; 1b
-.size							; 1c
+.size			resb	1		; 1c
 				endstruc
 
 				struc	dmac_t
@@ -111,6 +111,3 @@ dmap_inccnt:	test	byte [edi + dmach_t.mode], 20h
 dmap_adrsdec:	dec		dword [edi + dmach_t.adrs]
 				pop		edi
 				ret
-
-	ends
-
