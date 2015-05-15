@@ -60,10 +60,13 @@ static void MEMCALL memmain_wr16(UINT32 address, REG16 value) {
 static REG8 MEMCALL membms_rd8(UINT32 address) {
 
 	if (bmsio.cfg.enabled) {
-		if (bmsio.nomem == 1) {
+		if (bmsio.nomem) {
 			return(0xff);
 		}
-		return(bmsiowork.bmsmem[(bmsio.bank << 17) + (address - 0x80000)]);
+		if (bmsio.bank == 0) {
+			return(mem[address]);
+		}
+		return(bmsiowork.bmsmem[(((UINT32)bmsio.bank) << 17) + (address - 0x80000)]);
 	} else {
 		return(mem[address]);
 	}
@@ -71,13 +74,17 @@ static REG8 MEMCALL membms_rd8(UINT32 address) {
 
 static REG16 MEMCALL membms_rd16(UINT32 address) {
 
-const UINT8	*ptr;
+	const UINT8	*ptr;
 
 	if (bmsio.cfg.enabled) {
-		if (bmsio.nomem == 1) {
+		if (bmsio.nomem) {
 			return(0xffff);
 		}
-		ptr = bmsiowork.bmsmem + (bmsio.bank << 17) + (address - 0x80000);
+		if (bmsio.bank == 0) {
+			ptr = mem + address;
+		} else {
+			ptr = bmsiowork.bmsmem + (((UINT32)bmsio.bank) << 17) + (address - 0x80000);
+		}
 	} else {
 		ptr = mem + address;
 	}
@@ -86,8 +93,13 @@ const UINT8	*ptr;
 
 static void MEMCALL membms_wr8(UINT32 address, REG8 value) {
 	if (bmsio.cfg.enabled) {
-		if (bmsio.nomem == 0) {
-			bmsiowork.bmsmem[(bmsio.bank << 17) + (address - 0x80000)] = (UINT8)value;
+		if (bmsio.nomem) {
+			return;
+		}
+		if (bmsio.bank == 0) {
+			mem[address] = (UINT8)value;
+		} else {
+			bmsiowork.bmsmem[(((UINT32)bmsio.bank) << 17) + (address - 0x80000)] = (UINT8)value;
 		}
 	} else {
 		mem[address] = (UINT8)value;
@@ -96,19 +108,22 @@ static void MEMCALL membms_wr8(UINT32 address, REG8 value) {
 
 static void MEMCALL membms_wr16(UINT32 address, REG16 value) {
 
+	UINT8	*ptr;
+
 	if (bmsio.cfg.enabled) {
-		if (bmsio.nomem == 0) {
-			UINT8	*ptr;
-
-			ptr = bmsiowork.bmsmem + (bmsio.bank << 17) + (address - 0x80000);
-			STOREINTELWORD(ptr, value);
+		if (bmsio.nomem) {
+			return;
 		}
-	} else {
-		UINT8	*ptr;
-
-		ptr = mem + address;
+		if (bmsio.bank == 0) {
+			ptr = mem + address;
+		} else {
+			ptr = bmsiowork.bmsmem + (((UINT32)bmsio.bank) << 17) + (address - 0x80000);
+		}
 		STOREINTELWORD(ptr, value);
+	} else {
+		ptr = mem + address;
 	}
+	STOREINTELWORD(ptr, value);
 }
 
 #endif	// defined(SUPPORT_BMS)
