@@ -50,6 +50,7 @@ EM_OFF			equ		0
 .env_inc_decay1	resd	1		; 3c
 .env_inc_decay2	resd	1		; 40
 .env_inc_rel	resd	1		; 44
+.amon			resd	1		; 48
 				endstruc
 
 				struc	ch_t
@@ -71,6 +72,8 @@ EM_OFF			equ		0
 .extop			resb	1
 .stereo			resb	1
 				resb	1
+.pms			resd	1
+.ams			resd	1
 				endstruc
 
 				struc opngen_t
@@ -83,6 +86,9 @@ EM_OFF			equ		0
 .outdc			resd	1
 .outdr			resd	1
 .calcremain		resd	1
+.lfo_freq_cnt		resd	1	; frequency count
+.lfo_freq_inc		resd	1	; frequency step
+.lfo_enable		resd	1
 .keyreg			resb	12
 				endstruc
 
