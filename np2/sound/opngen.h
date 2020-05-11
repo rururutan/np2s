@@ -133,8 +133,8 @@ typedef struct {
 	UINT8	extop;				// extendopelator-enable
 	UINT8	stereo;				// stereo-enable
 	UINT8	padding2;
-	UINT32	pms;				//PMS
-	UINT32	ams;				//AMS
+	SINT32	pms;				//PMS
+	SINT32	ams;				//AMS
 } OPNCH;
 
 typedef struct {
@@ -163,6 +163,10 @@ typedef struct {
 
 	SINT32	sintable[SIN_ENT];
 	SINT32	envtable[EVC_ENT];
+#ifdef OPNGENX86
+	char	sinshift[SIN_ENT];
+	char	envshift[EVC_ENT];
+#endif
 	SINT32	envcurve[EVC_ENT*2 + 1];
 } OPNCFG;
 

@@ -18,10 +18,12 @@
 
 
 	OPNCFG	opncfg;
-#ifdef OPNGENX86
-	char	envshift[EVC_ENT];
-	char	sinshift[SIN_ENT];
-#endif
+
+//OPNCFG構造体のメンバー変数に、移動しました。
+//#ifdef OPNGENX86
+//	char	envshift[EVC_ENT];
+//	char	sinshift[SIN_ENT];
+//#endif
 
 
 static	SINT32	detunetable[8][32];
@@ -115,7 +117,7 @@ void opngen_initialize(UINT rate) {
 		while(sft < (ENVTBL_BIT + 8)) {
 			pom = (double)(1 << sft) / pow(10.0, EG_STEP*(EVC_ENT-i)/20.0);
 			opncfg.envtable[i] = (SINT32)pom;
-			envshift[i] = sft - TL_BITS;
+			opncfg.envshift[i] = sft - TL_BITS;
 			if (opncfg.envtable[i] >= (1 << (ENVTBL_BIT - 1))) {
 				break;
 			}
@@ -136,7 +138,7 @@ void opngen_initialize(UINT rate) {
 		while(sft < (SINTBL_BIT + 8)) {
 			pom = (double)(1 << sft) * sin(2*PI*i/SIN_ENT);
 			opncfg.sintable[i] = (SINT32)pom;
-			sinshift[i] = sft;
+			opncfg.sinshift[i] = sft;
 			if (opncfg.sintable[i] >= (1 << (SINTBL_BIT - 1))) {
 				break;
 			}
