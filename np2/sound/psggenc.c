@@ -69,7 +69,7 @@ void psggen_reset(PSGGEN psg) {
 	for (i=0; i<3; i++) {
 		psg->tone[i].pvol = psggencfg.volume + 0;
 	}
-	psg->noise.lfsr = 1;
+//	psg->noise.lfsr = 1;
 	for (i=0; i<sizeof(psggen_deftbl); i++) {
 		psggen_setreg(psg, i, psggen_deftbl[i]);
 	}

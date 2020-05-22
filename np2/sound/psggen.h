@@ -23,7 +23,8 @@ typedef struct {
 typedef struct {
 	UINT32	freq;			/*!< frequency */
 	UINT32	count;			/*!< counter */
-	UINT	lfsr;			/*!< linear feedback shift register */
+//	UINT	lfsr;			/*!< linear feedback shift register */
+	UINT	base;
 } PSGNOISE;
 
 typedef struct {

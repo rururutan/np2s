@@ -34,16 +34,18 @@ static void IOOUTCALL ymf_o18a(UINT port, REG8 dat) {
 	}
 	S98_put(NORMAL2608, addr, dat);
 	if (addr < 0x10) {
+		//0x00-0x0F: SSG
 		if (addr != 0x0e) {
 			psggen_setreg(&psg1, addr, dat);
 		}
 	}
 	else {
-		if (addr < 0x20) {
-			rhythm_setreg(&rhythm, addr, dat);
-		}
-		else if ((addr < 0x30) && (addr > 0x22)) {
-			if (addr == 0x28) {
+		if ((addr < 0x30) && (addr != 0x22)) {
+			if (addr < 0x20) {
+				//0x10-0x1F: Rhythm
+				rhythm_setreg(&rhythm, addr, dat);
+			} else if (addr == 0x28) {
+				//0x28: Key On/Off
 				if ((dat & 0x0f) < 3) {
 					opngen_keyon(dat & 0x0f, dat);
 				}
@@ -53,6 +55,7 @@ static void IOOUTCALL ymf_o18a(UINT port, REG8 dat) {
 				}
 			}
 			else {
+				//0x24-0x27: Timer
 				if (addr == 0x27) {
 					/* 118‚ÉCSMƒ‚[ƒh‚Í–³‚¢ */
 					dat &= ~0x80;
@@ -61,7 +64,8 @@ static void IOOUTCALL ymf_o18a(UINT port, REG8 dat) {
 				opnch[2].extop = dat & 0xc0;
 			}
 		}
-		else if (addr < 0xc0 || (addr == 0x22)) {
+		else if (addr < 0xc0) {
+			//0x22, 0x30-0xBF
 			opngen_setreg(0, addr, dat);
 		}
 		opn.reg[addr] = dat;
